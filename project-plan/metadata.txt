@@ -2,3 +2,5 @@ This folder contains information about the project and the plan which the projec
 requirements for files:
 date: YYYY.MM.DD
 
+file name: MMDD_file_name
+
