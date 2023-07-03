@@ -1,0 +1,117 @@
+working directory /mnt/c/Users/drizzotto/OneDrive - CeMM Research Center GmbH/Year 3/RNA sequencing/Nutlin_analysis$ 
+
+merging bam files from the different lanes into the same bam. Renaming for clarity, output in the raw_data folder
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t0_r1_*.bam -o raw_data/RPE1_Nutl_t0_r1.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t0_r2_*.bam -o raw_data/RPE1_Nutl_t0_r2.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t0_r3_*.bam -o raw_data/RPE1_Nutl_t0_r3.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t8_r1_*.bam -o raw_data/RPE1_Nutl_t8_r1.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t8_r2_*.bam -o raw_data/RPE1_Nutl_t8_r2.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t8_r3_*.bam -o raw_data/RPE1_Nutl_t8_r3.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t12_r1_*.bam -o raw_data/RPE1_Nutl_t12_r1.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t12_r2_*.bam -o raw_data/RPE1_Nutl_t12_r2.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t12_r3_*.bam -o raw_data/RPE1_Nutl_t12_r3.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t16_r1_*.bam -o raw_data/RPE1_Nutl_t16_r1.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t16_r2_*.bam -o raw_data/RPE1_Nutl_t16_r2.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t16_r3_*.bam -o raw_data/RPE1_Nutl_t16_r3.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t24_r1_*.bam -o raw_data/RPE1_Nutl_t24_r1.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t24_r2_*.bam -o raw_data/RPE1_Nutl_t24_r2.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t24_r3_*.bam -o raw_data/RPE1_Nutl_t24_r3.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t48_r1_*.bam -o raw_data/RPE1_Nutl_t48_r1.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t48_r2_*.bam -o raw_data/RPE1_Nutl_t48_r2.bam
+samtools merge BSF_1196_HNYLYBBXY_*#Nutl_t48_r3_*.bam -o raw_data/RPE1_Nutl_t48_r3.bam
+
+deleting the original, non-merged files
+
+converting bam into fastq
+samtools bam2fq raw_data/RPE1_Nutl_t0_r1.bam > raw_data/RPE1_Nutl_t0_r1.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t0_r2.bam > raw_data/RPE1_Nutl_t0_r2.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t0_r3.bam > raw_data/RPE1_Nutl_t0_r3.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t8_r1.bam > raw_data/RPE1_Nutl_t8_r1.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t8_r2.bam > raw_data/RPE1_Nutl_t8_r2.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t8_r3.bam > raw_data/RPE1_Nutl_t8_r3.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t12_r1.bam > raw_data/RPE1_Nutl_t12_r1.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t12_r2.bam > raw_data/RPE1_Nutl_t12_r2.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t12_r3.bam > raw_data/RPE1_Nutl_t12_r3.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t16_r1.bam > raw_data/RPE1_Nutl_t16_r1.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t16_r2.bam > raw_data/RPE1_Nutl_t16_r2.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t16_r3.bam > raw_data/RPE1_Nutl_t16_r3.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t24_r1.bam > raw_data/RPE1_Nutl_t24_r1.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t24_r2.bam > raw_data/RPE1_Nutl_t24_r2.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t24_r3.bam > raw_data/RPE1_Nutl_t24_r3.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t48_r1.bam > raw_data/RPE1_Nutl_t48_r1.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t48_r2.bam > raw_data/RPE1_Nutl_t48_r2.fastq
+samtools bam2fq raw_data/RPE1_Nutl_t48_r3.bam > raw_data/RPE1_Nutl_t48_r3.fastq
+
+deleting bam files
+rm raw_data/*.bam
+
+trimming reads using bbduk using the parameters set by lexogen 
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t0_r1.fastq out=trimmed/RPE_Nutl_t0_r1_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t0_r2.fastq out=trimmed/RPE_Nutl_t0_r2_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t0_r3.fastq out=trimmed/RPE_Nutl_t0_r3_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t8_r1.fastq out=trimmed/RPE_Nutl_t8_r1_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t8_r2.fastq out=trimmed/RPE_Nutl_t8_r2_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t8_r3.fastq out=trimmed/RPE_Nutl_t8_r3_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t12_r1.fastq out=trimmed/RPE_Nutl_t12_r1_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t12_r2.fastq out=trimmed/RPE_Nutl_t12_r2_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t12_r3.fastq out=trimmed/RPE_Nutl_t12_r3_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t16_r1.fastq out=trimmed/RPE_Nutl_t16_r1_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t16_r2.fastq out=trimmed/RPE_Nutl_t16_r2_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t16_r3.fastq out=trimmed/RPE_Nutl_t16_r3_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t24_r1.fastq out=trimmed/RPE_Nutl_t24_r1_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t24_r2.fastq out=trimmed/RPE_Nutl_t24_r2_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t24_r3.fastq out=trimmed/RPE_Nutl_t24_r3_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t48_r1.fastq out=trimmed/RPE_Nutl_t48_r1_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t48_r2.fastq out=trimmed/RPE_Nutl_t48_r2_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+/home/dario/bbmap/bbduk.sh in=raw_data/RPE1_Nutl_t48_r3.fastq out=trimmed/RPE_Nutl_t48_r3_tc.fastq ref=/home/dario/bbmap/resources/polyA.fa.gz,/home/dario/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+
+QUANTIFICATION (Salmon)
+Using the decoy-aware index built previously to align the reads
+
+conda activate salmon
+
+building the index based on the gentrome (file generated on the cluster), the decoys, and using a kmer size of 17
+salmon index -t salmon_index/gentrome.fa -i salmon_index/Hsapiens_index_k17 --decoys salmon_index/decoys.txt -k 17 
+
+Quantifying the reads of the different samples using the previously computed index. Output on the quantification/sample_name folder
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t0_r1_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t0_r1   
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t0_r2_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t0_r2
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t0_r3_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t0_r3
+
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t8_r1_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t8_r1
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t8_r2_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t8_r2
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t8_r3_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t8_r3
+
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t12_r1_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t12_r1
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t12_r2_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t12_r2
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t12_r3_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t12_r3
+
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t16_r1_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t16_r1
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t16_r2_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t16_r2
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t16_r3_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t16_r3
+
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t24_r1_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t24_r1
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t24_r2_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t24_r2
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t24_r3_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t24_r3
+
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t48_r1_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t48_r1
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t48_r2_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t48_r2
+salmon quant -i salmon_index/Hsapiens_index_k17 -l A -r trimmed/RPE_Nutl_t48_r3_tc.fastq -p 8 --validateMappings -o quantification/RPE_Nutl_t48_r3
+
+Mapping rates:
+t0 - 72%, 67%, 66%
+t8 - 68%, 69%, 62%
+t12 - 70%, 69%, 64%
+t16 - 67%, 68%, 61%
+t24 - 67%, 65, 61%
+t48 - 56%, 67%, 63%
+
+Analysis continues in the R script
+
+
+
