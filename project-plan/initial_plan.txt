@@ -1,0 +1,17 @@
+date: 2023.07.03
+title: "Aims/ initial pipeline ideas"
+
+The aim of the project is to attempt to merge the repeats, and the two experiements to increase the signal/ decrease noise and determine differentially expressed genes within each of the treatments and the time points.
+
+
+input data:
+potentially (yet to confirm) unaligned sequence reads in BAM format.
+
+
+thoughts of pipeline:
+1. merge data (reads in bam format)
+2. align sequences
+3. exclude rRNA / non- mRNA reads. the amount of exclusion should be varied, initially being conservative and then being harser - but just important to record what type of excluding parameters are used.
+4. run subsequent analysis. see dario-past/dario_pipeline.txt
+
+

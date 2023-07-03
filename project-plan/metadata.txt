@@ -1,0 +1,4 @@
+This folder contains information about the project and the plan which the project will take.
+requirements for files:
+date: YYYY.MM.DD
+
