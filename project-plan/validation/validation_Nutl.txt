@@ -1,0 +1,18 @@
+
+/Users/bsilke/bs-villungerlab/data/organised/Nutl
+
+all folders should have 12 files
+3 replicates in two experiements split once (3*2*2)
+
+folder=Nutl_0
+      12
+folder=Nutl_12
+      12
+folder=Nutl_16
+      12
+folder=Nutl_24
+      12
+folder=Nutl_48
+      12
+folder=Nutl_8
+      12
