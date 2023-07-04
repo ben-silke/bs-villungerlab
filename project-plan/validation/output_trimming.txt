@@ -1,0 +1,180 @@
+Trimming Nutl_0
+/Users/bsilke/bbmap//calcmem.sh: line 75: [: -v: unary operator expected
+Max memory cannot be determined.  Attempting to use 1400 MB.
+If this fails, please add the -Xmx flag (e.g. -Xmx24g) to your command, 
+or run this program qsubbed or from a qlogin session on Genepool, or set ulimit to an appropriate value.
+java -ea -Xmx1400m -Xms1400m -cp /Users/bsilke/bbmap/current/ jgi.BBDuk in=organised/Nutl/output_merged_fq_Nutl_0.fastq out={organised/Nutl}/trimmed_fq_Nutl_0.fastq ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+Executing jgi.BBDuk [in=organised/Nutl/output_merged_fq_Nutl_0.fastq, out={organised/Nutl}/trimmed_fq_Nutl_0.fastq, ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz, k=13, ktrim=r, useshortkmers=t, mink=5, qtrim=t, trimq=10, minlength=20]
+Version 39.01
+
+maskMiddle was disabled because useShortKmers=true
+0.032 seconds.
+Initial:
+Memory: max=1468m, total=1468m, free=1438m, used=30m
+
+Added 446 kmers; time:  0.141 seconds.
+Memory: max=1468m, total=1468m, free=1433m, used=35m
+
+Input is being processed as unpaired
+Started output streams: 0.161 seconds.
+Processing time:                112.515 seconds.
+
+Input:                          37531843 reads          1914123993 bases.
+QTrimmed:                       137738 reads (0.37%)    213985 bases (0.01%)
+KTrimmed:                       6415774 reads (17.09%)  181157754 bases (9.46%)
+Total Removed:                  2322148 reads (6.19%)   181371739 bases (9.48%)
+Result:                         35209695 reads (93.81%)         1732752254 bases (90.52%)
+
+Time:                           112.821 seconds.
+Reads Processed:      37531k    332.67k reads/sec
+Bases Processed:       1914m    16.97m bases/sec
+Trimming Nutl_8
+/Users/bsilke/bbmap//calcmem.sh: line 75: [: -v: unary operator expected
+Max memory cannot be determined.  Attempting to use 1400 MB.
+If this fails, please add the -Xmx flag (e.g. -Xmx24g) to your command, 
+or run this program qsubbed or from a qlogin session on Genepool, or set ulimit to an appropriate value.
+java -ea -Xmx1400m -Xms1400m -cp /Users/bsilke/bbmap/current/ jgi.BBDuk in=organised/Nutl/output_merged_fq_Nutl_8.fastq out={organised/Nutl}/trimmed_fq_Nutl_8.fastq ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+Executing jgi.BBDuk [in=organised/Nutl/output_merged_fq_Nutl_8.fastq, out={organised/Nutl}/trimmed_fq_Nutl_8.fastq, ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz, k=13, ktrim=r, useshortkmers=t, mink=5, qtrim=t, trimq=10, minlength=20]
+Version 39.01
+
+maskMiddle was disabled because useShortKmers=true
+0.037 seconds.
+Initial:
+Memory: max=1468m, total=1468m, free=1438m, used=30m
+
+Added 446 kmers; time:  0.082 seconds.
+Memory: max=1468m, total=1468m, free=1433m, used=35m
+
+Input is being processed as unpaired
+Started output streams: 0.069 seconds.
+Processing time:                96.928 seconds.
+
+Input:                          38902274 reads          1984015974 bases.
+QTrimmed:                       168343 reads (0.43%)    246397 bases (0.01%)
+KTrimmed:                       5795703 reads (14.90%)  161737689 bases (8.15%)
+Total Removed:                  2080415 reads (5.35%)   161984086 bases (8.16%)
+Result:                         36821859 reads (94.65%)         1822031888 bases (91.84%)
+
+Time:                           97.086 seconds.
+Reads Processed:      38902k    400.70k reads/sec
+Bases Processed:       1984m    20.44m bases/sec
+Trimming Nutl_12
+/Users/bsilke/bbmap//calcmem.sh: line 75: [: -v: unary operator expected
+Max memory cannot be determined.  Attempting to use 1400 MB.
+If this fails, please add the -Xmx flag (e.g. -Xmx24g) to your command, 
+or run this program qsubbed or from a qlogin session on Genepool, or set ulimit to an appropriate value.
+java -ea -Xmx1400m -Xms1400m -cp /Users/bsilke/bbmap/current/ jgi.BBDuk in=organised/Nutl/output_merged_fq_Nutl_12.fastq out={organised/Nutl}/trimmed_fq_Nutl_12.fastq ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+Executing jgi.BBDuk [in=organised/Nutl/output_merged_fq_Nutl_12.fastq, out={organised/Nutl}/trimmed_fq_Nutl_12.fastq, ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz, k=13, ktrim=r, useshortkmers=t, mink=5, qtrim=t, trimq=10, minlength=20]
+Version 39.01
+
+maskMiddle was disabled because useShortKmers=true
+0.039 seconds.
+Initial:
+Memory: max=1468m, total=1468m, free=1438m, used=30m
+
+Added 446 kmers; time:  0.062 seconds.
+Memory: max=1468m, total=1468m, free=1433m, used=35m
+
+Input is being processed as unpaired
+Started output streams: 0.030 seconds.
+Processing time:                78.637 seconds.
+
+Input:                          31595926 reads          1611392226 bases.
+QTrimmed:                       116819 reads (0.37%)    177745 bases (0.01%)
+KTrimmed:                       5277780 reads (16.70%)  145863205 bases (9.05%)
+Total Removed:                  1822718 reads (5.77%)   146040950 bases (9.06%)
+Result:                         29773208 reads (94.23%)         1465351276 bases (90.94%)
+
+Time:                           78.741 seconds.
+Reads Processed:      31595k    401.26k reads/sec
+Bases Processed:       1611m    20.46m bases/sec
+Trimming Nutl_16
+/Users/bsilke/bbmap//calcmem.sh: line 75: [: -v: unary operator expected
+Max memory cannot be determined.  Attempting to use 1400 MB.
+If this fails, please add the -Xmx flag (e.g. -Xmx24g) to your command, 
+or run this program qsubbed or from a qlogin session on Genepool, or set ulimit to an appropriate value.
+java -ea -Xmx1400m -Xms1400m -cp /Users/bsilke/bbmap/current/ jgi.BBDuk in=organised/Nutl/output_merged_fq_Nutl_16.fastq out={organised/Nutl}/trimmed_fq_Nutl_16.fastq ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+Executing jgi.BBDuk [in=organised/Nutl/output_merged_fq_Nutl_16.fastq, out={organised/Nutl}/trimmed_fq_Nutl_16.fastq, ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz, k=13, ktrim=r, useshortkmers=t, mink=5, qtrim=t, trimq=10, minlength=20]
+Version 39.01
+
+maskMiddle was disabled because useShortKmers=true
+0.031 seconds.
+Initial:
+Memory: max=1468m, total=1468m, free=1438m, used=30m
+
+Added 446 kmers; time:  0.044 seconds.
+Memory: max=1468m, total=1468m, free=1433m, used=35m
+
+Input is being processed as unpaired
+Started output streams: 0.025 seconds.
+Processing time:                140.838 seconds.
+
+Input:                          39586795 reads          2018926545 bases.
+QTrimmed:                       146215 reads (0.37%)    226002 bases (0.01%)
+KTrimmed:                       5646658 reads (14.26%)  147022629 bases (7.28%)
+Total Removed:                  1727463 reads (4.36%)   147248631 bases (7.29%)
+Result:                         37859332 reads (95.64%)         1871677914 bases (92.71%)
+
+Time:                           140.911 seconds.
+Reads Processed:      39586k    280.93k reads/sec
+Bases Processed:       2018m    14.33m bases/sec
+Trimming Nutl_24
+/Users/bsilke/bbmap//calcmem.sh: line 75: [: -v: unary operator expected
+Max memory cannot be determined.  Attempting to use 1400 MB.
+If this fails, please add the -Xmx flag (e.g. -Xmx24g) to your command, 
+or run this program qsubbed or from a qlogin session on Genepool, or set ulimit to an appropriate value.
+java -ea -Xmx1400m -Xms1400m -cp /Users/bsilke/bbmap/current/ jgi.BBDuk in=organised/Nutl/output_merged_fq_Nutl_24.fastq out={organised/Nutl}/trimmed_fq_Nutl_24.fastq ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+Executing jgi.BBDuk [in=organised/Nutl/output_merged_fq_Nutl_24.fastq, out={organised/Nutl}/trimmed_fq_Nutl_24.fastq, ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz, k=13, ktrim=r, useshortkmers=t, mink=5, qtrim=t, trimq=10, minlength=20]
+Version 39.01
+
+maskMiddle was disabled because useShortKmers=true
+0.033 seconds.
+Initial:
+Memory: max=1468m, total=1468m, free=1438m, used=30m
+
+Added 446 kmers; time:  0.064 seconds.
+Memory: max=1468m, total=1468m, free=1433m, used=35m
+
+Input is being processed as unpaired
+Started output streams: 0.066 seconds.
+Processing time:                99.401 seconds.
+
+Input:                          35425295 reads          1806690045 bases.
+QTrimmed:                       138503 reads (0.39%)    207078 bases (0.01%)
+KTrimmed:                       5291496 reads (14.94%)  147901962 bases (8.19%)
+Total Removed:                  1871481 reads (5.28%)   148109040 bases (8.20%)
+Result:                         33553814 reads (94.72%)         1658581005 bases (91.80%)
+
+Time:                           99.534 seconds.
+Reads Processed:      35425k    355.91k reads/sec
+Bases Processed:       1806m    18.15m bases/sec
+Trimming Nutl_48
+/Users/bsilke/bbmap//calcmem.sh: line 75: [: -v: unary operator expected
+Max memory cannot be determined.  Attempting to use 1400 MB.
+If this fails, please add the -Xmx flag (e.g. -Xmx24g) to your command, 
+or run this program qsubbed or from a qlogin session on Genepool, or set ulimit to an appropriate value.
+java -ea -Xmx1400m -Xms1400m -cp /Users/bsilke/bbmap/current/ jgi.BBDuk in=organised/Nutl/output_merged_fq_Nutl_48.fastq out={organised/Nutl}/trimmed_fq_Nutl_48.fastq ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz k=13 ktrim=r useshortkmers=t mink=5 qtrim=t trimq=10 minlength=20
+Executing jgi.BBDuk [in=organised/Nutl/output_merged_fq_Nutl_48.fastq, out={organised/Nutl}/trimmed_fq_Nutl_48.fastq, ref=/Users/bsilke/bbmap/resources/polyA.fa.gz,/Users/bsilke/bbmap/resources/truseq.fa.gz, k=13, ktrim=r, useshortkmers=t, mink=5, qtrim=t, trimq=10, minlength=20]
+Version 39.01
+
+maskMiddle was disabled because useShortKmers=true
+0.036 seconds.
+Initial:
+Memory: max=1468m, total=1468m, free=1438m, used=30m
+
+Added 446 kmers; time:  0.054 seconds.
+Memory: max=1468m, total=1468m, free=1433m, used=35m
+
+Input is being processed as unpaired
+Started output streams: 0.052 seconds.
+Processing time:                132.854 seconds.
+
+Input:                          41146265 reads          2098459515 bases.
+QTrimmed:                       151009 reads (0.37%)    233304 bases (0.01%)
+KTrimmed:                       6278701 reads (15.26%)  170486366 bases (8.12%)
+Total Removed:                  2081500 reads (5.06%)   170719670 bases (8.14%)
+Result:                         39064765 reads (94.94%)         1927739845 bases (91.86%)
+
+Time:                           132.963 seconds.
+Reads Processed:      41146k    309.46k reads/sec
+Bases Processed:       2098m    15.78m bases/sec
