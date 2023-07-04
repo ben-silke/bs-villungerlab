@@ -14,7 +14,10 @@ for treatment in ${treatments[@]}; do
     for time in ${times[@]}; do
         time_folder="${treatment}_${time}"
         echo "Converting $time_folder"
-        samtools fastq "organised/${treatment}/output_merged_${time_folder}.bam" > "organised/${treatment}/output_merged_fq_${time_folder}.fastq"
+        output_merged_folder="/organised/${treatment}/output_merged"
+        output_fastq_folder="/organised/${treatment}/output_merged_fq"
+        mkdir $output_fastq_folder
+        samtools fastq "$output_merged_folder/output_merged_${time_folder}.bam" > "$output_fastq_folder/output_merged_fq_${time_folder}.fastq"
 
         # We should probably remove the bam file now to make space
         # rm "organised/${treatment}/output_merged_${time_folder}.bam"

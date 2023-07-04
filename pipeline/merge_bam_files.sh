@@ -19,7 +19,9 @@ for treatment in ${treatments[@]}; do
         echo "Merging $folder"
 
         # NOTE: We may need to look at sorting these files before using this command.
-        samtools merge -o "/organised/${treatment}/output_merged_${time_folder}.bam" $folder/*.bam
+        output_merged_folder="/organised/${treatment}/output_merged"
+        mkdir $output_merged_folder
+        samtools merge -o "$output_merged_folder/output_merged_${time_folder}.bam" $folder/*.bam
 
         # To remove the files
         # These files are copied from data/raw so can easily be recopied.

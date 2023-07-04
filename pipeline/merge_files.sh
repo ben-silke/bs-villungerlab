@@ -28,16 +28,16 @@ for treatment in ${treatments[@]}; do
         # This should be reasonably non-specific and not cause issues if the directory structure is slightly different;
         # provided that .*samples is within the folder name.
         find . -type d -name "*samples" | while read -r directory; do
-        # Loop through each file matching the pattern
-        echo "processing $directory"
-        file_expression="${treatment}_t${time}"
-        for file in $directory/*$file_expression*.bam; do
-            # Move the file into the new folder
-            file_name="${file##*/}"
-            echo "file_name = $file_name"
-            cp "$file" "../organised/$treatment/$time_folder/$file_name"
-            # Could also use mv, depending on how you feel about deleting files; cp for now and the files in that subsequent directory will be removed after merge
-        done
+            # Loop through each file matching the pattern
+            echo "processing $directory"
+            file_expression="${treatment}_t${time}"
+            for file in $directory/*$file_expression*.bam; do
+                # Move the file into the new folder
+                file_name="${file##*/}"
+                echo "file_name = $file_name"
+                cp "$file" "../organised/$treatment/$time_folder/$file_name"
+                # Could also use mv, depending on how you feel about deleting files; cp for now and the files in that subsequent directory will be removed after merge
+            done
         done
     done
 done

@@ -37,11 +37,17 @@ for treatment in ${treatments[@]}; do
         folder="organised/$treatment"
 
         echo "Trimming $time_folder"
-
+        output_fastq_folder="/organised/${treatment}/output_merged_fq"
+        output_trimmed_folder="/organised/${treatment}/output_trimmed"
+        mkdir $output_trimmed_folder
+        
         # Command to run bbduk.sh with necessary arguments.
+        # See https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbduk-guide/ for arguments
         $BBMAP_PATH/bbduk.sh \
-        in="$folder/output_merged_fq_${time_folder}.fastq" \
-        out="{$folder}/trimmed_fq_${time_folder}.fastq" \
+        in="$output_fastq_folder/output_merged_fq_${time_folder}.fastq" \
+        out="${output_trimmed_folder}/trimmed_fq_${time_folder}.fastq" \
+        stats="../project-plan/validation/${treatment}/stats_${time_folder}.txt" \
+        # This is just removing a polyA tail and the primer, rRNA is not being removed here
         ref="$BBMAP_PATH/resources/polyA.fa.gz,$BBMAP_PATH/resources/truseq.fa.gz" \
         k=13 \
         ktrim=r \
@@ -50,6 +56,7 @@ for treatment in ${treatments[@]}; do
         qtrim=t \
         trimq=10 \
         minlength=20 \
-
+        # Now we should delete the old file
+        rm "$output_fastq_folder/output_merged_fq_${time_folder}.fastq"
     done
 done
