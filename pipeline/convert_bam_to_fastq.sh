@@ -1,10 +1,7 @@
-
-
 #!/bin/bash
 
 # Move to the data folder
 cd ../data/
-
 
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 24 36 48)
@@ -12,14 +9,14 @@ times=(0 8 12 16 24 36 48)
 # treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
 treatments=("Nutl")
 
-
 # This command should run the samtools fastq command for all treatments/ times.
 for treatment in ${treatments[@]}; do
     for time in ${times[@]}; do
-        time_folder="${treatment}_${time}.bam"
-        folder="/organised/$treatment/$time_folder"
-        samtools fastq "${folder}output_merged_${time_folder}.bam" > "${folder}/output_merged_${time_folder}.fastq"
-        # see {folder}/
-        # samtools fastq "${folder}/output_merged_${time_folder}.bam" > "${folder}/output_merged_${time_folder}.fastq"
+        time_folder="${treatment}_${time}"
+        echo "Converting $time_folder"
+        samtools fastq "organised/${treatment}/output_merged_${time_folder}.bam" > "organised/${treatment}/output_merged_fq_${time_folder}.fastq"
+
+        # We should probably remove the bam file now to make space
+        # rm "organised/${treatment}/output_merged_${time_folder}.bam"
     done
 done
