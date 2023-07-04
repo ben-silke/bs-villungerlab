@@ -1,0 +1,2 @@
+TODO: add requirements.txt
+https://github.com/alexdobin/STAR/releases/tag/2.7.10b
