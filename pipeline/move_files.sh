@@ -41,12 +41,13 @@ for treatment in ${treatments[@]}; do
                 file_expression="#${treatment}_t${time}_${replicate}"
                 for file in $directory/*$file_expression*.bam; do
                     # Move the file into the new folder
-                    echo $file
+                    # echo $file
                     substring="${file#*/}"  # Removes everything before the first slash
                     experiment_folder="${substring%%/*}"
-                    echo "experiment_folder $experiment_folder"
+                    # echo "experiment_folder $experiment_folder"
                     file_name="${file##*/}"
-                    echo "file_name = $file_name"
+                    # echo "file_name = $file_name"
+                    # echo "$replicate_folder/$experiment_folder/$file_name"
                     cp "$file" "$replicate_folder/$experiment_folder/$file_name"
                     # Could also use mv, depending on how you feel about deleting files; cp for now and the files in that subsequent directory will be removed after merge
                 done

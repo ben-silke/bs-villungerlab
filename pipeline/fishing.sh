@@ -12,8 +12,7 @@ times=(0 8 12 16 24 36 48)
 treatments=("Nutl")
 # Nutl does not have 36 hour time point so we should redefine this variable here
 times=(0 8 12 16 24 48)
-replicates=("r1","r2","r3")
-
+replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 
 # salmon quant 
 # -i salmon_index/Hsapiens_index_k17 
@@ -25,30 +24,31 @@ replicates=("r1","r2","r3")
 
 # salmon index -t references/human_index_salmon/gentrome.fa -i references/human_index_salmon/Hsapiens_index_k17 --decoys references/human_index_salmon/decoys.txt -k 17 
 
-
-
 # This command should run the salmon quant command for all treatments/ times.
 for treatment in ${treatments[@]}; do
     for time in ${times[@]}; do
-        time_folder="${treatment}_${time}"
-        folder="organised/$treatment"
+        for replicate in ${replicates[@]}; do
 
-        echo "Fishing in $time_folder"
+            time_folder="${treatment}_${time}_${replicate}"
+            folder="organised/$treatment"
 
-        # folder for salmon outputs == aquarium obviously
-        aquarium="organised/${treatment}/output_salmon"
-        mkdir $aquarium
+            echo "Fishing in $time_folder"
 
-        input_trimmed_folder="organised/${treatment}/output_trimmed"
-        input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${time_folder}.fastq"
+            # folder for salmon outputs == aquarium obviously
+            aquarium="organised/${treatment}/output_salmon"
+            mkdir $aquarium
 
-        salmon quant -i "references/human_index_salmon/Hsapiens_index_k17" \
-        -l A \
-        -r $input_trimmed_file \
-        -p 8 \
-        -o "$aquarium/salmon_quant_${time_folder}" \
+            input_trimmed_folder="organised/${treatment}/output_trimmed"
+            input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${time_folder}.fastq"
 
-        # Now we should delete the old file
-        # rm $input_trimmed_file
+            salmon quant -i "references/human_index_salmon/Hsapiens_index_k17" \
+            -l A \
+            -r $input_trimmed_file \
+            -p 8 \  # can maybe look at using more cores
+            -o "$aquarium/salmon_quant_${time_folder}" \
+
+            # Now we should delete the old file
+            # rm $input_trimmed_file
+        done
     done
 done
