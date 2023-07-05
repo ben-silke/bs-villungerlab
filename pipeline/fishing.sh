@@ -22,7 +22,7 @@ times=(0 8 12 16 24 48)
 # --validateMappings 
 # -o quantification/RPE_Nutl_t0_r1   
 
-salmon index -t references/human_index_salmon/gentrome.fa -i references/human_index_salmon/Hsapiens_index_k17 --decoys references/human_index_salmon/decoys.txt -k 17 
+# salmon index -t references/human_index_salmon/gentrome.fa -i references/human_index_salmon/Hsapiens_index_k17 --decoys references/human_index_salmon/decoys.txt -k 17 
 
 
 
@@ -32,7 +32,7 @@ for treatment in ${treatments[@]}; do
         time_folder="${treatment}_${time}"
         folder="organised/$treatment"
 
-        echo "Trimming $time_folder"
+        echo "Fishing in $time_folder"
 
         # folder for salmon outputs == aquarium obviously
         aquarium="organised/${treatment}/output_salmon"
@@ -44,7 +44,7 @@ for treatment in ${treatments[@]}; do
         salmon quant -i "references/human_index_salmon/Hsapiens_index_k17" \
         -l A \
         -r $input_trimmed_file \
-        -p 8
+        -p 8 \
         -o "$aquarium/salmon_quant_${time_folder}" \
 
         # Now we should delete the old file
