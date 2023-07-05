@@ -30,7 +30,7 @@ treatments=("Nutl")
 times=(0 8 12 16 24 48)
 
 
-# This command should run the samtools fastq command for all treatments/ times.
+# This command should run the bbduk decomtamination for all treatments/ times.
 for treatment in ${treatments[@]}; do
     for time in ${times[@]}; do
         time_folder="${treatment}_${time}"
