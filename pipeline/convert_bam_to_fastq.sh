@@ -8,6 +8,7 @@ times=(0 8 12 16 24 36 48)
 # can use all treatments in the future, but for now we will just used Nutl because of memory issues on the computer.
 # treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
 treatments=("Nutl")
+replicates=("r1","r2","r3")
 
 # This command should run the samtools fastq command for all treatments/ times.
 for treatment in ${treatments[@]}; do

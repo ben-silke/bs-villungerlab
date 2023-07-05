@@ -12,6 +12,7 @@ times=(0 8 12 16 24 36 48)
 treatments=("Nutl")
 # Nutl does not have 36 hour time point so we should redefine this variable here
 times=(0 8 12 16 24 48)
+replicates=("r1","r2","r3")
 
 
 # salmon quant 
