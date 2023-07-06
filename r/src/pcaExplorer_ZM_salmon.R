@@ -15,7 +15,7 @@ getwd()
 treatment <- "ZM"
 salmon_data_directory = file.path(dir, glue('data/organised/{treatment}/output_salmon'))
 times = c(0,8,12,16,20,24,36,48)
-times <- c(0,16)
+times <- c(0,16,24)
 
 default_file_prefix <- "salmon_quant_"
 
