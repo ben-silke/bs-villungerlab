@@ -18,8 +18,6 @@ treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude
 times=(0 16 24 36 48)
 
-
-
 # This command should run the samtools merge command for all treatments/ times.
 for treatment in ${treatments[@]}; do
     output_merged_folder="organised/${treatment}/output_merged"
@@ -51,7 +49,8 @@ for treatment in ${treatments[@]}; do
 
                 # To remove the files
                 # These files are copied from data/raw so can easily be recopied.
-                # rm $folder/*.bam
+                rm $folder/*.bam
+                rm $folder
             done
         done
     done
