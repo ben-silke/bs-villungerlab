@@ -47,7 +47,7 @@ for treatment in ${treatments[@]}; do
             -p 8
 
             # Now we should delete the old file
-            rm $input_trimmed_file
+            # rm $input_trimmed_file
         done
     done
 done
