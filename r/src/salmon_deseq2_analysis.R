@@ -6,24 +6,24 @@ dir <- glue("/Users/{user}/bs-villungerlab")
 setwd(dir)
 getwd()
 
-treatment <- 'Nutl'
-data_directory = file.path(dir, glue('data/organised/{treatment}/output_salmon'))
-Nutl_t0 <- file.path(data_directory,"salmon_quant_Nutl_0","quant.sf")
-Nutl_t8 <- file.path(data_directory,"salmon_quant_Nutl_8","quant.sf")
-Nutl_t12 <- file.path(data_directory,"salmon_quant_Nutl_12","quant.sf")
-Nutl_t16 <- file.path(data_directory,"salmon_quant_Nutl_16","quant.sf")
-Nutl_t24 <- file.path(data_directory,"salmon_quant_Nutl_24","quant.sf")
-Nutl_t48 <- file.path(data_directory,"salmon_quant_Nutl_48","quant.sf")
 
-files <- c(Nutl_t0, Nutl_t8, Nutl_t12, Nutl_t16, Nutl24, Nutl48)
-names <- c("Nutl_t0", "Nutl_t8", "Nutl_t12", "Nutl_t16", "Nutl24", "Nutl48")
+
+treatment <- 'ZM'
+data_directory = file.path(dir, glue('data/organised/{treatment}/output_salmon'))
+times = c(0,8,12,16,20,24,36,48)
+files <- lapply(times, function(time) { file.path(data_directory, glue::glue("salmon_quant_{treatment}_{time}"), 'quant.sf')})
+
+files
+names <- lapply(times, function(i) { paste0("ZM_", i)})
 #creating the timepoint variable
-timepoint <- c("t0","t8","t12","t16", "t24", "t48")
+timepoints <- lapply(times, function(i) { paste0("t", i)})
+# timepoint <- c("t0","t8","t12","t16", "t24", "t48")
 #creating replicate variable
-replicate <- c("r1")
+replicates <- lapply(1:6, function(i) { paste0("r", i)})
+replicates
 
 #building the coldata dataframe
-coldata <- data.frame(files = files, names= names, timepoint=timepoint, replicate = replicate, stringsAsFactors=FALSE)
+coldata <- data.frame(files = files, names= names, timepoint=timepoints, replicate = replicates, stringsAsFactors=FALSE)
 coldata
 
 #activate tximeta and build the SummarizeExperiment (se) object
