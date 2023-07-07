@@ -3,7 +3,7 @@
 
 # Move to the data folder
 external_drive="/Volumes/bs_external/villunger"
-cd "$external_drive/data/"
+cd $external_drive
 
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 24 36 48)

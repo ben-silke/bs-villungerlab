@@ -4,8 +4,12 @@
 
 
 # Move to the data folder
-cd ../data/raw/
-mkdir ../organised
+# cd ../data/raw/
+
+# Move to the data folder
+external_drive="/Volumes/bs_external/villunger"
+cd "$external_drive/raw"
+# mkdir ../organised
 
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 24 36 48)
@@ -13,10 +17,11 @@ replicates=("r1" "r2" "r3")
 
 # can use all treatments in the future, but for now we will just used Nutl because of space issues on the computer.
 # treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
-# Question -> Nalm6_ZM?
-treatments=("ZM")
+treatments=("Nutl" "Noc" "Etop" "DHCB")
+
+# treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude
-times=(0 16 24 36 48)
+# times=(0 16 24 36 48)
 
 for treatment in ${treatments[@]}; do
     echo "treatment = $treatment"

@@ -18,8 +18,9 @@ BBMAP_PATH=$1
 
 
 # Move to the data folder
-cd ../data/
-
+# cd ../data/
+external_drive="/Volumes/bs_external/villunger"
+cd $external_drive
 
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 24 36 48)
@@ -27,7 +28,7 @@ treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 
 ## SPECIFIC TREATMENT
-# treatments=("ZM")
+# treatments=("Nutl")
 # # Nutl does not have 36 hour time point so we should redefine this variable here
 # times=(0 8 12 16 24 48)
 

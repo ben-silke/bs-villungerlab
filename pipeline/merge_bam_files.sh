@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # Move to the data folder
-cd ../data/
+# cd ../data/
+
+# Move to the data folder
+external_drive="/Volumes/bs_external/villunger"
+cd $external_drive
 
 
 # Include all times, can exclude based upon experiement later.
