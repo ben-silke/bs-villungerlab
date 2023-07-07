@@ -3,24 +3,30 @@
 # Move to the data folder
 # cd ../data/
 
+main_path=$1
+cd $main_path
+ls
+pwd
+# exit
 # Move to the data folder
-external_drive="/Volumes/bs_external/villunger"
-cd $external_drive
+# external_drive="/Volumes/bs_external/villunger"
+# cd $external_drive
 
 
 # Include all times, can exclude based upon experiement later.
-times=(0 8 12 16 24 36 48)
+times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3")
 experiment_folders=("experiment_one" "experiment_two")
 
 # can use all treatments in the future, but for now we will just used Nutl because of memory issues on the computer.
 treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
+treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 
 # SPECIFIC TREATMENT
-treatments=("ZM")
+# treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude
-times=(0 16 24 36 48)
+# times=(0 16 24 36 48)
 
 # This command should run the samtools merge command for all treatments/ times.
 for treatment in ${treatments[@]}; do
@@ -53,8 +59,8 @@ for treatment in ${treatments[@]}; do
 
                 # To remove the files
                 # These files are copied from data/raw so can easily be recopied.
-                rm $folder/*.bam
-                rm $folder
+                # rm $folder/*.bam
+                # rm $folder
             done
         done
     done

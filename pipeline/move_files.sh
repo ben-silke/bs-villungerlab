@@ -2,22 +2,24 @@
 
 # folder names can be created better but this is just to test
 
+main_path=$1
+cd $main_path
 
 # Move to the data folder
 # cd ../data/raw/
 
 # Move to the data folder
-external_drive="/Volumes/bs_external/villunger"
-cd "$external_drive/raw"
+# external_drive="/Volumes/bs_external/villunger"
+# cd "$external_drive/raw"
 # mkdir ../organised
 
 # Include all times, can exclude based upon experiement later.
-times=(0 8 12 16 24 36 48)
+times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3")
 
 # can use all treatments in the future, but for now we will just used Nutl because of space issues on the computer.
 # treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
-treatments=("Nutl" "Noc" "Etop" "DHCB")
+treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 # treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude

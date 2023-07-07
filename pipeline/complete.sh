@@ -8,8 +8,8 @@
 # 5. fishing/ STAR Gazing, - this step is dependent upon the analysis which you would like to run; fishing uses salmon, while STAR gazing uses STAR
 
 
-./move_files.sh
-./merge_bam_files.sh
-./convert_bam_to_fastq.sh
-./trim_reads.sh Users/bsilke/bbmap
-./fishing.sh
+./move_files.sh /Volumes/bs_external/villunger
+./merge_bam_files.sh /Volumes/bs_external/villunger
+./convert_bam_to_fastq.sh /Volumes/bs_external/villunger
+./trim_reads.sh /Volumes/bs_external/villunger Users/bsilke/bbmap
+./fishing.sh /Volumes/bs_external/villunger

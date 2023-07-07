@@ -1,21 +1,26 @@
 #!/bin/bash
 
+
 # Move to the data folder
 # cd ../data/
+main_path=$1
+cd $main_path
 
 # Move to the data folder
-external_drive="/Volumes/bs_external/villunger"
-cd $external_drive
+# external_drive="/Volumes/bs_external/villunger"
+# cd $external_drive
 
 # Include all times, can exclude based upon experiement later.
-times=(0 8 12 16 24 36 48)
+times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
 
 # SPECIFIC TREATMENT
-treatments=("ZM")
+# treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude
-times=(0 16 24 36 48)
+# times=(0 16 24 36 48)
+
+treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 # salmon quant 
 # -i salmon_index/Hsapiens_index_k17 

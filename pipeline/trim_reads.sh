@@ -1,7 +1,10 @@
 #!/bin/bash
 
+main_path=$1
+cd $main_path
+
 # To retain ability to run on different files.
-BBMAP_PATH=$1
+BBMAP_PATH=$2
 
 
 # bbduk.sh 
@@ -19,23 +22,25 @@ BBMAP_PATH=$1
 
 # Move to the data folder
 # cd ../data/
-external_drive="/Volumes/bs_external/villunger"
-cd $external_drive
+# external_drive="/Volumes/bs_external/villunger"
+cd $main_path
 
 # Include all times, can exclude based upon experiement later.
-times=(0 8 12 16 24 36 48)
+times=(0 8 12 16 20 24 36 48)
 treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
-
 ## SPECIFIC TREATMENT
 # treatments=("Nutl")
 # # Nutl does not have 36 hour time point so we should redefine this variable here
 # times=(0 8 12 16 24 48)
 
 # SPECIFIC TREATMENT
-treatments=("ZM")
+# treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude
-times=(0 16 24 36 48)
+# times=(0 16 24 36 48)
+
+
+treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 # This command should run the bbduk decomtamination for all treatments/ times.
 for treatment in ${treatments[@]}; do

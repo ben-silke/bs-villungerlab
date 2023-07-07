@@ -20,6 +20,5 @@ STAR \
 --runThreadN 2 \
 --runMode genomeGenerate \
 --genomeDir "$external_drive/STAR/star_index" \
---genomeFastaFiles "$external_drive/STAR/ensembl_genome/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz" \
---sjdbGTFfile "$external_drive/STAR/ensemble_annotation" \ # path to file which contains reference
-date
+--genomeFastaFiles "$external_drive/STAR/ensembl_genome/combinded.fa" \
+--sjdbGTFfile "$external_drive/STAR/ensemble_annotation" \
