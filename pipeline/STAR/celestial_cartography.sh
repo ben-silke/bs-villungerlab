@@ -2,7 +2,8 @@
 # Mapping step using STAR
 
 # Move to the data folder
-cd ../../data/
+external_drive="/Volumes/bs_external/villunger"
+cd "$external_drive/data/"
 
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 24 36 48)
@@ -30,7 +31,7 @@ for treatment in ${treatments[@]}; do
             echo "Mapping STARS in $file"
 
             # folder for salmon outputs == aquarium obviously
-            night_sky="organised/${treatment}/output_salmon"
+            night_sky="organised/${treatment}/ouput_STAR"
             mkdir $night_sky
 
             input_trimmed_folder="organised/${treatment}/output_trimmed"
@@ -38,7 +39,7 @@ for treatment in ${treatments[@]}; do
 
             STAR \
             --runThreadN 2 \
-            --genomeDir references/STAR \
+            --genomeDir references/STAR/star_index/ \
             --readFilesIn "$input_trimmed_file" \
             --outFileNamePrefix "$night_sky"
 
