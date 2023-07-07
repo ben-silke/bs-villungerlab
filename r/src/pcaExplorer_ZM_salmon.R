@@ -5,6 +5,9 @@ library(stringr)
 library("pcaExplorer")
 library(tximeta)
 library(DESeq2)
+library(org.Hs.eg.db)
+
+
 
 user <- 'bsilke'
 
@@ -15,7 +18,7 @@ getwd()
 treatment <- "ZM"
 salmon_data_directory = file.path(dir, glue('data/organised/{treatment}/output_salmon'))
 times = c(0,8,12,16,20,24,36,48)
-times <- c(0,16,24)
+times <- c(0,16,24,36,48)
 
 default_file_prefix <- "salmon_quant_"
 
@@ -66,5 +69,20 @@ gse <- summarizeToGene(ZM_summarized_experiment)
 dds <- DESeqDataSet(gse, design = ~ 1)
 dds
 
+rownames(dds)
+
+# Get the annotation
+# ids =
+library(org.Hs.eg.db)
+genenames <- mapIds(org.Hs.eg.db,keys = rownames(dds),column = "SYMBOL",keytype="ENSEMBL")
+# genenames
+annotation <- data.frame(gene_name=genenames,
+                         row.names=rownames(dds),
+                         stringsAsFactors = FALSE)
+
+head(annotation)
+
+
 # Where dds is a DESeqDataSet object
-pcaExplorer(dds=dds)
+pcaExplorer(dds=dds,
+            annotation=annotation)
