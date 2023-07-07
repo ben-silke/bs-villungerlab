@@ -13,6 +13,7 @@ cd $main_path
 # cd "$external_drive/raw"
 # mkdir ../organised
 
+# TODO: make these env variables so that you only need to update this once
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3")

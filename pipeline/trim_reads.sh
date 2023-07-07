@@ -25,6 +25,7 @@ BBMAP_PATH=$2
 # external_drive="/Volumes/bs_external/villunger"
 cd $main_path
 
+# TODO: make these env variables so that you only need to update this once
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 20 24 36 48)
 treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")

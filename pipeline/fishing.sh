@@ -11,6 +11,8 @@ cd $main_path
 # cd $external_drive
 
 # Include all times, can exclude based upon experiement later.
+# TODO: make these env variables so that you only need to update this once
+
 times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")

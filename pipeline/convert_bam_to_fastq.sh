@@ -11,6 +11,7 @@ cd $main_path
 
 ls
 # Include all times, can exclude based upon experiement later.
+# TODO: make these env variables so that you only need to update this once
 times=(0 8 12 16 20 24 36 48)
 # can use all treatments in the future, but for now we will just used Nutl because of memory issues on the computer.
 treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
