@@ -1,4 +1,5 @@
 
+# TODO: make this non-specific and see if you can make it like click
 library(glue)
 library(stringr)
 
@@ -7,20 +8,18 @@ library(tximeta)
 library(DESeq2)
 library(org.Hs.eg.db)
 
-user <- 'bsilke'
-dir <- glue("/Users/{user}/bs-villungerlab")
+dir <- "/Volumes/bs_external/villunger"
 setwd(dir)
 getwd()
 
-treatment <- "ZM"
-salmon_data_directory = file.path(dir, glue('data/organised/{treatment}/output_salmon'))
+treatments <- c("ZM", "Nutl")
 times = c(0,8,12,16,20,24,36,48)
 times <- c(0,16,24,36,48)
 
 default_file_prefix <- "salmon_quant_"
 
 parse_filename <- function(filename, file_prefix=default_file_prefix) {
-
+  
   name <- str_extract(filename, "(?<=salmon_quant_)[^_]*")
   time <- str_extract(filename, "(?<=_)[^_]*(?=_r)")
   replicate <- str_extract(filename, "(?<=_r)\\d+")
@@ -31,6 +30,8 @@ parse_filename <- function(filename, file_prefix=default_file_prefix) {
 }
 
 create_treatment_data <- function(treatment_name, data_directory, times, file_prefix) {
+  data_directory = file.path(data_directory, glue('organised/{treatment_name}/output_salmon'))
+  
   replicates <- unlist(lapply(1:6, function(i) { paste0("r", i)}))
   # Create the files
   files <- list()

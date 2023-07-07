@@ -1,24 +1,6 @@
-
-library(glue)
-library(stringr)
-
-library("pcaExplorer")
-library(tximeta)
-library(DESeq2)
-library(org.Hs.eg.db)
-
-dir <- "/Volumes/bs_external/villunger"
-setwd(dir)
-getwd()
-
-treatments <- c("ZM", "Nutl")
-times = c(0,8,12,16,20,24,36,48)
-times <- c(0,16,24,36,48)
-
-default_file_prefix <- "salmon_quant_"
-
 parse_filename <- function(filename, file_prefix=default_file_prefix) {
   
+  # TODO: Make this non-specific to salmon_quantification
   name <- str_extract(filename, "(?<=salmon_quant_)[^_]*")
   time <- str_extract(filename, "(?<=_)[^_]*(?=_r)")
   replicate <- str_extract(filename, "(?<=_r)\\d+")
@@ -29,8 +11,6 @@ parse_filename <- function(filename, file_prefix=default_file_prefix) {
 }
 
 create_treatment_data <- function(treatment_name, data_directory, times, file_prefix) {
-  data_directory = file.path(data_directory, glue('organised/{treatment_name}/output_salmon'))
-  
   replicates <- unlist(lapply(1:6, function(i) { paste0("r", i)}))
   # Create the files
   files <- list()
@@ -51,35 +31,3 @@ create_treatment_data <- function(treatment_name, data_directory, times, file_pr
   
   return(data_frame)
 }
-
-ZM_data_frame <- create_treatment_data('ZM', salmon_data_directory, times, "salmon_quant") 
-ZM_data_frame
-
-#Check that all files exist
-stopifnot(file.exists(ZM_data_frame$files))
-
-#activate tximeta and build the SummarizeExperiment (se) object
-ZM_summarized_experiment <- tximeta(ZM_data_frame)
-
-gse <- summarizeToGene(ZM_summarized_experiment)
-
-dds <- DESeqDataSet(gse, design = ~ 1)
-dds
-
-rownames(dds)
-
-# Get the annotation
-# ids =
-library(org.Hs.eg.db)
-genenames <- mapIds(org.Hs.eg.db,keys = rownames(dds),column = "SYMBOL",keytype="ENSEMBL")
-# genenames
-annotation <- data.frame(gene_name=genenames,
-                         row.names=rownames(dds),
-                         stringsAsFactors = FALSE)
-
-head(annotation)
-
-
-# Where dds is a DESeqDataSet object
-pcaExplorer(dds=dds,
-            annotation=annotation)
