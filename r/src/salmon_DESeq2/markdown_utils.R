@@ -1,3 +1,4 @@
+# Boilerplate code which can be reused to make the analysis for salmon data
 
 library(DESeq2)
 

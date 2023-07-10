@@ -1,5 +1,5 @@
 getwd()
-source("r/src/salmon_DESeq2/utils.R")
+source("r/src/utils.R")
 
 treatment <- "ZM"
 salmon_data_directory = file.path(getwd(), glue('data/organised/{treatment}/output_salmon'))

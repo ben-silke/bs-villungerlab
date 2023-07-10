@@ -6,6 +6,8 @@ library(tximeta)
 library(DESeq2)
 library(org.Hs.eg.db)
 
+DEFAULT_TIMES_SHORT <- c(0, 8, 16, 20, 24, 48)
+DEFAULT_TIMES_LONG <- c(0, 16, 20, 24, 36, 48)
 
 default_file_prefix <- "salmon_quant_"
 
@@ -46,7 +48,7 @@ create_treatment_data <- function(treatment_name, data_directory, times, file_pr
   return(data_frame)
 }
 
-create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
+create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE, run_DESeq=TRUE) {
   data_frame <- create_treatment_data(treatment, salmon_data_directory, times, file_prefix, replicates_list)
   print(colnames(data_frame))
   # Check if all files exist
@@ -63,6 +65,10 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
   if (trim_data) {
     keep <- rowSums(counts(dds)) >= 10
     dds <- dds[keep,]  
+  }
+
+  if (!run_DESeq) {
+    return (dds)
   }
   
   # Run DESeq method on the data structure
