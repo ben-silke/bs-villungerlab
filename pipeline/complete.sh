@@ -11,5 +11,5 @@
 ./move_files.sh /Volumes/bs_external/villunger
 ./merge_bam_files.sh /Volumes/bs_external/villunger
 ./convert_bam_to_fastq.sh /Volumes/bs_external/villunger
-./trim_reads.sh /Volumes/bs_external/villunger Users/bsilke/bbmap
+./trim_reads.sh /Volumes/bs_external/villunger
 ./fishing.sh /Volumes/bs_external/villunger

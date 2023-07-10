@@ -1,11 +1,11 @@
 #!/bin/bash
 
 main_path=$1
-cd $main_path
+# cd $main_path
+ls 
 
 # To retain ability to run on different files.
-BBMAP_PATH=$2
-
+BBMAP_PATH="Users/bsilke/bbmap"
 
 # bbduk.sh 
 # in=raw_data/RPE1_Nutl_t0_r1.fastq 
@@ -23,7 +23,7 @@ BBMAP_PATH=$2
 # Move to the data folder
 # cd ../data/
 # external_drive="/Volumes/bs_external/villunger"
-cd $main_path
+# cd $main_path
 
 # TODO: make these env variables so that you only need to update this once
 # Include all times, can exclude based upon experiement later.
@@ -51,16 +51,18 @@ for treatment in ${treatments[@]}; do
             file="${treatment}_${time}_${replicate}"
 
             echo "Trimming $file"
-            output_fastq_folder="organised/${treatment}/output_merged_fq"
-            output_trimmed_folder="organised/${treatment}/output_trimmed"
+            output_fastq_folder="$main_path/organised/${treatment}/output_merged_fq"
+            output_trimmed_folder="$main_path/organised/${treatment}/output_trimmed"
             mkdir $output_trimmed_folder
-            
+            bbduk_output_logs="validation/bbduk/${treatment}"
+            mkdir $bbduk_output_logs
+
             # Command to run bbduk.sh with necessary arguments.
             # See https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbduk-guide/ for arguments
-            $BBMAP_PATH/bbduk.sh \
+            /$BBMAP_PATH/bbduk.sh \
             in="$output_fastq_folder/output_merged_fq_${file}.fastq" \
             out="${output_trimmed_folder}/trimmed_fq_${file}.fastq" \
-            stats="../project-plan/validation/${treatment}/stats_${file}.txt" \
+            stats="$bbduk_output_logs/stats_${file}.txt" \
             # This is just removing a polyA tail and the primer, rRNA is not being removed here
             ref="$BBMAP_PATH/resources/polyA.fa.gz,$BBMAP_PATH/resources/truseq.fa.gz" \
             k=13 \
@@ -72,7 +74,7 @@ for treatment in ${treatments[@]}; do
             minlength=20 \
 
             # Now we should delete the old file
-            rm "$output_fastq_folder/output_merged_fq_${file}.fastq"
+            # rm "$output_fastq_folder/output_merged_fq_${file}.fastq"
         done
     done
 done

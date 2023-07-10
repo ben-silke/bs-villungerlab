@@ -22,6 +22,7 @@ replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 # ZM does not have 8 or 12 so can exclude
 # times=(0 16 24 36 48)
 treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
+treatments=("Nutl" "Noc")
 
 # This command should run the samtools fastq command for all treatments/ times.
 for treatment in ${treatments[@]}; do
