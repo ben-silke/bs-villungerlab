@@ -167,3 +167,15 @@ cython_debug/
 # ignore examples
 
 /r/examples
+/r/data
+
+/results
+
+/pipeline/validation
+
+# Just ignore all logging files and
+.out
+
+# Ignore r hisotry and data
+.Rhistory
+.RData
