@@ -6,6 +6,9 @@ library(tximeta)
 library(DESeq2)
 library(org.Hs.eg.db)
 
+source("r/src/pca_utils.R")
+
+
 DEFAULT_TIMES_SHORT <- c(0, 8, 16, 20, 24, 48)
 DEFAULT_TIMES_LONG <- c(0, 16, 20, 24, 36, 48)
 
@@ -77,4 +80,20 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
   results <- results(dds)
   print(resultsNames(dds))
   return (dds)
+}
+
+add_annotations_to_results <- function(res) {
+  annotation <- get_annotation()
+  ens.str <- substr(rownames(res), 1, 15)
+  res$symbol <- mapIds(org.Hs.eg.db,
+                       keys=ens.str,
+                       column="SYMBOL",
+                       keytype="ENSEMBL",
+                       multiVals="first")
+  res$entrez <- mapIds(org.Hs.eg.db,
+                       keys=ens.str,
+                       column="ENTREZID",
+                       keytype="ENSEMBL",
+                       multiVals="first")
+  return (res)
 }

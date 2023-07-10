@@ -174,8 +174,12 @@ cython_debug/
 /pipeline/validation
 
 # Just ignore all logging files and
-.out
+*.out
 
 # Ignore r hisotry and data
-.Rhistory
-.RData
+*.Rhistory
+*.RData
+
+# These might be results/ result like and therefore should be excluded untill discussed
+*.html
+*.jpeg
