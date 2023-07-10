@@ -37,8 +37,6 @@ create_treatment_data <- function(treatment_name, data_directory, times, file_pr
     }
   }
   files <- unlist(files)
-  # timepoints <- unlist(c(lapply(times, function(time) { paste0("t", time)})))
-  # names <- unlist(lapply(times, function(time) { paste0(glue("{treatment_name}_"), time)}))
   data_frame <- data.frame(files=files, stringsAsFactors = FALSE)
   parsed_values <- do.call("rbind", lapply(data_frame$files, parse_filename))
   data_frame$names <- parsed_values[, 1]
@@ -49,7 +47,7 @@ create_treatment_data <- function(treatment_name, data_directory, times, file_pr
 }
 
 create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
-  data_frame <- create_treatment_data(treatment, salmon_data_directory, times, files_prefix, replicates_list)
+  data_frame <- create_treatment_data(treatment, salmon_data_directory, times, file_prefix, replicates_list)
   print(colnames(data_frame))
   # Check if all files exist
   stopifnot(file.exists(data_frame$files))
@@ -57,15 +55,18 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
   gene_se <- summarizeToGene(summarized_experiement)
   
   if (batch_correction) {
-    dds <- DESeqDataSet(gse_one, design = ~ batch + timepoint)
+    dds <- DESeqDataSet(gene_se, design = ~ batch + timepoint)
   } else {
-    dds <- DESeqDataSet(gse_one, design = ~ timepoint)
+    dds <- DESeqDataSet(gene_se, design = ~ timepoint)
   }
   
   if (trim_data) {
     keep <- rowSums(counts(dds)) >= 10
     dds <- dds[keep,]  
   }
+  
+  # Run DESeq method on the data structure
+  dds <- DESeq(dds)
   
   results <- results(dds)
   print(resultsNames(dds))

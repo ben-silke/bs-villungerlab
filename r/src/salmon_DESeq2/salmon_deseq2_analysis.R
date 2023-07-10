@@ -78,6 +78,7 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
     dds <- dds[keep,]  
   }
   
+  dds <- DESeq(dds)
   results <- results(dds)
   print(resultsNames(dds))
   return (dds)
@@ -157,10 +158,6 @@ sum(results_t16_v_t0$padj < 0.05, na.rm=TRUE)
 
 plotMA(results_t16_v_t0, ylim=c(-2,2))
 plotMA(results_t16_v_t0_LFC, ylim=c(-2,2))
-
-idx <- identify(results_t16_v_t0_LFC$baseMean, results_t16_v_t0_LFC$log2FoldChange)
-rownames(results_t16_v_t0_LFC)[idx]
-
 
 ## Using Ashr
 results_t16_v_t0_LFC <- lfcShrink(dds, coef="timepoint_t16_vs_t0", type="apeglm")
