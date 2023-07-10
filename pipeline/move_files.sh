@@ -14,6 +14,7 @@ cd $main_path
 # mkdir ../organised
 
 # TODO: make these env variables so that you only need to update this once
+
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3")
@@ -25,15 +26,15 @@ treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 # treatments=("ZM")
 # ZM does not have 8 or 12 so can exclude
 # times=(0 16 24 36 48)
-
+cd raw/
 for treatment in ${treatments[@]}; do
     echo "treatment = $treatment"
-    mkdir ../organised/$treatment
+    mkdir "../organised/$treatment"
     for time in ${times[@]}; do
         echo "time=$time"
         time_folder="${treatment}_${time}"
         echo "processing $time_folder"
-        mkdir ../organised/$treatment/$time_folder
+        mkdir "../organised/$treatment/$time_folder"
         
         for replicate in ${replicates[@]}; do
             replicate_folder="../organised/$treatment/$time_folder/$replicate"
@@ -52,10 +53,9 @@ for treatment in ${treatments[@]}; do
                     # echo $file
                     substring="${file#*/}"  # Removes everything before the first slash
                     experiment_folder="${substring%%/*}"
-                    # echo "experiment_folder $experiment_folder"
                     file_name="${file##*/}"
-                    # echo "file_name = $file_name"
-                    # echo "$replicate_folder/$experiment_folder/$file_name"
+                    echo "file_name = $file_name"
+                    echo "$replicate_folder/$experiment_folder/$file_name"
                     cp "$file" "$replicate_folder/$experiment_folder/$file_name"
                     # Could also use mv, depending on how you feel about deleting files; cp for now and the files in that subsequent directory will be removed after merge
                 done
