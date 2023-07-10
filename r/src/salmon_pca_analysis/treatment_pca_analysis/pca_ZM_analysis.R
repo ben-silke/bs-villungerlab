@@ -1,11 +1,13 @@
 
 getwd()
 source("r/src/utils.R")
-source("r/src/salmon_pca_analysis/pca_analysis_util.R")
+source("r/src/pca_utils.R")
 
 treatment <- "ZM"
-salmon_data_directory = file.path(getwd(), glue('data/organised/{treatment}/output_salmon'))
-times = c(0, 16, 20, 24, 36, 48)
+salmon_data_directory <- file.path(getwd(), glue('data/organised/{treatment}/output_salmon'))
+times <- c(0, 16, 20, 24, 36, 48)
+
+times <- c(0, 16, 24, 36, 48)
 
 print(salmon_data_directory)
 # create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
