@@ -19,6 +19,8 @@ echo "$external_drive"
 
 # merge the cDNA and the ncRNA
 
+
+# This requires 32 GB ram and therefore needs to be run on the cluster
 STAR \
 --runThreadN 2 \
 --runMode genomeGenerate \
