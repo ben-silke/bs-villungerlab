@@ -1,0 +1,60 @@
+---
+title: "Salmon Analysis - ZM T0 to T16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+
+
+load("../../../data/ZM_data.RData")
+dds
+results <- results(dds)
+resultsNames(dds)
+
+```
+
+
+# t0 to t16
+## Unrestricted
+
+### Summary
+```{r}
+results_t0_to_t16 <-
+  results(dds, contrast = c("timepoint", "t16", "t0"))
+
+summary(results_t0_to_t16)
+
+```
+
+
+### MA Plot
+```{r}
+plotMA(results_t0_to_t16)
+```
+
+
+## Restricted
+### Summary
+
+```{r}
+results_t0_to_t16_restricted <-
+  results(
+    dds,
+    alpha = 0.05,
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t16", "t0")
+  )
+summary(results_t0_to_t16_restricted)
+
+```
+
+
+### MA Plot
+```{r}
+plotMA(results_t0_to_t16_restricted)
+```
+
+
+
