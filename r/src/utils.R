@@ -5,6 +5,7 @@ library("pcaExplorer")
 library(tximeta)
 library(DESeq2)
 library(org.Hs.eg.db)
+library("RUVSeq")
 
 source("r/src/pca_utils.R")
 
@@ -66,7 +67,7 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
   }
   
   if (trim_data) {
-    keep <- rowSums(counts(dds)) >= 10
+    keep <- rowSums(counts(dds)) >= 1
     dds <- dds[keep,]  
   }
 
@@ -83,7 +84,6 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
 }
 
 add_annotations_to_results <- function(res) {
-  annotation <- get_annotation()
   ens.str <- substr(rownames(res), 1, 15)
   res$symbol <- mapIds(org.Hs.eg.db,
                        keys=ens.str,
@@ -187,5 +187,15 @@ create_dds_from_htseq <-
   }
 
 
-
+account_for_batch_effect <- function(dds) {
+  set <- newSeqExpressionSet(counts(dds))
+  idx  <- rowSums(counts(set) > 5) >= 2
+  set  <- set[idx, ]
+  set <- betweenLaneNormalization(set, which="upper")
+  not.sig <- rownames(res)[which(res$pvalue > .1)]
+  empirical <- rownames(set)[ rownames(set) %in% not.sig ]
+  set <- RUVg(set, empirical, k=2)
+  print(pData(set))
+  return (set)
+}
 
