@@ -14,7 +14,7 @@ print(salmon_data_directory)
 dds <-
   create_dds('ZM', salmon_data_directory, times, "salmon_quant", 1:6, run_DESeq=FALSE)
 
-annotation <- get_annotation()
+annotation <- get_annotation(dds)
 
 # Where dds is a DESeqDataSet object
 pcaExplorer(dds=dds,

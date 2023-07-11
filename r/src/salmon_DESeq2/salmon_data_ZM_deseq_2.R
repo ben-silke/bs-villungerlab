@@ -83,11 +83,14 @@ plotMA(resL, ylim=ylim); drawLines()
 
 
 ## adding annotations
-annotation <- get_annotation()
+annotation <- get_annotation(dds)
 res = results(dds)
 res = add_annotations_to_results(res)
 
 annotated_results <- add_annotations_to_results(res)
+
+# order results by padj value (most significant to least)
+res <- res[order(res$padj),]
 
 resOrdered <- res[order(annotated_results$pvalue),]
 resOrdered
