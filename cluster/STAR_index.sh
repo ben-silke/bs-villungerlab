@@ -52,9 +52,9 @@ STAR \
 --runThreadN 2 \
 --runMode genomeGenerate \
 --genomeDir /nobackup/villunger/drizzotto/STAR/references \
---genomeFastaFiles /Volumes/bs_external/villunger/references/STAR/ensembl_genome/homo_sapiens/cdna/Homo_sapiens.GRCh38.cdna.all.fa.gz /Volumes/bs_external/villunger/references/STAR/ensembl_genome/nc/ncrna/Homo_sapiens.GRCh38.ncrna.fa.gz\
-# /Volumes/bs_external/villunger/references/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.chr.gff3.gz
---sjdbGTFfile /Volumes/bs_external/villunger/references/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.chr.gff3.gz \ # path to file which contains reference
+--genomeFastaFiles /Volumes/bs_external/villunger/references/STAR/ensembl_genome/combined_reference.fa\
+ # path to file which contains reference
+--sjdbGTFfile /Volumes/bs_external/villunger/references/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.chr.gff3 \
 # --outFileNamePrefix /nobackup/villunger/drizzotto/STAR/output \#
 date
 seff $SLURM_JOB_ID

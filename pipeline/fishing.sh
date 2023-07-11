@@ -1,6 +1,10 @@
 #!/bin/bash
 
-
+echo "sleeping"
+# sleep 10
+echo "still sleeping"
+# sleep 10000
+echo "no longer sleeping"
 # Move to the data folder
 # cd ../data/
 main_path=$1
