@@ -1,8 +1,5 @@
 library("vsn")
 library("genefilter")
-
-
-getwd()
 source("r/src/utils.R")
 source("r/src/pca_utils.R")
 
@@ -209,3 +206,11 @@ for (i in 1:2) {
 }
 
 ### end account for batch effects
+
+vsd <- vst(dds, blind=FALSE)
+
+res <- results(dds)
+plotPCA(dds)
+plotPCA(vsd, intgroup=c('batch'))
+colData(dds)
+

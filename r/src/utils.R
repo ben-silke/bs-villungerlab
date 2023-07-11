@@ -67,8 +67,10 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
   }
   
   if (trim_data) {
+    print(nrow(dds))
     keep <- rowSums(counts(dds)) >= 1
-    dds <- dds[keep,]  
+    dds <- dds[keep,]
+    print(nrow(dds))
   }
 
   if (!run_DESeq) {
