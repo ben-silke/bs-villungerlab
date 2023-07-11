@@ -198,6 +198,13 @@ account_for_batch_effect <- function(dds) {
   empirical <- rownames(set)[ rownames(set) %in% not.sig ]
   set <- RUVg(set, empirical, k=2)
   print(pData(set))
-  return (set)
+  
+  # Unsure if these are complete
+  ddsruv <- dds
+  ddsruv$W1 <- set$W_1
+  ddsruv$W2 <- set$W_2
+  design(ddsruv) <- ~ W1 + W2 + dex
+  
+  return (ddsruv)
 }
 
