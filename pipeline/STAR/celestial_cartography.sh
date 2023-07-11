@@ -29,7 +29,7 @@ for treatment in ${treatments[@]}; do
 
     for time in ${times[@]}; do
         for replicate in ${replicates[@]}; do
-
+            (
             file="${treatment}_${time}_${replicate}"
 
             echo "Mapping STARS in $file"
@@ -41,20 +41,20 @@ for treatment in ${treatments[@]}; do
             --genomeDir references/STAR/star_index/ \
             --readFilesIn "$input_trimmed_file" \
             --outFileNamePrefix "$night_sky"
-
+            ) &
             # Now we should delete the old file
             # rm $input_trimmed_file
 
             # if htseq is not installed on the cluster
 
-            htseq-count \
-            -m union \
-            -i gene_name \
-            -a 10 \
-            --stranded=no \
-            $night_sky \              # aligned out files
-            "$external_drive/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.gff3" \  # annotation file
-            "$output_htseq/htseq_count_${file}.counts"   # output files
+            # htseq-count \
+            # -m union \
+            # -i gene_name \
+            # -a 10 \
+            # --stranded=no \
+            # $night_sky \              # aligned out files
+            # "$external_drive/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.gff3" \  # annotation file
+            # "$output_htseq/htseq_count_${file}.counts"   # output files
         done
     done
 done

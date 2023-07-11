@@ -41,26 +41,29 @@ treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 # This command should run the salmon quant command for all treatments/ times.
 for treatment in ${treatments[@]}; do
+    folder="organised/$treatment"
+    aquarium="organised/${treatment}/output_salmon"
+    mkdir $aquarium
     for time in ${times[@]}; do
         for replicate in ${replicates[@]}; do
-
+            # Runs in parallel (phew)
+            (
             file="${treatment}_${time}_${replicate}"
-            folder="organised/$treatment"
-
             echo "Fishing in $file"
 
-            # folder for salmon outputs == aquarium obviously
-            aquarium="organised/${treatment}/output_salmon"
-            mkdir $aquarium
+            if test -d "$aquarium/salmon_quant_${file}"; then
+                echo "$aquarium/salmon_quant_${file} exists"
+            else
+                # folder for salmon outputs == aquarium obviously
+                input_trimmed_folder="organised/${treatment}/output_trimmed"
+                input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${file}.fastq"
 
-            input_trimmed_folder="organised/${treatment}/output_trimmed"
-            input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${file}.fastq"
-
-            salmon quant -i "references/human_index_salmon/Hsapiens_index_k17"  -o "$aquarium/salmon_quant_${file}" \
-            -l A \
-            -r $input_trimmed_file \
-            -p 8
-
+                salmon quant -i "references/human_index_salmon/Hsapiens_index_k17"  -o "$aquarium/salmon_quant_${file}" \
+                -l A \
+                -r $input_trimmed_file \
+                -p 8
+            fi
+            ) &
             # Now we should delete the old file
             # rm $input_trimmed_file
         done
