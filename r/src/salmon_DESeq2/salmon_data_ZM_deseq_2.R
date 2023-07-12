@@ -5,54 +5,38 @@ source("r/src/pca_utils.R")
 
 
 
-treatment <- "ZM"
-salmon_data_directory = file.path(getwd(), glue('data/organised/{treatment}/output_salmon'))
-times = c(0, 16, 24, 36, 48)
+########## treatment <- "ZM"
+# salmon_data_directory = file.path(getwd(), glue('data/organised/{treatment}/output_salmon'))
+# times = c(0, 16, 24, 36, 48)
+# 
+# print(salmon_data_directory)
+# # create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
+# dds <-
+#   create_dds('ZM', salmon_data_directory, times, "salmon_quant", 1:6)
+# # Create the data and then save it
+# save(dds, file = glue('r/data/', glue(treatment, "_data.RData")))
+getwd()
+load("r/data/ZM_data.RData")
+###
 
-print(salmon_data_directory)
-# create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
-dds <-
-  create_dds('ZM', salmon_data_directory, times, "salmon_quant", 1:6)
-# Create the data and then save it
-save(dds, file = glue('r/data/', glue(treatment, "_data.RData")))
-
-
-
-#######
+####### 
+# (4.1)
 nrow(dds)
 keep <- rowSums(counts(dds)) > 1
 dds <- dds[keep,]
 nrow(dds)
-######
+#######
 
 
-results <- results(dds)
+res <- results(dds)
 resultsNames(dds)
-
-
-results_t0_to_t16 <-
-  results(dds, contrast = c("timepoint", "t16", "t0"))
-results_t0_to_t16
-
-results_t0_to_t48 <-
-  results(
-    dds,
-    alpha = 0.05,
-    lfcThreshold = 1,
-    contrast = c("timepoint", "t48", "t0")
-  )
-
-results_t0_to_t48
-
-
-summary(results_t0_to_t48)
 
 
 
 #####
 # Other downstream analysis
 # In order to test for differential expression, we operate on raw counts and use discrete distributions as described in the previous section on differential expression. However for other downstream analyses – e.g. for visualization or clustering – it might be useful to work with transformed versions of the count data.
-
+# The variance stabilizing transformation and the rlog (4.2)
 normalised_data <- normTransform(dds)
 meanSdPlot(assay(normalised_data))
 
@@ -73,7 +57,7 @@ log.cts.one <- log2(cts + 1)
 meanSdPlot(log.cts.one, ranks = FALSE)
 
 
-##comparison between different normalisation methods
+##comparison between different normalisation methods (4.2)
 library("dplyr")
 library("ggplot2")
 
@@ -93,8 +77,50 @@ df$transformation <- factor(df$transformation, levels=lvls)
 ggplot(df, aes(x = x, y = y)) + geom_hex(bins = 80) +
   coord_fixed() + facet_grid( . ~ transformation)  
 
-########
 
+#####
+########## SAMPLE DISTANCES: (4.3)
+
+sampleDists <- dist(t(assay(vsd)))
+sampleDists
+
+library("pheatmap")
+library("RColorBrewer")
+
+sampleDistMatrix <- as.matrix( sampleDists )
+rownames(sampleDistMatrix) <- paste( vsd$timepoint, vsd$batch, sep = "_" )
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows = sampleDists,
+         clustering_distance_cols = sampleDists,
+         col = colors)
+
+library("PoiClaClu")
+poisd <- PoissonDistance(t(counts(dds)))
+samplePoisDistMatrix <- as.matrix( poisd$dd )
+rownames(samplePoisDistMatrix) <- paste( vsd$timepoint, vsd$batch, sep = "_" )
+colnames(samplePoisDistMatrix) <- NULL
+pheatmap(samplePoisDistMatrix,
+         clustering_distance_rows = poisd$dd,
+         clustering_distance_cols = poisd$dd,
+         col = colors)
+
+#####
+# Plotting PCA plots:
+plotPCA(dds)
+plotPCA(vsd, intgroup=c('batch', 'timepoint'))
+
+
+######
+# generalised PCA plots
+library("glmpca")
+gpca <- glmpca(counts(dds), L=2)
+gpca.dat <- gpca$factors
+gpca.dat$batch <- dds$batch
+gpca.dat$timepoint <- dds$timepoint
+ggplot(gpca.dat, aes(x = dim1, y = dim2, color = batch, shape = timepoint)) +
+  geom_point(size =3) + coord_fixed() + ggtitle("glmpca - Generalized PCA")
 
 
 ######
@@ -103,9 +129,9 @@ dds_lrt <- DESeq(dds, test="LRT", reduced=~batch)
 results_lrt <- results(dds_lrt)
 results_lrt
 summary(results_lrt)
+
+
 #######
-
-
 # Shrinkage with ashr
 
 resAshT <- lfcShrink(dds, coef=2, type="ashr", lfcThreshold=1)
@@ -113,7 +139,7 @@ plotMA(resAshT, ylim=c(-3,3), cex=.8)
 # abline(h=c(-1,1), col="dodgerblue", lwd=2)
 
 
-
+#####
 # Testing with thresholds
 
 par(mfrow=c(2,2),mar=c(2,2,1,1))
@@ -129,14 +155,14 @@ plotMA(resG, ylim=ylim); drawLines()
 plotMA(resL, ylim=ylim); drawLines()
 
 
-
+####
 ## adding annotations
 annotation <- get_annotation(dds)
 res = results(dds)
 res = add_annotations_to_results(res)
 
 annotated_results <- add_annotations_to_results(res)
-
+#####
 # order results by padj value (most significant to least)
 res <- res[order(res$padj),]
 
@@ -185,8 +211,9 @@ mat  <- mat - rowMeans(mat)
 anno <- as.data.frame(colData(vsd)[, c("timepoint")])
 pheatmap(mat, annotation_col = anno)
 
-
+#####
 ######### Account for batch effects
+#######
 library("RUVSeq")
 
 set <- newSeqExpressionSet(counts(dds))
@@ -195,6 +222,9 @@ set  <- set[idx, ]
 set <- betweenLaneNormalization(set, which="upper")
 not.sig <- rownames(res)[which(res$pvalue > .1)]
 empirical <- rownames(set)[ rownames(set) %in% not.sig ]
+
+# This accounting for batch effects probably is not as effective because we are using a gene specific methods
+# but, we do not know what the genes which are unaffected by the treatment are
 set <- RUVg(set, empirical, k=2)
 
 pData(set)
@@ -205,12 +235,62 @@ for (i in 1:2) {
   abline(h = 0)
 }
 
+ddsruv <- dds
+ddsruv$W1 <- set$W_1
+ddsruv$W2 <- set$W_2
+design(ddsruv) <- ~ W1 + W2 + timepoint
+
+vsd_ruv <- vst(ddsruv, blind=FALSE)
+
+plotPCA(vsd_ruv, intgroup=c('batch'))
+
+gpca <- glmpca(counts(ddsruv), L=2)
+gpca.dat <- gpca$factors
+gpca.dat$batch <- dds$batch
+gpca.dat$timepoint <- dds$timepoint
+ggplot(gpca.dat, aes(x = dim1, y = dim2, color = batch, shape = timepoint)) +
+  geom_point(size =3) + coord_fixed() + ggtitle("glmpca - Generalized PCA with RUV batch controlled samples")
+
+
+
 ### end account for batch effects
 
 vsd <- vst(dds, blind=FALSE)
 
 res <- results(dds)
-plotPCA(dds)
 plotPCA(vsd, intgroup=c('batch'))
 colData(dds)
 
+
+
+
+
+
+
+
+######
+## SVA batch effects
+library("sva")
+dat  <- counts(dds, normalized = TRUE)
+idx  <- rowMeans(dat) > 1
+dat  <- dat[idx, ]
+mod  <- model.matrix(~ timepoint, colData(dds))
+mod0 <- model.matrix(~   1, colData(dds))
+svseq <- svaseq(dat, mod, mod0, n.sv = 2)
+
+svseq$sv
+
+
+par(mfrow = c(2, 1), mar = c(3,5,3,1))
+for (i in 1:2) {
+  stripchart(svseq$sv[, i] ~ dds$batch, vertical = TRUE, main = paste0("SV", i))
+  abline(h = 0)
+}
+
+ddssva <- dds
+ddssva$SV1 <- svseq$sv[,1]
+ddssva$SV2 <- svseq$sv[,2]
+design(ddssva) <- ~ SV1 + SV2 + timepoint
+ddssva
+vsd <- vst(ddssva, blind=FALSE)
+plotPCA(vsd, intgroup=c('batch'))
