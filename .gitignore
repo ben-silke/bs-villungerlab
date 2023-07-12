@@ -183,3 +183,4 @@ cython_debug/
 # These might be results/ result like and therefore should be excluded untill discussed
 *.html
 *.jpeg
+*.png
