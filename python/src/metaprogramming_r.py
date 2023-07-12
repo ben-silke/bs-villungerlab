@@ -168,15 +168,16 @@ plotMA(%s)
 ```{self._r}
 {variable} <- add_annotations_to_results({variable})
 selected_genes <- as.character({variable}$symbol)
+{variable}$padj_neglog10 <- -log10({variable}$padj)
 
 EnhancedVolcano({variable},
                 lab = selected_genes,
                 x = 'log2FoldChange',
-                y = 'padj',
+                y = 'padj_neglog10',
                 xlim = c(-8,8),
                 title = 'Differential expression',
-                pCutoff = 10e-16,
-                FCcutoff = 1.5,
+                pCutoff = 0.05,
+                FCcutoff = 1,
                 pointSize = 3.0,
                 labSize = 3.0)
 ```
