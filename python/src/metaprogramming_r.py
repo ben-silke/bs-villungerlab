@@ -28,7 +28,7 @@ class RFileWriter():
     def write_r_file(self):
         replicate = "1:6" if self.all_replicates else "1:3"
         times = self.time_dict[self.treatment][0]
-
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
 
         content = f"""
 library("vsn")
@@ -43,7 +43,7 @@ treatment <- "{self.treatment}"
 
 dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds, file = glue('r/data/', glue(treatment, "{self.treatment}_data.RData")))
+save(dds, file = glue('r/data/', glue(treatment, "{self.treatment}_{replicate_file_name}_data.RData")))
 
 res <- results(dds)
 resOrdered <- res[order(res$padj),]
@@ -51,14 +51,14 @@ resOrdered <- add_annotations_to_results(resOrdered)
 
 head(resOrdered)
 
-
 resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
-write.csv(resOrderedDF, file = "results/{self.treatment}_data.csv")
+write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
 
         """
 
         # file = f'{self.directory}/{self.treatment}_create_data.R'
-        file = f"{self.treatment}_create_data.R"
+
+        file = f"{self.treatment}_{replicate_file_name}_create_data.R"
         with open(file, 'w') as f:
             f.write(content) 
 
@@ -81,7 +81,9 @@ write.csv(resOrderedDF, file = "results/{self.treatment}_data.csv")
             content = content + time_content
         
         # file = f'{self.directory}/{self.treatment}_analysis.Rmd'
-        file = f'{self.treatment}_analysis.Rmd'
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+
+        file = f'{self.treatment}_{replicate_file_name}_analysis.Rmd'
 
         with open(file, 'w') as f:
             f.write(content) 
@@ -116,6 +118,7 @@ summary({variable_name}_restricted)
 
 ```
 {self.write_ma_plot("%s_restricted" % variable_name)}
+{self.write_vplot("%s_restricted" % variable_name)}
 
 ### With LFC-Shrink
 It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
@@ -128,6 +131,7 @@ summary({variable_name}_shrunk)
 ```
 
 {self.write_ma_plot("%s_shrunk" % variable_name)}
+{self.write_vplot("%s_restricted" % variable_name)}
 
 #### ashr
 ```{self._r}
@@ -137,6 +141,7 @@ summary({variable_name}_shrunk)
 ```
 
 {self.write_ma_plot("%s_shrunk" % variable_name)}
+{self.write_vplot("%s_restricted" % variable_name)}
 
 {self.write_p_adjusted_analysis(variable_name)}
         """
@@ -155,6 +160,30 @@ plotMA(%s)
         """ % variable
 
         return content
+
+    def write_vplot(self, variable):
+        content = f"""
+#### V- Plot
+
+```{self._r}
+{variable} <- add_annotations_to_results({variable})
+selected_genes <- as.character({variable}$symbol)
+
+EnhancedVolcano({variable},
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                title = 'Differential expression',
+                pCutoff = 10e-16,
+                FCcutoff = 1.5,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+"""
+        return content
+
+
 
     def write_p_adjusted_analysis(self, variable):
         content = """
@@ -180,7 +209,9 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
     def markdown_outline(self):
-        outline = """
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+
+        content = """
 
 ---
 title: "Salmon Analysis - %s "
@@ -214,5 +245,5 @@ output: html_document
     return (res)
     }
 ```
-        """ % self.treatment
-        return outline
+        """ % (f'{self.treatment}_{replicate_file_name}', f'{self.treatment}_{replicate_file_name}')
+        return content
