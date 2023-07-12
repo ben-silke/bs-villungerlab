@@ -40,14 +40,24 @@ treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 # salmon index -t references/human_index_salmon/gentrome.fa -i references/human_index_salmon/Hsapiens_index_k17 --decoys references/human_index_salmon/decoys.txt -k 17 
 
 # This command should run the salmon quant command for all treatments/ times.
+# number=$(( $RANDOM % (30) ))
+
 for treatment in ${treatments[@]}; do
     folder="organised/$treatment"
     aquarium="organised/${treatment}/output_salmon"
     mkdir $aquarium
+    # sleep $number
+    # number = $(($number + 1000))
+
     for time in ${times[@]}; do
+        # number=$(($number + $time))
+        # echo "Sleeping for $number"
+        # sleep $number
         for replicate in ${replicates[@]}; do
             # Runs in parallel (phew)
-            (
+            # (
+            # echo "sleeping for $number"
+            # sleep $number
             file="${treatment}_${time}_${replicate}"
             echo "Fishing in $file"
 
@@ -62,8 +72,11 @@ for treatment in ${treatments[@]}; do
                 -l A \
                 -r $input_trimmed_file \
                 -p 8
+
+                sleep 100
             fi
-            ) &
+
+            # ) &
             # Now we should delete the old file
             # rm $input_trimmed_file
         done
