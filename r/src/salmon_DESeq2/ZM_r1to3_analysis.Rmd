@@ -1,37 +1,40 @@
-
-
-
 ---
 title: "Salmon Analysis - ZM_r1to3 "
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-    knitr::opts_chunk$set(echo = TRUE)
-    library(DESeq2)
-    library("apeglm")
-    library("ashr")
-    library(org.Hs.eg.db)
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
 
-    load("../../../data/ZM_r1to3_data.RData")
-    dds
-    results <- results(dds)
-    resultsNames(dds)
+getwd()
+# file.exists("../../data/ZM_data.RData")
+# file.exists("../../data/ZM_r1to3_data.RData")
 
-    add_annotations_to_results <- function(res) {
-    ens.str <- substr(rownames(res), 1, 15)
-    res$symbol <- mapIds(org.Hs.eg.db,
-                        keys=ens.str,
-                        column="SYMBOL",
-                        keytype="ENSEMBL",
-                        multiVals="first")
-    res$entrez <- mapIds(org.Hs.eg.db,
-                        keys=ens.str,
-                        column="ENTREZID",
-                        keytype="ENSEMBL",
-                        multiVals="first")
-    return (res)
-    }
+load("../../data/ZM_r1to3_data.RData")
+
+dds
+results <- results(dds)
+resultsNames(dds)
+
+add_annotations_to_results <- function(res) {
+ens.str <- substr(rownames(res), 1, 15)
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+return (res)
+}
 ```
         
 # ZM Analysis {.tabset}
