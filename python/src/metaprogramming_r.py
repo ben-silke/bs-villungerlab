@@ -125,23 +125,23 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{self._r}
 
-{variable_name}_shrunk <- lfcShrink(dds, coef="{timepoint_name}", type="apeglm")
-summary({variable_name}_shrunk)
+{variable_name}_shrunk_apeglm <- lfcShrink(dds, coef="{timepoint_name}", type="apeglm")
+summary({variable_name}_shrunk_apeglm)
 
 ```
 
-{self.write_ma_plot("%s_shrunk" % variable_name)}
-{self.write_vplot("%s_restricted" % variable_name)}
+{self.write_ma_plot("%s_shrunk_apeglm" % variable_name)}
+{self.write_vplot("%s_shrunk_apeglm" % variable_name)}
 
 #### ashr
 ```{self._r}
-{variable_name}_shrunk <- lfcShrink(dds, coef="{timepoint_name}", type="ashr")
-summary({variable_name}_shrunk)
+{variable_name}_shrunk_ashr <- lfcShrink(dds, coef="{timepoint_name}", type="ashr")
+summary({variable_name}_shrunk_ashr)
 
 ```
 
-{self.write_ma_plot("%s_shrunk" % variable_name)}
-{self.write_vplot("%s_restricted" % variable_name)}
+{self.write_ma_plot("%s_shrunk_ashr" % variable_name)}
+{self.write_vplot("%s_shrunk_ashr" % variable_name)}
 
 {self.write_p_adjusted_analysis(variable_name)}
         """
@@ -218,31 +218,33 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-    knitr::opts_chunk$set(echo = TRUE)
-    library(DESeq2)
-    library("apeglm")
-    library("ashr")
-    library(org.Hs.eg.db)
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
 
-    load("../../../data/%s_data.RData")
-    dds
-    results <- results(dds)
-    resultsNames(dds)
+library(org.Hs.eg.db)
 
-    add_annotations_to_results <- function(res) {
-    ens.str <- substr(rownames(res), 1, 15)
-    res$symbol <- mapIds(org.Hs.eg.db,
-                        keys=ens.str,
-                        column="SYMBOL",
-                        keytype="ENSEMBL",
-                        multiVals="first")
-    res$entrez <- mapIds(org.Hs.eg.db,
-                        keys=ens.str,
-                        column="ENTREZID",
-                        keytype="ENSEMBL",
-                        multiVals="first")
-    return (res)
-    }
+load("../../../data/%s_data.RData")
+dds
+results <- results(dds)
+resultsNames(dds)
+
+add_annotations_to_results <- function(res) {
+ens.str <- substr(rownames(res), 1, 15)
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+return (res)
+}
 ```
         """ % (f'{self.treatment}_{replicate_file_name}', f'{self.treatment}_{replicate_file_name}')
         return content
