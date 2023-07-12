@@ -292,5 +292,45 @@ ddssva$SV1 <- svseq$sv[,1]
 ddssva$SV2 <- svseq$sv[,2]
 design(ddssva) <- ~ SV1 + SV2 + timepoint
 ddssva
-vsd <- vst(ddssva, blind=FALSE)
-plotPCA(vsd, intgroup=c('batch'))
+vsd_sva <- vst(ddssva, blind=FALSE)
+plotPCA(vsd_sva, intgroup=c('batch', 'timepoint'))
+plotPCA(vsd, intgroup=c('batch', 'timepoint'))
+
+
+
+nrows(dds)
+library('sva')
+count_matrix <- counts(dds)
+count_matrix
+mod <- model.matrix(~ timepoint, data=colData(dds))
+batch <- colData(dds)$batch
+count_matrix_combat <- ComBat(dat = count_matrix, batch = batch, mod = mod, par.prior = TRUE, prior.plots = FALSE)
+dds <- DESeqDataSetFromMatrix(countData = count_matrix_combat,
+                              colData = colData(dds),
+                              design = ~ timepoint)
+
+# This is garbage and barely allowed, but i just want to see what the PCA looks like/
+# if it corrects for the batch at all
+mat <- count_matrix_combat
+mat <- mat[!rowSums(mat < 0), ]
+mat
+
+dds_combat <- DESeqDataSetFromMatrix(countData = count_matrix,
+                              colData = colData(dds),
+                              design = ~ timepoint)
+dds_combat
+
+dds_combat = DESeq(dds_combat)
+
+res_combat = results(dds_combat)
+res_combat <- add_annotations_to_results(res_combat)
+res_combat
+
+# res_combat <- res_combat[order(res_combat$padj),]
+# res_combat
+
+vsd_combat <- vst(dds_combat, blind=FALSE)
+plotPCA(vsd_combat, intgroup=c('batch', 'timepoint'))
+results_t48_t0_shrunk <- lfcShrink(dds_combat, coef="timepoint_t48_vs_t0", type="ashr")
+plotMA(results_t48_t0_shrunk)
+

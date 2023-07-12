@@ -89,6 +89,26 @@ summary(results_t16_t0_shrunk)
 plotMA(results_t16_t0_shrunk)
 ```
 
+#### V- Plot
+
+```{r}
+results_t16_t0_shrunk <- add_annotations_to_results(results_t16_t0_shrunk)
+selected_genes <- as.character(results_t16_t0_shrunk$symbol)
+
+EnhancedVolcano(results_t16_t0_shrunk,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                title = 'Differential expression',
+                pCutoff = 10e-16,
+                FCcutoff = 1.5,
+                pointSize = 3.0,
+                labSize = 3.0)
+
+
+sum(results_t16_t0_shrunk$padj < 0.05, na.rm=TRUE)
+```
         
 
 #### ashr
