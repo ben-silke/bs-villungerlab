@@ -4,8 +4,8 @@ class RFileWriter():
     directory: str
     file_location: str
 
-    short_times = "c(0, 8, 12, 16, 24, 48)"
-    long_times = "c(0, 16, 20, 24, 36, 48)"
+    short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48])
+    long_times = ("c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48])
 
     all_replicates: bool
 
@@ -27,7 +27,7 @@ class RFileWriter():
 
     def write_r_file(self):
         replicate = "1:6" if self.all_replicates else "1:3"
-        times = self.time_dict[self.treatment]
+        times = self.time_dict[self.treatment][0]
 
 
         content = f"""
@@ -38,11 +38,23 @@ source("r/src/pca_utils.R")
 {self.file_location}
 
 times = {times}
+treatment <- "{self.treatment}"
 
 
 dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
 save(dds, file = glue('r/data/', glue(treatment, "{self.treatment}_data.RData")))
+
+res <- results(dds)
+resOrdered <- res[order(res$padj),]
+resOrdered <- add_annotations_to_results(resOrdered)
+
+head(resOrdered)
+
+
+resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
+write.csv(resOrderedDF, file = "results/{self.treatment}_data.csv")
+
         """
 
         # file = f'{self.directory}/{self.treatment}_create_data.R'
@@ -55,28 +67,18 @@ save(dds, file = glue('r/data/', glue(treatment, "{self.treatment}_data.RData"))
         tabset_detail = "{.tabset}"
         content = f"""
 {outline}
-# ZM Analysis {tabset_detail}
+# {self.treatment} Analysis {tabset_detail}
 
-## TIME - ZM T0 to T16
-{self.time_analysis(0,16)}
+"""
 
+        for time in self.time_dict[self.treatment][1]:
+            time_content = f"""
 
-## TIME - ZM T0 to T20
-{self.time_analysis(0,20)}
+## Time -- {self.treatment} T0 to T{time}
+{self.time_analysis(0,time)}
 
-
-## TIME - ZM T0 to T24
-{self.time_analysis(0,24)}
-
-
-## TIME - ZM T0 to T36
-{self.time_analysis(0,36)}
-
-
-## TIME - ZM T0 to T48
-{self.time_analysis(0,48)}
-
-        """
+"""
+            content = content + time_content
         
         # file = f'{self.directory}/{self.treatment}_analysis.Rmd'
         file = f'{self.treatment}_analysis.Rmd'
@@ -181,7 +183,7 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
         outline = """
 
 ---
-title: "Salmon Analysis - ZM"
+title: "Salmon Analysis - %s "
 output: html_document
 ---
 
@@ -192,7 +194,7 @@ output: html_document
     library("ashr")
     library(org.Hs.eg.db)
 
-    load("../../../data/ZM_data.RData")
+    load("../../../data/%s_data.RData")
     dds
     results <- results(dds)
     resultsNames(dds)
@@ -212,5 +214,5 @@ output: html_document
     return (res)
     }
 ```
-        """
+        """ % self.treatment
         return outline
