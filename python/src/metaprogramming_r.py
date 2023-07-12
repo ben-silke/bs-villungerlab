@@ -43,7 +43,7 @@ treatment <- "{self.treatment}"
 
 dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds, file = glue('r/data/', glue(treatment, "{self.treatment}_{replicate_file_name}_data.RData")))
+save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
 
 res <- results(dds)
 resOrdered <- res[order(res$padj),]
@@ -212,7 +212,6 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
 
         content = """
-
 ---
 title: "Salmon Analysis - %s "
 output: html_document
