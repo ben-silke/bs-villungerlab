@@ -96,45 +96,100 @@ write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_d
 
     def exploration_analyis(self, start, end):
         tabset_detail = "{.tabset}"
+        timepoint_name = f'timepoint_t{end}_vs_t{start}'
+        variable_name = f'results_t{end}_t{start}'
 
         content = f"""
 ### Exploratory Analysis {tabset_detail}
-#### Heatmap
-##### Ecludian Distance
-
-##### Poission Distance
-
-
 #### PCA
 ##### VST - Variance Stablised Transformation
-
+```{self._r}
+vsd_{variable_name} <- vst(dds, blind=FALSE)
+plotPCA(vsd_{variable_name}, intgroup=c('batch', 'timepoint'))
+```
 ##### rLog
+```{self._r}
+rld_{variable_name} <- rlog(dds, blind=FALSE)
+plotPCA(rld_{variable_name}, intgroup=c('batch', 'timepoint'))
+```
+#### Heatmap
+##### Euclidian Distance
+{self.write_heatmap(variable_name)}
+
+##### Poission Distance
+{self.write_poi_heatmap(variable_name)}
+
+
+
+#### Summary
+##### General Summary
+```{self._r}
+{variable_name} <- results(dds, contrast = c("timepoint", "t{end}", "t{start}"))
+
+{variable_name} = add_annotations_to_results({variable_name})
+
+summary({variable_name})
+
+```
+##### Restricted Values
+```{self._r}
+{variable_name}_restricted <-
+results(
+    dds,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t{end}", "t{start}")
+)
+summary({variable_name}_restricted)
+
+```
+{self.write_ma_plot("%s_restricted" % variable_name)}
 
 """
         return content
 
     def differential_expression_analysis(self, start, end):
         tabset_detail = "{.tabset}"
+        timepoint_name = f'timepoint_t{end}_vs_t{start}'
+        variable_name = f'results_t{end}_t{start}'
 
         content = f"""
 ### Differential Expression Analysis {tabset_detail}
 It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
 
 #### APEGLM
-##### MA - Plot
+```{self._r}
 
-##### V-Plot
+{variable_name}_shrunk_apeglm <- lfcShrink(dds, coef="{timepoint_name}", type="apeglm")
+summary({variable_name}_shrunk_apeglm)
+
+```
+###### MA - Plot
+{self.write_ma_plot("%s_shrunk_apeglm" % variable_name)}
+
+###### V-Plot
+{self.write_vplot("%s_shrunk_apeglm" % variable_name)}
 
 
 #### ASHR
-##### MA - Plot
+```{self._r}
+{variable_name}_shrunk_ashr <- lfcShrink(dds, coef="{timepoint_name}", type="ashr")
+summary({variable_name}_shrunk_ashr)
 
-##### V-Plot
+```
+###### MA - Plot
+{self.write_ma_plot("%s_shrunk_ashr" % variable_name)}
+
+###### V-Plot
+{self.write_vplot("%s_shrunk_ashr" % variable_name)}
+
+#### P-Adjusted Analysis
+{self.write_p_adjusted_analysis(variable_name)}
+
 
 """
         return content
-
-
 
 
     def time_analysis(self, start, end):
@@ -200,7 +255,7 @@ summary({variable_name}_shrunk_ashr)
     
     def write_ma_plot(self, variable):
         content = """
-#### MA Plot
+MA Plot
 ```{r}
 
 plotMA(%s)
@@ -212,7 +267,7 @@ plotMA(%s)
 
     def write_vplot(self, variable):
         content = f"""
-#### V- Plot
+V- Plot
 
 ```{self._r}
 {variable} <- add_annotations_to_results({variable})
@@ -243,7 +298,7 @@ We can use the package limma to account for the batch effect:
 https://bioconductor.org/packages/release/bioc/html/limma.html
 
 We can see that there is a clear batch effect.
-```{self.r}
+```{self._r}
 vsd_{variable} <- vst(dds, blind=FALSE)
 plotPCA(vsd_{variable}, intgroup=c('batch', 'timepoint'))
 
@@ -279,7 +334,6 @@ results_{variable} <- add_annotations_to_results(results_{variable})
 results_clean__{variable} <- results_{variable}[!is.na(results_{variable}$logFC), ]
 
 results_ordered_{variable} <- results_clean__{variable}[order(results_clean__{variable}$logFC), ]
-results_ordered_{variable}
 ```
 
 ```{self._r}
@@ -303,22 +357,22 @@ EnhancedVolcano(
 ```
 
 """
+        return content
 
 
     def write_p_adjusted_analysis(self, variable):
         content = """
-### P-Adjusted Analysis
 ```{r}
 resSig <- subset(%s, padj < 0.1) 
 summary(resSig)
 ```
 
-### Strongest Down Regulated Genes
+###### Strongest Down Regulated Genes
 ```{r}
 head(resSig[ order(resSig$log2FoldChange), ])
 ```
 
-### Strongest up regulation
+###### Strongest up regulation
 ```{r}
 head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 ```
@@ -344,6 +398,9 @@ library("apeglm")
 library("ashr")
 library(EnhancedVolcano)
 library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
 
 load("../../data/%s_data.RData")
 dds
@@ -366,4 +423,40 @@ return (res)
 }
 ```
         """ % (f'{self.treatment}_{replicate_file_name}', f'{self.treatment}_{replicate_file_name}')
+        return content
+
+    def write_heatmap(self, variable):
+
+        content = f"""
+
+```{self._r}
+sampleDists_{variable} <- dist(t(assay(vsd_{variable})))
+
+sampleDistMatrix_{variable} <- as.matrix( sampleDists_{variable} )
+rownames(sampleDistMatrix_{variable}) <- paste( vsd_{variable}$timepoint, vsd_{variable}$batch, sep = "_" )
+colnames(sampleDistMatrix_{variable}) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix_{variable},
+         clustering_distance_rows = sampleDists_{variable},
+         clustering_distance_cols = sampleDists_{variable},
+         col = colors)
+```
+"""
+        return content
+
+
+    def write_poi_heatmap(self, variable):
+        content = f"""
+```{self._r}
+poisd_{variable} <- PoissonDistance(t(counts(dds)))
+
+samplePoisDistMatrix_{variable} <- as.matrix( poisd_{variable}$dd )
+rownames(samplePoisDistMatrix_{variable}) <- paste( vsd_{variable}$timepoint, vsd_{variable}$batch, sep = "_" )
+colnames(samplePoisDistMatrix_{variable}) <- NULL
+pheatmap(samplePoisDistMatrix_{variable},
+         clustering_distance_rows = poisd_{variable}$dd,
+         clustering_distance_cols = poisd_{variable}$dd,
+         col = colors)
+```
+"""
         return content
