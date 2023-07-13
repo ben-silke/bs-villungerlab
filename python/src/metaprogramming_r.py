@@ -72,10 +72,16 @@ write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_d
 """
 
         for time in self.time_dict[self.treatment][1]:
+            variable_name = f'results_t{0}_t{time}'
+
             time_content = f"""
 
-## Time -- {self.treatment} T0 to T{time}
-{self.time_analysis(0,time)}
+## Time -- {self.treatment} T0 to T{time} {tabset_detail}
+{self.exploration_analyis(0, time)}
+
+{self.differential_expression_analysis(0,time)}
+
+{self.write_batch_limma_analysis(variable_name, time)}
 
 """
             content = content + time_content
@@ -87,6 +93,49 @@ write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_d
 
         with open(file, 'w') as f:
             f.write(content) 
+
+    def exploration_analyis(self, start, end):
+        tabset_detail = "{.tabset}"
+
+        content = f"""
+### Exploratory Analysis {tabset_detail}
+#### Heatmap
+##### Ecludian Distance
+
+##### Poission Distance
+
+
+#### PCA
+##### VST - Variance Stablised Transformation
+
+##### rLog
+
+"""
+        return content
+
+    def differential_expression_analysis(self, start, end):
+        tabset_detail = "{.tabset}"
+
+        content = f"""
+### Differential Expression Analysis {tabset_detail}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+##### MA - Plot
+
+##### V-Plot
+
+
+#### ASHR
+##### MA - Plot
+
+##### V-Plot
+
+"""
+        return content
+
+
+
 
     def time_analysis(self, start, end):
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
@@ -174,8 +223,10 @@ EnhancedVolcano({variable},
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
-                title = 'Differential expression',
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for {variable}',
                 pCutoff = 0.05,
+                # at least double, or less than half
                 FCcutoff = 1,
                 pointSize = 3.0,
                 labSize = 3.0)
@@ -183,6 +234,75 @@ EnhancedVolcano({variable},
 """
         return content
 
+    def write_batch_limma_analysis(self, variable, timepoint):
+
+        content = f"""
+
+### Batch Effects 
+We can use the package limma to account for the batch effect:
+https://bioconductor.org/packages/release/bioc/html/limma.html
+
+We can see that there is a clear batch effect.
+```{self.r}
+vsd_{variable} <- vst(dds, blind=FALSE)
+plotPCA(vsd_{variable}, intgroup=c('batch', 'timepoint'))
+
+```
+
+Using limma we can normalise the counts for this.
+```{self._r}
+mat_{variable} <- assay(vsd_{variable})
+mm_{variable} <- model.matrix(~timepoint, colData(vsd_{variable}))
+mat_{variable} <- limma::removeBatchEffect(mat_{variable}, batch=vsd_{variable}$batch, design=mm_{variable})
+assay(vsd_{variable}) <- mat_{variable}
+plotPCA(vsd_{variable}, intgroup=c('batch', 'timepoint'))
+
+```
+
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{self._r}
+design_{variable} <- model.matrix(~ timepoint, colData(vsd_{variable}))
+fit_{variable} <- lmFit(mat_{variable}, design_{variable})
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t{timepoint}
+contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design_{variable})
+fit2_{variable} <- contrasts.fit(fit_{variable}, contrast.matrix)
+fit2_{variable} <- eBayes(fit2_{variable})
+
+results_{variable} <- topTable(fit2_{variable}, adjust.method="BH", number=Inf)
+results_{variable} <- add_annotations_to_results(results_{variable})
+
+results_clean__{variable} <- results_{variable}[!is.na(results_{variable}$logFC), ]
+
+results_ordered_{variable} <- results_clean__{variable}[order(results_clean__{variable}$logFC), ]
+results_ordered_{variable}
+```
+
+```{self._r}
+selected_genes_{variable} <- as.character(results_ordered_{variable}$symbol)
+
+EnhancedVolcano(
+    results_ordered_{variable},
+    lab = selected_genes_{variable},
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled ZM t0_t{timepoint} (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+"""
 
 
     def write_p_adjusted_analysis(self, variable):
@@ -223,10 +343,9 @@ library(DESeq2)
 library("apeglm")
 library("ashr")
 library(EnhancedVolcano)
-
 library(org.Hs.eg.db)
 
-load("../../../data/%s_data.RData")
+load("../../data/%s_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
