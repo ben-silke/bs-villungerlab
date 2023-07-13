@@ -11,8 +11,8 @@ library(DESeq2)
 library("apeglm")
 library("ashr")
 library(EnhancedVolcano)
-
 library(org.Hs.eg.db)
+library("limma")
 
 load("../../data/ZM_r1to6_data.RData")
 dds
@@ -79,13 +79,12 @@ plotMA(results_t16_t0_restricted)
 
 ```{r}
 results_t16_t0_restricted <- add_annotations_to_results(results_t16_t0_restricted)
-results_t16_t0_restricted$adjp_neglog10 <- -log10(results_t16_t0_restricted$padj)
 selected_genes <- as.character(results_t16_t0_restricted$symbol)
 
 EnhancedVolcano(results_t16_t0_restricted,
                 lab = selected_genes,
                 x = 'log2FoldChange',
-                y = 'adjp_neglog10',
+                y = 'padj',
                 xlim = c(-8,8),
                 title = 'Differential expression',
                 pCutoff = 0.05,
@@ -100,9 +99,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{r}
 
-results_t16_t0_shrunk <- lfcShrink(dds, coef="timepoint_t16_vs_t0", type="apeglm")
-
-summary(results_t16_t0_shrunk)
+results_t16_t0_shrunk_apeglm <- lfcShrink(dds, coef="timepoint_t16_vs_t0", type="apeglm")
+summary(results_t16_t0_shrunk_apeglm)
 
 ```
 
@@ -110,7 +108,7 @@ summary(results_t16_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t16_t0_shrunk)
+plotMA(results_t16_t0_shrunk_apeglm)
 ```
 
         
@@ -118,14 +116,13 @@ plotMA(results_t16_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t16_t0_shrunk <- add_annotations_to_results(results_t16_t0_shrunk)
-selected_genes <- as.character(results_t16_t0_shrunk$symbol)
-results_t16_t0_shrunk$adjp_neglog10 <- -log10(results_t16_t0_shrunk$pvalue)
+results_t16_t0_shrunk_apeglm <- add_annotations_to_results(results_t16_t0_shrunk_apeglm)
+selected_genes <- as.character(results_t16_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t16_t0_shrunk,
+EnhancedVolcano(results_t16_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
-                y = 'adjp_neglog10',
+                y = 'padj',
                 xlim = c(-8,8),
                 title = 'Differential expression',
                 pCutoff = 0.05,
@@ -137,8 +134,8 @@ EnhancedVolcano(results_t16_t0_shrunk,
 
 #### ashr
 ```{r}
-results_t16_t0_shrunk <- lfcShrink(dds, coef="timepoint_t16_vs_t0", type="ashr")
-summary(results_t16_t0_shrunk)
+results_t16_t0_shrunk_ashr <- lfcShrink(dds, coef="timepoint_t16_vs_t0", type="ashr")
+summary(results_t16_t0_shrunk_ashr)
 
 ```
 
@@ -146,7 +143,7 @@ summary(results_t16_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t16_t0_shrunk)
+plotMA(results_t16_t0_shrunk_ashr)
 ```
 
         
@@ -154,10 +151,10 @@ plotMA(results_t16_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t16_t0_restricted <- add_annotations_to_results(results_t16_t0_restricted)
-selected_genes <- as.character(results_t16_t0_restricted$symbol)
+results_t16_t0_shrunk_ashr <- add_annotations_to_results(results_t16_t0_shrunk_ashr)
+selected_genes <- as.character(results_t16_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t16_t0_restricted,
+EnhancedVolcano(results_t16_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -251,8 +248,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{r}
 
-results_t20_t0_shrunk <- lfcShrink(dds, coef="timepoint_t20_vs_t0", type="apeglm")
-summary(results_t20_t0_shrunk)
+results_t20_t0_shrunk_apeglm <- lfcShrink(dds, coef="timepoint_t20_vs_t0", type="apeglm")
+summary(results_t20_t0_shrunk_apeglm)
 
 ```
 
@@ -260,7 +257,7 @@ summary(results_t20_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t20_t0_shrunk)
+plotMA(results_t20_t0_shrunk_apeglm)
 ```
 
         
@@ -268,10 +265,10 @@ plotMA(results_t20_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t20_t0_restricted <- add_annotations_to_results(results_t20_t0_restricted)
-selected_genes <- as.character(results_t20_t0_restricted$symbol)
+results_t20_t0_shrunk_apeglm <- add_annotations_to_results(results_t20_t0_shrunk_apeglm)
+selected_genes <- as.character(results_t20_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t20_t0_restricted,
+EnhancedVolcano(results_t20_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -286,8 +283,8 @@ EnhancedVolcano(results_t20_t0_restricted,
 
 #### ashr
 ```{r}
-results_t20_t0_shrunk <- lfcShrink(dds, coef="timepoint_t20_vs_t0", type="ashr")
-summary(results_t20_t0_shrunk)
+results_t20_t0_shrunk_ashr <- lfcShrink(dds, coef="timepoint_t20_vs_t0", type="ashr")
+summary(results_t20_t0_shrunk_ashr)
 
 ```
 
@@ -295,7 +292,7 @@ summary(results_t20_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t20_t0_shrunk)
+plotMA(results_t20_t0_shrunk_ashr)
 ```
 
         
@@ -303,10 +300,10 @@ plotMA(results_t20_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t20_t0_restricted <- add_annotations_to_results(results_t20_t0_restricted)
-selected_genes <- as.character(results_t20_t0_restricted$symbol)
+results_t20_t0_shrunk_ashr <- add_annotations_to_results(results_t20_t0_shrunk_ashr)
+selected_genes <- as.character(results_t20_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t20_t0_restricted,
+EnhancedVolcano(results_t20_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -400,8 +397,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{r}
 
-results_t24_t0_shrunk <- lfcShrink(dds, coef="timepoint_t24_vs_t0", type="apeglm")
-summary(results_t24_t0_shrunk)
+results_t24_t0_shrunk_apeglm <- lfcShrink(dds, coef="timepoint_t24_vs_t0", type="apeglm")
+summary(results_t24_t0_shrunk_apeglm)
 
 ```
 
@@ -409,7 +406,7 @@ summary(results_t24_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t24_t0_shrunk)
+plotMA(results_t24_t0_shrunk_apeglm)
 ```
 
         
@@ -417,10 +414,10 @@ plotMA(results_t24_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t24_t0_restricted <- add_annotations_to_results(results_t24_t0_restricted)
-selected_genes <- as.character(results_t24_t0_restricted$symbol)
+results_t24_t0_shrunk_apeglm <- add_annotations_to_results(results_t24_t0_shrunk_apeglm)
+selected_genes <- as.character(results_t24_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t24_t0_restricted,
+EnhancedVolcano(results_t24_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -435,8 +432,8 @@ EnhancedVolcano(results_t24_t0_restricted,
 
 #### ashr
 ```{r}
-results_t24_t0_shrunk <- lfcShrink(dds, coef="timepoint_t24_vs_t0", type="ashr")
-summary(results_t24_t0_shrunk)
+results_t24_t0_shrunk_ashr <- lfcShrink(dds, coef="timepoint_t24_vs_t0", type="ashr")
+summary(results_t24_t0_shrunk_ashr)
 
 ```
 
@@ -444,7 +441,7 @@ summary(results_t24_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t24_t0_shrunk)
+plotMA(results_t24_t0_shrunk_ashr)
 ```
 
         
@@ -452,10 +449,10 @@ plotMA(results_t24_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t24_t0_restricted <- add_annotations_to_results(results_t24_t0_restricted)
-selected_genes <- as.character(results_t24_t0_restricted$symbol)
+results_t24_t0_shrunk_ashr <- add_annotations_to_results(results_t24_t0_shrunk_ashr)
+selected_genes <- as.character(results_t24_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t24_t0_restricted,
+EnhancedVolcano(results_t24_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -549,8 +546,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{r}
 
-results_t36_t0_shrunk <- lfcShrink(dds, coef="timepoint_t36_vs_t0", type="apeglm")
-summary(results_t36_t0_shrunk)
+results_t36_t0_shrunk_apeglm <- lfcShrink(dds, coef="timepoint_t36_vs_t0", type="apeglm")
+summary(results_t36_t0_shrunk_apeglm)
 
 ```
 
@@ -558,7 +555,7 @@ summary(results_t36_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t36_t0_shrunk)
+plotMA(results_t36_t0_shrunk_apeglm)
 ```
 
         
@@ -566,10 +563,10 @@ plotMA(results_t36_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t36_t0_restricted <- add_annotations_to_results(results_t36_t0_restricted)
-selected_genes <- as.character(results_t36_t0_restricted$symbol)
+results_t36_t0_shrunk_apeglm <- add_annotations_to_results(results_t36_t0_shrunk_apeglm)
+selected_genes <- as.character(results_t36_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t36_t0_restricted,
+EnhancedVolcano(results_t36_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -584,8 +581,8 @@ EnhancedVolcano(results_t36_t0_restricted,
 
 #### ashr
 ```{r}
-results_t36_t0_shrunk <- lfcShrink(dds, coef="timepoint_t36_vs_t0", type="ashr")
-summary(results_t36_t0_shrunk)
+results_t36_t0_shrunk_ashr <- lfcShrink(dds, coef="timepoint_t36_vs_t0", type="ashr")
+summary(results_t36_t0_shrunk_ashr)
 
 ```
 
@@ -593,7 +590,7 @@ summary(results_t36_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t36_t0_shrunk)
+plotMA(results_t36_t0_shrunk_ashr)
 ```
 
         
@@ -601,10 +598,10 @@ plotMA(results_t36_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t36_t0_restricted <- add_annotations_to_results(results_t36_t0_restricted)
-selected_genes <- as.character(results_t36_t0_restricted$symbol)
+results_t36_t0_shrunk_ashr <- add_annotations_to_results(results_t36_t0_shrunk_ashr)
+selected_genes <- as.character(results_t36_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t36_t0_restricted,
+EnhancedVolcano(results_t36_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -648,6 +645,74 @@ results_t48_t0 <- results(dds, contrast = c("timepoint", "t48", "t0"))
 results_t48_t0 = add_annotations_to_results(results_t48_t0)
 
 summary(results_t48_t0)
+
+```
+#### PCA Plots
+##### Removing batch effect with Limma
+```{r}
+# plotPCA(dds, intgroup=c('batch', 'timepoint'))
+lb_vsd <- vsd
+
+mat <- assay(lb_vsd)
+mm <- model.matrix(~timepoint, colData(lb_vsd))
+mat <- limma::removeBatchEffect(mat, batch=lb_vsd$batch, design=mm)
+assay(lb_vsd) <- mat
+plotPCA(lb_vsd, intgroup=c('timepoint'))
+
+```
+```{r}
+design <- model.matrix(~ timepoint, colData(lb_vsd))
+fit <- lmFit(mat, design)
+
+colnames(design)
+
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t48
+contrast.matrix <- makeContrasts(timepointt48, levels=design)
+fit2 <- contrasts.fit(fit, contrast.matrix)
+fit2 <- eBayes(fit2)
+
+results <- topTable(fit2, adjust.method="BH", number=Inf)
+results <- add_annotations_to_results(results)
+results_trimmed_na <- na.omit(results)
+results_no_na <- results[!is.na(results$logFC), ]
+
+results_ordered <- results_no_na[order(results_no_na$logFC), ]
+results_ordered
+
+
+```
+```{r}
+selected_genes <- as.character(results_t48_t0_restricted$symbol)
+
+EnhancedVolcano(
+    results,
+    lab = selected_genes,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Limma Batch effect Normalised ZM t0_t48',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+##### VSD
+```{r}
+vsd <- vst(dds, blind=FALSE)
+plotPCA(vsd, intgroup=c('batch', 'timepoint'))
+
+```
+##### rLog
+```{r}
+rld <- rlog(dds, blind=FALSE)
+plotPCA(rld, intgroup=c('batch', 'timepoint'))
+
 
 ```
 
@@ -698,8 +763,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{r}
 
-results_t48_t0_shrunk <- lfcShrink(dds, coef="timepoint_t48_vs_t0", type="apeglm")
-summary(results_t48_t0_shrunk)
+results_t48_t0_shrunk_apeglm <- lfcShrink(dds, coef="timepoint_t48_vs_t0", type="apeglm")
+summary(results_t48_t0_shrunk_apeglm)
 
 ```
 
@@ -707,7 +772,7 @@ summary(results_t48_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t48_t0_shrunk)
+plotMA(results_t48_t0_shrunk_apeglm)
 ```
 
         
@@ -715,10 +780,10 @@ plotMA(results_t48_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t48_t0_restricted <- add_annotations_to_results(results_t48_t0_restricted)
-selected_genes <- as.character(results_t48_t0_restricted$symbol)
+results_t48_t0_shrunk_apeglm <- add_annotations_to_results(results_t48_t0_shrunk_apeglm)
+selected_genes <- as.character(results_t48_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t48_t0_restricted,
+EnhancedVolcano(results_t48_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
@@ -733,8 +798,8 @@ EnhancedVolcano(results_t48_t0_restricted,
 
 #### ashr
 ```{r}
-results_t48_t0_shrunk <- lfcShrink(dds, coef="timepoint_t48_vs_t0", type="ashr")
-summary(results_t48_t0_shrunk)
+results_t48_t0_shrunk_ashr <- lfcShrink(dds, coef="timepoint_t48_vs_t0", type="ashr")
+summary(results_t48_t0_shrunk_ashr)
 
 ```
 
@@ -742,7 +807,7 @@ summary(results_t48_t0_shrunk)
 #### MA Plot
 ```{r}
 
-plotMA(results_t48_t0_shrunk)
+plotMA(results_t48_t0_shrunk_ashr)
 ```
 
         
@@ -750,10 +815,10 @@ plotMA(results_t48_t0_shrunk)
 #### V- Plot
 
 ```{r}
-results_t48_t0_restricted <- add_annotations_to_results(results_t48_t0_restricted)
-selected_genes <- as.character(results_t48_t0_restricted$symbol)
+results_t48_t0_shrunk_ashr <- add_annotations_to_results(results_t48_t0_shrunk_ashr)
+selected_genes <- as.character(results_t48_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t48_t0_restricted,
+EnhancedVolcano(results_t48_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
