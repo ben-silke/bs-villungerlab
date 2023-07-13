@@ -2,13 +2,13 @@
 # Mapping step using STAR
 
 # Move to the data folder
-external_drive="/Volumes/bs_external/villunger"
+external_drive="/nobackup/lab_villunger/bsilke"
 cd $external_drive
 
 # Include all times, can exclude based upon experiement later.
 times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
-treatments=("ZM" "Nutl" "Noc" "Nalm6_ZM" "Etop" "DHCB")
+treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 # STAR \
 # --runThreadN 2 \
@@ -37,8 +37,8 @@ for treatment in ${treatments[@]}; do
             input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${file}.fastq"
 
             STAR \
-            --runThreadN 2 \
-            --genomeDir references/STAR/star_index/ \
+            --runThreadN 4 \
+            --genomeDir star_index \
             --readFilesIn "$input_trimmed_file" \
             --outFileNamePrefix "$night_sky"
             ) &
