@@ -18,6 +18,8 @@ class RFileWriter():
 
     _r = "{r}"
     _r_false_include = "{r include=FALSE}"
+    _r_setup = "{r setup, include=FALSE}"
+
 
     def __init__(self, treatment: str, directory: str, file_location: str, all_replicates: bool) -> None:
         self.treatment = treatment
@@ -25,8 +27,8 @@ class RFileWriter():
         self.all_replicates = all_replicates
         self.file_location = file_location
 
-    def write_markdown_file(self):
-        outline = self.markdown_outline()
+    def write_markdown_file(self, include_data_create):
+        outline = self.markdown_outline(include_data_create)
         tabset_detail = "{.tabset}"
         content = f"""
 {outline}
@@ -106,7 +108,7 @@ Using limma we can normalise the counts for this.
 ```{self._r}
 mat_{self.treatment} <- assay(vsd_{self.treatment})
 mm_{self.treatment} <- model.matrix(~timepoint, colData(vsd_{self.treatment}))
-mat_{self.treatment} <- limma::removeBatchEffect(mat_{self.treatment}, batch=vsd_{self.treatment}$batch, design=mm_{variable})
+mat_{self.treatment} <- limma::removeBatchEffect(mat_{self.treatment}, batch=vsd_{self.treatment}$batch, design=mm_{self.treatment})
 assay(vsd_{self.treatment}) <- mat_{self.treatment}
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 
@@ -304,7 +306,7 @@ we can see if different genes are highlighted for differential expression
 
 ```{self._r}
 design_{variable} <- model.matrix(~ timepoint, colData(vsd_{treatment}))
-fit_{variable} <- lmFit(mat_{variable}, design_{variable})
+fit_{variable} <- lmFit(mat_{self.treatment}, design_{variable})
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t{timepoint}
 contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design_{variable})
@@ -372,7 +374,7 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 
-    def markdown_outline(self):
+    def markdown_outline(self, include_data_create=False):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
 
         content = """
@@ -413,6 +415,76 @@ return (res)
 }
 ```
         """ % (f'{self.treatment}_{replicate_file_name}', f'{self.treatment}_{replicate_file_name}')
+
+        if include_data_create:
+            replicate = "1:6" if self.all_replicates else "1:3"
+            times = self.time_dict[self.treatment][0]
+            replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+            function = """
+add_annotations_to_results <- function(res) {
+ens.str <- substr(rownames(res), 1, 15)
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+return (res)
+}
+"""
+            content = f"""
+---
+title: "Salmon Analysis - {self.treatment}: {replicate_file_name}"
+output: html_document
+---
+
+```{self._r_setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("limma")
+library("RColorBrewer")
+library("PoiClaClu")
+library("vsn")
+library("genefilter")
+source("r/src/utils.R")
+source("r/src/pca_utils.R")
+
+times = {times}
+treatment <- "{self.treatment}"
+{self.file_location}
+
+dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
+# Create the data and then save it
+save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
+
+res <- results(dds)
+resOrdered <- res[order(res$padj),]
+resOrdered <- add_annotations_to_results(resOrdered)
+
+head(resOrdered)
+
+resOrderedDF <- as.data.frame(resOrdered)
+write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
+
+load("../../data/%s_data.RData")
+dds
+results <- results(dds)
+resultsNames(dds)
+
+{function}
+
+```
+            """
+
         return content
 
     def write_heatmap(self, variable):
