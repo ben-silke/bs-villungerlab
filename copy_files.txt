@@ -1,0 +1,9 @@
+
+
+scp -r login://nobackup/lab_villunger/bsilke/organised/Nutl/output_salmon /Volumes/bs_external/villunger/organised/Nutl
+scp -r login://nobackup/lab_villunger/bsilke/organised/DHCB/output_salmon /Volumes/bs_external/villunger/organised/DHCB
+scp -r login://nobackup/lab_villunger/bsilke/organised/Etop/output_salmon /Volumes/bs_external/villunger/organised/Etop
+scp -r login://nobackup/lab_villunger/bsilke/organised/Noc/output_salmon /Volumes/bs_external/villunger/organised/Noc
+
+
+DHCB  Etop  Noc  Nutl  ZM
