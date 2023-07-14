@@ -1,5 +1,7 @@
+
+
 ---
-title: "Salmon Analysis - ZM_r1to6 "
+title: "Salmon Analysis - Noc: r1to6"
 output: html_document
 ---
 
@@ -14,11 +16,33 @@ library("pheatmap")
 library("limma")
 library("RColorBrewer")
 library("PoiClaClu")
+library("vsn")
+library("genefilter")
+source("r/src/utils.R")
+source("r/src/pca_utils.R")
 
-load("../../data/ZM_r1to6_data.RData")
+times = c(0, 16, 20, 24, 36, 48)
+treatment <- "Noc"
+data_directory = file.path('/Volumes/bs_external/villunger', glue('organised/{treatment}/output_salmon'))
+
+dds <- create_dds('Noc', data_directory, times, "salmon_quant", 1:6)
+# Create the data and then save it
+save(dds, file = glue('r/data/', "Noc_r1to6_data.RData"))
+
+res <- results(dds)
+resOrdered <- res[order(res$padj),]
+resOrdered <- add_annotations_to_results(resOrdered)
+
+head(resOrdered)
+
+resOrderedDF <- as.data.frame(resOrdered)
+write.csv(resOrderedDF, file = "results/Noc_r1to6_data.csv")
+
+load("../../data/%s_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
+
 
 add_annotations_to_results <- function(res) {
 ens.str <- substr(rownames(res), 1, 15)
@@ -34,25 +58,27 @@ res$entrez <- mapIds(org.Hs.eg.db,
                     multiVals="first")
 return (res)
 }
+
+
 ```
-        
-# ZM Analysis {.tabset}
+            
+# Noc Analysis {.tabset}
 ## Exploratory Analysis
 
 
 ### PCA
 #### VST - Variance Stablised Transformation
 ```{r}
-vsd_ZM <- vst(dds, blind=FALSE)
-plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
+vsd_Noc <- vst(dds, blind=FALSE)
+plotPCA(vsd_Noc, intgroup=c('batch', 'timepoint'))
 ```
 
 
 #### rLog
 
 ```{r}
-rld_ZM <- rlog(dds, blind=FALSE)
-plotPCA(rld_ZM, intgroup=c('batch', 'timepoint'))
+rld_Noc <- rlog(dds, blind=FALSE)
+plotPCA(rld_Noc, intgroup=c('batch', 'timepoint'))
 ```
 
 
@@ -63,15 +89,15 @@ plotPCA(rld_ZM, intgroup=c('batch', 'timepoint'))
 
 
 ```{r}
-sampleDists_ZM <- dist(t(assay(vsd_ZM)))
+sampleDists_Noc <- dist(t(assay(vsd_Noc)))
 
-sampleDistMatrix_ZM <- as.matrix( sampleDists_ZM )
-rownames(sampleDistMatrix_ZM) <- paste( vsd_ZM$timepoint, vsd_ZM$batch, sep = "_" )
-colnames(sampleDistMatrix_ZM) <- NULL
+sampleDistMatrix_Noc <- as.matrix( sampleDists_Noc )
+rownames(sampleDistMatrix_Noc) <- paste( vsd_Noc$timepoint, vsd_Noc$batch, sep = "_" )
+colnames(sampleDistMatrix_Noc) <- NULL
 colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix_ZM,
-         clustering_distance_rows = sampleDists_ZM,
-         clustering_distance_cols = sampleDists_ZM,
+pheatmap(sampleDistMatrix_Noc,
+         clustering_distance_rows = sampleDists_Noc,
+         clustering_distance_cols = sampleDists_Noc,
          col = colors)
 ```
 
@@ -79,14 +105,14 @@ pheatmap(sampleDistMatrix_ZM,
 #### Poission Distance
 
 ```{r}
-poisd_ZM <- PoissonDistance(t(counts(dds)))
+poisd_Noc <- PoissonDistance(t(counts(dds)))
 
-samplePoisDistMatrix_ZM <- as.matrix( poisd_ZM$dd )
-rownames(samplePoisDistMatrix_ZM) <- paste( vsd_ZM$timepoint, vsd_ZM$batch, sep = "_" )
-colnames(samplePoisDistMatrix_ZM) <- NULL
-pheatmap(samplePoisDistMatrix_ZM,
-         clustering_distance_rows = poisd_ZM$dd,
-         clustering_distance_cols = poisd_ZM$dd,
+samplePoisDistMatrix_Noc <- as.matrix( poisd_Noc$dd )
+rownames(samplePoisDistMatrix_Noc) <- paste( vsd_Noc$timepoint, vsd_Noc$batch, sep = "_" )
+colnames(samplePoisDistMatrix_Noc) <- NULL
+pheatmap(samplePoisDistMatrix_Noc,
+         clustering_distance_rows = poisd_Noc$dd,
+         clustering_distance_cols = poisd_Noc$dd,
          col = colors)
 ```
 
@@ -99,18 +125,18 @@ https://bioconductor.org/packages/release/bioc/html/limma.html
 
 We can see that there is a clear batch effect.
 ```{r}
-vsd_ZM <- vst(dds, blind=FALSE)
-plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
+vsd_Noc <- vst(dds, blind=FALSE)
+plotPCA(vsd_Noc, intgroup=c('batch', 'timepoint'))
 
 ```
 
 Using limma we can normalise the counts for this.
 ```{r}
-mat_ZM <- assay(vsd_ZM)
-mm_ZM <- model.matrix(~timepoint, colData(vsd_ZM))
-mat_ZM <- limma::removeBatchEffect(mat_ZM, batch=vsd_ZM$batch, design=mm_ZM)
-assay(vsd_ZM) <- mat_ZM
-plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
+mat_Noc <- assay(vsd_Noc)
+mm_Noc <- model.matrix(~timepoint, colData(vsd_Noc))
+mat_Noc <- limma::removeBatchEffect(mat_Noc, batch=vsd_Noc$batch, design=mm_Noc)
+assay(vsd_Noc) <- mat_Noc
+plotPCA(vsd_Noc, intgroup=c('batch', 'timepoint'))
 
 ```
     
@@ -119,7 +145,7 @@ plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
 
 
             
-## Time -- ZM T0 to T16 {.tabset}
+## Time -- Noc T0 to T16 {.tabset}
 
 ### Exploratory Analysis {.tabset}
 
@@ -271,8 +297,8 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t16 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t16 <- lmFit(mat_ZM, design_results_t0_t16)
+design_results_t0_t16 <- model.matrix(~ timepoint, colData(vsd_Noc))
+fit_results_t0_t16 <- lmFit(mat_Noc, design_results_t0_t16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
 contrast.matrix <- makeContrasts(timepointt16, levels=design_results_t0_t16)
@@ -319,7 +345,7 @@ write.csv(results_ordered_results_t0_t16_df, file = "../../../results/batch_corr
 
 
             
-## Time -- ZM T0 to T20 {.tabset}
+## Time -- Noc T0 to T20 {.tabset}
 
 ### Exploratory Analysis {.tabset}
 
@@ -471,8 +497,8 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t20 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t20 <- lmFit(mat_results_t0_t20, design_results_t0_t20)
+design_results_t0_t20 <- model.matrix(~ timepoint, colData(vsd_Noc))
+fit_results_t0_t20 <- lmFit(mat_Noc, design_results_t0_t20)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t20
 contrast.matrix <- makeContrasts(timepointt20, levels=design_results_t0_t20)
@@ -519,7 +545,7 @@ write.csv(results_ordered_results_t0_t20_df, file = "../../../results/batch_corr
 
 
             
-## Time -- ZM T0 to T24 {.tabset}
+## Time -- Noc T0 to T24 {.tabset}
 
 ### Exploratory Analysis {.tabset}
 
@@ -671,8 +697,8 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t24 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t24 <- lmFit(mat_results_t0_t24, design_results_t0_t24)
+design_results_t0_t24 <- model.matrix(~ timepoint, colData(vsd_Noc))
+fit_results_t0_t24 <- lmFit(mat_Noc, design_results_t0_t24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
 contrast.matrix <- makeContrasts(timepointt24, levels=design_results_t0_t24)
@@ -719,7 +745,7 @@ write.csv(results_ordered_results_t0_t24_df, file = "../../../results/batch_corr
 
 
             
-## Time -- ZM T0 to T36 {.tabset}
+## Time -- Noc T0 to T36 {.tabset}
 
 ### Exploratory Analysis {.tabset}
 
@@ -871,8 +897,8 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t36 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t36 <- lmFit(mat_results_t0_t36, design_results_t0_t36)
+design_results_t0_t36 <- model.matrix(~ timepoint, colData(vsd_Noc))
+fit_results_t0_t36 <- lmFit(mat_Noc, design_results_t0_t36)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t36
 contrast.matrix <- makeContrasts(timepointt36, levels=design_results_t0_t36)
@@ -919,7 +945,7 @@ write.csv(results_ordered_results_t0_t36_df, file = "../../../results/batch_corr
 
 
             
-## Time -- ZM T0 to T48 {.tabset}
+## Time -- Noc T0 to T48 {.tabset}
 
 ### Exploratory Analysis {.tabset}
 
@@ -1071,8 +1097,8 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t48 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t48 <- lmFit(mat_results_t0_t48, design_results_t0_t48)
+design_results_t0_t48 <- model.matrix(~ timepoint, colData(vsd_Noc))
+fit_results_t0_t48 <- lmFit(mat_Noc, design_results_t0_t48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
 contrast.matrix <- makeContrasts(timepointt48, levels=design_results_t0_t48)

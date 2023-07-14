@@ -5,12 +5,12 @@ source("r/src/utils.R")
 source("r/src/pca_utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
-treatment <- "ZM"
+treatment <- "DHCB"
 data_directory = file.path('/Volumes/bs_external/villunger', glue('organised/{treatment}/output_salmon'))
-# /Volumes/bs_external/villunger/organised/ZM/output_salmon/salmon_quant_ZM_0_r1
-dds <- create_dds('ZM', data_directory, times, "salmon_quant", 1:6)
+
+dds <- create_dds('DHCB', data_directory, times, "salmon_quant", 1:6)
 # Create the data and then save it
-save(dds, file = glue('r/data/', "ZM_r1to6_data.RData"))
+save(dds, file = glue('r/data/', "DHCB_r1to6_data.RData"))
 
 res <- results(dds)
 resOrdered <- res[order(res$padj),]
@@ -19,4 +19,4 @@ resOrdered <- add_annotations_to_results(resOrdered)
 head(resOrdered)
 
 resOrderedDF <- as.data.frame(resOrdered)
-write.csv(resOrderedDF, file = "results/ZM_r1to6_data.csv")
+write.csv(resOrderedDF, file = "results/DHCB_r1to6_data.csv")

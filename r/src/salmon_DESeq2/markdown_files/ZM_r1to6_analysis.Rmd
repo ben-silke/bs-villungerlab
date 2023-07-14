@@ -1,5 +1,7 @@
+
+
 ---
-title: "Salmon Analysis - ZM_r1to6 "
+title: "Salmon Analysis - ZM: r1to6"
 output: html_document
 ---
 
@@ -14,11 +16,33 @@ library("pheatmap")
 library("limma")
 library("RColorBrewer")
 library("PoiClaClu")
+library("vsn")
+library("genefilter")
+source("r/src/utils.R")
+source("r/src/pca_utils.R")
 
-load("../../data/ZM_r1to6_data.RData")
+times = c(0, 16, 20, 24, 36, 48)
+treatment <- "ZM"
+data_directory = file.path('/Volumes/bs_external/villunger', glue('organised/{treatment}/output_salmon'))
+
+dds <- create_dds('ZM', data_directory, times, "salmon_quant", 1:6)
+# Create the data and then save it
+save(dds, file = glue('r/data/', "ZM_r1to6_data.RData"))
+
+res <- results(dds)
+resOrdered <- res[order(res$padj),]
+resOrdered <- add_annotations_to_results(resOrdered)
+
+head(resOrdered)
+
+resOrderedDF <- as.data.frame(resOrdered)
+write.csv(resOrderedDF, file = "results/ZM_r1to6_data.csv")
+
+load("../../data/%s_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
+
 
 add_annotations_to_results <- function(res) {
 ens.str <- substr(rownames(res), 1, 15)
@@ -34,8 +58,10 @@ res$entrez <- mapIds(org.Hs.eg.db,
                     multiVals="first")
 return (res)
 }
+
+
 ```
-        
+            
 # ZM Analysis {.tabset}
 ## Exploratory Analysis
 
@@ -472,7 +498,7 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_results_t0_t20 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t20 <- lmFit(mat_results_t0_t20, design_results_t0_t20)
+fit_results_t0_t20 <- lmFit(mat_ZM, design_results_t0_t20)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t20
 contrast.matrix <- makeContrasts(timepointt20, levels=design_results_t0_t20)
@@ -672,7 +698,7 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_results_t0_t24 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t24 <- lmFit(mat_results_t0_t24, design_results_t0_t24)
+fit_results_t0_t24 <- lmFit(mat_ZM, design_results_t0_t24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
 contrast.matrix <- makeContrasts(timepointt24, levels=design_results_t0_t24)
@@ -872,7 +898,7 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_results_t0_t36 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t36 <- lmFit(mat_results_t0_t36, design_results_t0_t36)
+fit_results_t0_t36 <- lmFit(mat_ZM, design_results_t0_t36)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t36
 contrast.matrix <- makeContrasts(timepointt36, levels=design_results_t0_t36)
@@ -1072,7 +1098,7 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_results_t0_t48 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit_results_t0_t48 <- lmFit(mat_results_t0_t48, design_results_t0_t48)
+fit_results_t0_t48 <- lmFit(mat_ZM, design_results_t0_t48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
 contrast.matrix <- makeContrasts(timepointt48, levels=design_results_t0_t48)
