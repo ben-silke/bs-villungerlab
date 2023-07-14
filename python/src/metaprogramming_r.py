@@ -341,7 +341,7 @@ EnhancedVolcano(
 
 ```{self._r_false_include}
 results_ordered_{variable} <- add_annotations_to_results(results_ordered_{variable})
-results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})[1:100, ]
+results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})
 write.csv(results_ordered_{variable}_df, file = "../../../results/batch_corrected_{variable}_data.csv")
 
 ```
