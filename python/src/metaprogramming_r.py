@@ -17,6 +17,7 @@ class RFileWriter():
     }
 
     _r = "{r}"
+    _r_false_include = "{r include=FALSE}"
 
     def __init__(self, treatment: str, directory: str, file_location: str, all_replicates: bool) -> None:
         self.treatment = treatment
@@ -30,7 +31,8 @@ class RFileWriter():
         content = f"""
 {outline}
 # {self.treatment} Analysis {tabset_detail}
-
+## Exploratory Analysis
+{self.write_intro_analysis()}
 """
 
         for time in self.time_dict[self.treatment][1]:
@@ -38,12 +40,13 @@ class RFileWriter():
 
             time_content = f"""
 
+            
 ## Time -- {self.treatment} T0 to T{time} {tabset_detail}
 {self.exploration_analyis(0, time)}
 
 {self.differential_expression_analysis(0,time)}
 
-{self.write_batch_limma_analysis(variable_name, time)}
+{self.write_batch_limma_analysis(variable_name, time, self.treatment)}
 
 """
             content = content + time_content
@@ -54,8 +57,59 @@ class RFileWriter():
         file = f'{self.treatment}_{replicate_file_name}_analysis.Rmd'
 
         with open(file, 'w') as f:
-            f.write(content) 
+            f.write(content)
 
+    def write_intro_analysis(self):
+        tabset_detail = "{.tabset}"
+        variable = f'results_{self.treatment}'
+        content = f"""
+
+### PCA
+#### VST - Variance Stablised Transformation
+```{self._r}
+vsd_{self.treatment} <- vst(dds, blind=FALSE)
+plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
+```
+#### rLog
+```{self._r}
+rld_{self.treatment} <- rlog(dds, blind=FALSE)
+plotPCA(rld_{self.treatment}, intgroup=c('batch', 'timepoint'))
+```
+
+### Heatmap
+#### Euclidian Distance
+{self.write_heatmap(self.treatment)}
+
+#### Poission Distance
+{self.write_poi_heatmap(self.treatment)}
+
+
+
+        
+We can use the package limma to account for the batch effect:
+https://bioconductor.org/packages/release/bioc/html/limma.html
+
+We can see that there is a clear batch effect.
+```{self._r}
+vsd_{self.treatment} <- vst(dds, blind=FALSE)
+plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
+
+```
+
+Using limma we can normalise the counts for this.
+```{self._r}
+mat_{self.treatment} <- assay(vsd_{self.treatment})
+mm_{self.treatment} <- model.matrix(~timepoint, colData(vsd_{self.treatment}))
+mat_{self.treatment} <- limma::removeBatchEffect(mat_{self.treatment}, batch=vsd_{self.treatment}$batch, design=mm_{variable})
+assay(vsd_{self.treatment}) <- mat_{self.treatment}
+plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
+
+```
+    
+
+"""
+        return content
+    
     def exploration_analyis(self, start, end):
         tabset_detail = "{.tabset}"
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
@@ -63,25 +117,6 @@ class RFileWriter():
 
         content = f"""
 ### Exploratory Analysis {tabset_detail}
-#### PCA
-##### VST - Variance Stablised Transformation
-```{self._r}
-vsd_{variable_name} <- vst(dds, blind=FALSE)
-plotPCA(vsd_{variable_name}, intgroup=c('batch', 'timepoint'))
-```
-##### rLog
-```{self._r}
-rld_{variable_name} <- rlog(dds, blind=FALSE)
-plotPCA(rld_{variable_name}, intgroup=c('batch', 'timepoint'))
-```
-#### Heatmap
-##### Euclidian Distance
-{self.write_heatmap(variable_name)}
-
-##### Poission Distance
-{self.write_poi_heatmap(variable_name)}
-
-
 
 #### Summary
 ##### General Summary
@@ -251,30 +286,12 @@ EnhancedVolcano({variable},
 """
         return content
 
-    def write_batch_limma_analysis(self, variable, timepoint):
+    def write_batch_limma_analysis(self, variable, timepoint, treatment):
 
         content = f"""
 
 ### Batch Effects 
-We can use the package limma to account for the batch effect:
-https://bioconductor.org/packages/release/bioc/html/limma.html
 
-We can see that there is a clear batch effect.
-```{self._r}
-vsd_{variable} <- vst(dds, blind=FALSE)
-plotPCA(vsd_{variable}, intgroup=c('batch', 'timepoint'))
-
-```
-
-Using limma we can normalise the counts for this.
-```{self._r}
-mat_{variable} <- assay(vsd_{variable})
-mm_{variable} <- model.matrix(~timepoint, colData(vsd_{variable}))
-mat_{variable} <- limma::removeBatchEffect(mat_{variable}, batch=vsd_{variable}$batch, design=mm_{variable})
-assay(vsd_{variable}) <- mat_{variable}
-plotPCA(vsd_{variable}, intgroup=c('batch', 'timepoint'))
-
-```
 
 
 ##### Differential expression analysis with limma
@@ -282,7 +299,7 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{self._r}
-design_{variable} <- model.matrix(~ timepoint, colData(vsd_{variable}))
+design_{variable} <- model.matrix(~ timepoint, colData(vsd_{treatment}))
 fit_{variable} <- lmFit(mat_{variable}, design_{variable})
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t{timepoint}
@@ -315,6 +332,13 @@ EnhancedVolcano(
     pointSize = 3.0,
     labSize = 3.0
 )
+
+```
+
+```{self._r_false_include}
+results_ordered_{variable} <- add_annotations_to_results(results_ordered_{variable})
+results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})[1:100, ]
+write.csv(results_ordered_{variable}_df, file = "../../../results/batch_corrected_{variable}_data.csv")
 
 ```
 
