@@ -344,7 +344,7 @@ EnhancedVolcano(
 ```{self._r_false_include}
 results_ordered_{variable} <- add_annotations_to_results(results_ordered_{variable})
 results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})
-write.csv(results_ordered_{variable}_df, file = "../../../results/batch_corrected_{variable}_data.csv")
+write.csv(results_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
 
 ```
 
@@ -393,8 +393,9 @@ library(org.Hs.eg.db)
 library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
+library("limma")
 
-load("../../data/%s_data.RData")
+load("../../../data/%s_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
@@ -435,7 +436,8 @@ res$entrez <- mapIds(org.Hs.eg.db,
                     multiVals="first")
 return (res)
 }
-"""
+"""         
+            included_content = 'r include_source, include=FALSE, code = readLines("r/src/utils.R"), code = readLines("r/src/pca_utils.R")'
             content = f"""
 ---
 title: "Salmon Analysis - {self.treatment}: {replicate_file_name}"
@@ -455,8 +457,11 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("vsn")
 library("genefilter")
-source("r/src/utils.R")
-source("r/src/pca_utils.R")
+
+```
+
+
+```{included_content}
 
 times = {times}
 treatment <- "{self.treatment}"
@@ -464,7 +469,7 @@ treatment <- "{self.treatment}"
 
 dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
+# save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
 
 res <- results(dds)
 resOrdered <- res[order(res$padj),]
@@ -475,7 +480,7 @@ head(resOrdered)
 resOrderedDF <- as.data.frame(resOrdered)
 write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
 
-load("../../data/%s_data.RData")
+# load("../../../data/%s_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
