@@ -1,7 +1,7 @@
 
 
 ---
-title: "Salmon Analysis - Etop: r1to6"
+title: "Salmon Analysis - Etop_r1to6 "
 output: html_document
 ---
 
@@ -13,36 +13,14 @@ library("ashr")
 library(EnhancedVolcano)
 library(org.Hs.eg.db)
 library("pheatmap")
-library("limma")
 library("RColorBrewer")
 library("PoiClaClu")
-library("vsn")
-library("genefilter")
-source("r/src/utils.R")
-source("r/src/pca_utils.R")
+library("limma")
 
-times = c(0, 8, 12, 16, 24, 48)
-treatment <- "Etop"
-data_directory = file.path('/Volumes/bs_external/villunger', glue('organised/{treatment}/output_salmon'))
-
-dds <- create_dds('Etop', data_directory, times, "salmon_quant", 1:6)
-# Create the data and then save it
-save(dds, file = glue('r/data/', "Etop_r1to6_data.RData"))
-
-res <- results(dds)
-resOrdered <- res[order(res$padj),]
-resOrdered <- add_annotations_to_results(resOrdered)
-
-head(resOrdered)
-
-resOrderedDF <- as.data.frame(resOrdered)
-write.csv(resOrderedDF, file = "results/Etop_r1to6_data.csv")
-
-load("../../data/%s_data.RData")
+load("../../data/Etop_r1to6_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
-
 
 add_annotations_to_results <- function(res) {
 ens.str <- substr(rownames(res), 1, 15)
@@ -58,10 +36,8 @@ res$entrez <- mapIds(org.Hs.eg.db,
                     multiVals="first")
 return (res)
 }
-
-
 ```
-            
+        
 # Etop Analysis {.tabset}
 ## Exploratory Analysis
 

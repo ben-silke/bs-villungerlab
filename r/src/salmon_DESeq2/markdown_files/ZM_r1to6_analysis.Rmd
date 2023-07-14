@@ -1,7 +1,7 @@
 
 
 ---
-title: "Salmon Analysis - ZM: r1to6"
+title: "Salmon Analysis - ZM_r1to6 "
 output: html_document
 ---
 
@@ -13,36 +13,14 @@ library("ashr")
 library(EnhancedVolcano)
 library(org.Hs.eg.db)
 library("pheatmap")
-library("limma")
 library("RColorBrewer")
 library("PoiClaClu")
-library("vsn")
-library("genefilter")
-source("r/src/utils.R")
-source("r/src/pca_utils.R")
-
-times = c(0, 16, 20, 24, 36, 48)
-treatment <- "ZM"
-data_directory = file.path('/Volumes/bs_external/villunger', glue('organised/{treatment}/output_salmon'))
-
-dds <- create_dds('ZM', data_directory, times, "salmon_quant", 1:6)
-# Create the data and then save it
-save(dds, file = glue('r/data/', "ZM_r1to6_data.RData"))
-
-res <- results(dds)
-resOrdered <- res[order(res$padj),]
-resOrdered <- add_annotations_to_results(resOrdered)
-
-head(resOrdered)
-
-resOrderedDF <- as.data.frame(resOrdered)
-write.csv(resOrderedDF, file = "results/ZM_r1to6_data.csv")
-
-load("../../data/%s_data.RData")
+library("limma")
+getwd()
+load("../../../data/ZM_r1to6_data.RData")
 dds
 results <- results(dds)
 resultsNames(dds)
-
 
 add_annotations_to_results <- function(res) {
 ens.str <- substr(rownames(res), 1, 15)
@@ -58,10 +36,8 @@ res$entrez <- mapIds(org.Hs.eg.db,
                     multiVals="first")
 return (res)
 }
-
-
 ```
-            
+        
 # ZM Analysis {.tabset}
 ## Exploratory Analysis
 
@@ -336,7 +312,7 @@ EnhancedVolcano(
 ```{r include=FALSE}
 results_ordered_results_t0_t16 <- add_annotations_to_results(results_ordered_results_t0_t16)
 results_ordered_results_t0_t16_df <- as.data.frame(results_ordered_results_t0_t16)
-write.csv(results_ordered_results_t0_t16_df, file = "../../../results/batch_corrected_results_t0_t16_data.csv")
+write.csv(results_ordered_results_t0_t16_df, file = "../../../../results/batch_corrected_results_t0_t16_data.csv")
 
 ```
 
