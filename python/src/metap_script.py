@@ -1,4 +1,4 @@
-from metaprogramming_r import RFileWriter
+from metaprogramming_r import SalmonRFileWriter
 
 
 import click
@@ -10,7 +10,7 @@ import click
 @click.option('--all_replicates', '-r', is_flag=True, help="include all replicates? or just 1-3?")
 
 def create_files(treatment, directory, file_location, all_replicates):
-    file_writer = RFileWriter(treatment, directory, file_location, all_replicates)
+    file_writer = SalmonRFileWriter(treatment, directory, file_location, all_replicates)
     file_writer.write_r_file()
     file_writer.write_markdown_file()
 

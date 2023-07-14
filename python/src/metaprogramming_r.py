@@ -1,4 +1,3 @@
-
 class RFileWriter():
     treatment: str
     directory: str
@@ -24,42 +23,6 @@ class RFileWriter():
         self.directory = directory
         self.all_replicates = all_replicates
         self.file_location = file_location
-
-    def write_r_file(self):
-        replicate = "1:6" if self.all_replicates else "1:3"
-        times = self.time_dict[self.treatment][0]
-        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-
-        content = f"""
-library("vsn")
-library("genefilter")
-source("r/src/utils.R")
-source("r/src/pca_utils.R")
-
-times = {times}
-treatment <- "{self.treatment}"
-{self.file_location}
-
-dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
-# Create the data and then save it
-save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
-
-res <- results(dds)
-resOrdered <- res[order(res$padj),]
-resOrdered <- add_annotations_to_results(resOrdered)
-
-head(resOrdered)
-
-resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
-write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
-
-        """
-
-        # file = f'{self.directory}/{self.treatment}_create_data.R'
-
-        file = f"{self.treatment}_{replicate_file_name}_create_data.R"
-        with open(file, 'w') as f:
-            f.write(content) 
 
     def write_markdown_file(self):
         outline = self.markdown_outline()
@@ -459,3 +422,48 @@ pheatmap(samplePoisDistMatrix_{variable},
 ```
 """
         return content
+
+class SalmonRFileWriter(RFileWriter):
+
+    def write_r_file(self):
+        replicate = "1:6" if self.all_replicates else "1:3"
+        times = self.time_dict[self.treatment][0]
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+
+        content = f"""
+library("vsn")
+library("genefilter")
+source("r/src/utils.R")
+source("r/src/pca_utils.R")
+
+times = {times}
+treatment <- "{self.treatment}"
+{self.file_location}
+
+dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
+# Create the data and then save it
+save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
+
+res <- results(dds)
+resOrdered <- res[order(res$padj),]
+resOrdered <- add_annotations_to_results(resOrdered)
+
+head(resOrdered)
+
+resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
+write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
+"""
+
+        # file = f'{self.directory}/{self.treatment}_create_data.R'
+
+        file = f"{self.treatment}_{replicate_file_name}_create_data.R"
+        with open(file, 'w') as f:
+            f.write(content) 
+
+    
+    
+
+class StarRFileWriter(RFileWriter):
+    def write_r_data_file(self):
+        pass
+    
