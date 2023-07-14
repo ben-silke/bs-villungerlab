@@ -15,6 +15,7 @@ library(org.Hs.eg.db)
 library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
+library("limma")
 
 load("../../data/ZM_r1to6_data.RData")
 dds
