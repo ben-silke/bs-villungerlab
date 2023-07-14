@@ -2,7 +2,7 @@
 # Mapping step using STAR
 
 # Move to the data folder
-external_drive="/nobackup/lab_villunger/bsilke"
+datadir="/nobackup/lab_villunger/bsilke"
 cd $external_drive
 
 # Include all times, can exclude based upon experiement later.
@@ -15,46 +15,35 @@ treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 # --genomeDir ../../data/references/STAR \
 # --readFilesIn "specific to the files"
 
-
+ls
 # This command should run the STAR mapping process for all treatments/ times.
 for treatment in ${treatments[@]}; do
-    output_htseq="organised/${treatment}/output_htseq_counts"
+    output_htseq="$datadir/organised/${treatment}/output_htseq_counts"
     mkdir $output_htseq
 
     # where do you store stars?
-    night_sky="organised/${treatment}/ouput_STAR"
+    night_sky="$datadir/organised/${treatment}/output_STAR"
     mkdir $night_sky
+    
 
-    input_trimmed_folder="organised/${treatment}/output_trimmed"
+    input_trimmed_folder="$datadir/organised/${treatment}/output_trimmed"
 
     for time in ${times[@]}; do
         for replicate in ${replicates[@]}; do
-            (
             file="${treatment}_${time}_${replicate}"
 
             echo "Mapping STARS in $file"
 
             input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${file}.fastq"
+            output_file="${night_sky}/${file}"
 
             STAR \
             --runThreadN 4 \
-            --genomeDir star_index \
+            --genomeDir $datadir/star_index \
             --readFilesIn "$input_trimmed_file" \
-            --outFileNamePrefix "$night_sky"
-            ) &
+            --outFileNamePrefix "${night_sky}/${file}_"
             # Now we should delete the old file
             # rm $input_trimmed_file
-
-            # if htseq is not installed on the cluster
-
-            # htseq-count \
-            # -m union \
-            # -i gene_name \
-            # -a 10 \
-            # --stranded=no \
-            # $night_sky \              # aligned out files
-            # "$external_drive/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.gff3" \  # annotation file
-            # "$output_htseq/htseq_count_${file}.counts"   # output files
         done
     done
 done
