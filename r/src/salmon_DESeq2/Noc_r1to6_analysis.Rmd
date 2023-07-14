@@ -295,6 +295,17 @@ EnhancedVolcano(
 
 ```
 
+```{r include=FALSE}
+results_ordered_results_t0_t16
+
+results_ordered_results_t0_t16 <- add_annotations_to_results(results_ordered_results_t0_t16)
+
+head(results_ordered_results_t0_t16)
+
+results_ordered_results_t0_t16_df <- as.data.frame(results_ordered_results_t0_t16)[1:100, ]
+write.csv(results_ordered_results_t0_t16_df, file = "results/Noc_r1to6_data.csv")
+
+```
 
 
 
