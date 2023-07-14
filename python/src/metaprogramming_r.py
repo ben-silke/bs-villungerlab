@@ -478,11 +478,9 @@ resOrdered <- add_annotations_to_results(resOrdered)
 
 head(resOrdered)
 
-resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
+resOrderedDF <- as.data.frame(resOrdered)
 write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
 """
-
-        # file = f'{self.directory}/{self.treatment}_create_data.R'
 
         file = f"{self.treatment}_{replicate_file_name}_create_data.R"
         with open(file, 'w') as f:
