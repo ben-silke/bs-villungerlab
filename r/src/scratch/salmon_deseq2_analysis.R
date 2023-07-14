@@ -20,7 +20,7 @@ times <- c(0,16,24,36,48)
 
 default_file_prefix <- "salmon_quant_"
 
-parse_filename <- function(filename, file_prefix=default_file_prefix) {
+# parse_filename <- function(filename, file_prefix=default_file_prefix) {
   
   name <- str_extract(filename, "(?<=salmon_quant_)[^_]*")
   time <- str_extract(filename, "(?<=_)[^_]*(?=_r)")
@@ -37,7 +37,7 @@ parse_filename <- function(filename, file_prefix=default_file_prefix) {
   return(c(name, time, replicate, batch))
 }
 
-create_treatment_data <- function(treatment_name, data_directory, times, file_prefix, replicates_list) {
+# create_treatment_data <- function(treatment_name, data_directory, times, file_prefix, replicates_list) {
   replicates <- unlist(lapply(replicates_list, function(i) { paste0("r", i)}))
   # Create the files
   files <- list()
@@ -59,7 +59,7 @@ create_treatment_data <- function(treatment_name, data_directory, times, file_pr
   return(data_frame)
 }
 
-create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
+# create_dds <- function(treatment, salmon_data_directory, times, file_prefix, replicates_list, batch_correction=TRUE, trim_data=TRUE) {
   data_frame <- create_treatment_data(treatment, salmon_data_directory, times, files_prefix, replicates_list)
   print(colnames(data_frame))
   # Check if all files exist

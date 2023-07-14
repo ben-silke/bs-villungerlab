@@ -43,6 +43,9 @@ create_treatment_data <- function(treatment_name, data_directory, times, file_pr
     }
   }
   files <- unlist(files)
+
+  print(files)
+  print(file.exists(files))
   data_frame <- data.frame(files=files, stringsAsFactors = FALSE)
   parsed_values <- do.call("rbind", lapply(data_frame$files, parse_filename))
   data_frame$names <- parsed_values[, 1]
@@ -56,6 +59,9 @@ create_dds <- function(treatment, salmon_data_directory, times, file_prefix, rep
   data_frame <- create_treatment_data(treatment, salmon_data_directory, times, file_prefix, replicates_list)
   print(colnames(data_frame))
   # Check if all files exist
+  print(data_frame$files)
+  file.exists(data_frame$files)
+  
   stopifnot(file.exists(data_frame$files))
   summarized_experiement <- tximeta(data_frame)
   gene_se <- summarizeToGene(summarized_experiement)
