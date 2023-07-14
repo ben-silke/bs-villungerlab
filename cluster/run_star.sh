@@ -29,7 +29,7 @@ echo "======================"
 # *** setup environment ***
 # load the required environmental modules that your script depends upon
 module load STAR
-
+module load HTSeq
 # *** run the job ***
 date
 ./celestial_cartography.sh
