@@ -12,7 +12,7 @@ class RFileWriter():
     time_dict = {
         'ZM': long_times,
         'Noc': long_times,
-        'DCHB': long_times,
+        'DHCB': long_times,
         'Nutl': short_times,
         'Etop': short_times
     }
@@ -35,11 +35,10 @@ library("vsn")
 library("genefilter")
 source("r/src/utils.R")
 source("r/src/pca_utils.R")
-{self.file_location}
 
 times = {times}
 treatment <- "{self.treatment}"
-
+{self.file_location}
 
 dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
