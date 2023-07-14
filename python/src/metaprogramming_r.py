@@ -70,14 +70,20 @@ class RFileWriter():
 vsd_{self.treatment} <- vst(dds, blind=FALSE)
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 ```
+
+
 #### rLog
+
 ```{self._r}
 rld_{self.treatment} <- rlog(dds, blind=FALSE)
 plotPCA(rld_{self.treatment}, intgroup=c('batch', 'timepoint'))
 ```
 
+
 ### Heatmap
+
 #### Euclidian Distance
+
 {self.write_heatmap(self.treatment)}
 
 #### Poission Distance
@@ -291,8 +297,6 @@ EnhancedVolcano({variable},
         content = f"""
 
 ### Batch Effects 
-
-
 
 ##### Differential expression analysis with limma
 After we have adjusted counts for the batch effect, 
