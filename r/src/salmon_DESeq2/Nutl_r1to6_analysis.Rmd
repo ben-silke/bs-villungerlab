@@ -15,7 +15,6 @@ library(org.Hs.eg.db)
 library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
-library("limma")
 
 load("../../data/Nutl_r1to6_data.RData")
 dds
@@ -39,57 +38,91 @@ return (res)
 ```
         
 # Nutl Analysis {.tabset}
+## Exploratory Analysis
+
+
+### PCA
+#### VST - Variance Stablised Transformation
+```{r}
+vsd_Nutl <- vst(dds, blind=FALSE)
+plotPCA(vsd_Nutl, intgroup=c('batch', 'timepoint'))
+```
+
+
+#### rLog
+
+```{r}
+rld_Nutl <- rlog(dds, blind=FALSE)
+plotPCA(rld_Nutl, intgroup=c('batch', 'timepoint'))
+```
+
+
+### Heatmap
+
+#### Euclidian Distance
 
 
 
+```{r}
+sampleDists_Nutl <- dist(t(assay(vsd_Nutl)))
+
+sampleDistMatrix_Nutl <- as.matrix( sampleDists_Nutl )
+rownames(sampleDistMatrix_Nutl) <- paste( vsd_Nutl$timepoint, vsd_Nutl$batch, sep = "_" )
+colnames(sampleDistMatrix_Nutl) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix_Nutl,
+         clustering_distance_rows = sampleDists_Nutl,
+         clustering_distance_cols = sampleDists_Nutl,
+         col = colors)
+```
+
+
+#### Poission Distance
+
+```{r}
+poisd_Nutl <- PoissonDistance(t(counts(dds)))
+
+samplePoisDistMatrix_Nutl <- as.matrix( poisd_Nutl$dd )
+rownames(samplePoisDistMatrix_Nutl) <- paste( vsd_Nutl$timepoint, vsd_Nutl$batch, sep = "_" )
+colnames(samplePoisDistMatrix_Nutl) <- NULL
+pheatmap(samplePoisDistMatrix_Nutl,
+         clustering_distance_rows = poisd_Nutl$dd,
+         clustering_distance_cols = poisd_Nutl$dd,
+         col = colors)
+```
+
+
+
+
+        
+We can use the package limma to account for the batch effect:
+https://bioconductor.org/packages/release/bioc/html/limma.html
+
+We can see that there is a clear batch effect.
+```{r}
+vsd_Nutl <- vst(dds, blind=FALSE)
+plotPCA(vsd_Nutl, intgroup=c('batch', 'timepoint'))
+
+```
+
+Using limma we can normalise the counts for this.
+```{r}
+mat_Nutl <- assay(vsd_Nutl)
+mm_Nutl <- model.matrix(~timepoint, colData(vsd_Nutl))
+mat_Nutl <- limma::removeBatchEffect(mat_Nutl, batch=vsd_Nutl$batch, design=mm_results_Nutl)
+assay(vsd_Nutl) <- mat_Nutl
+plotPCA(vsd_Nutl, intgroup=c('batch', 'timepoint'))
+
+```
+    
+
+
+
+
+            
 ## Time -- Nutl T0 to T8 {.tabset}
 
 ### Exploratory Analysis {.tabset}
-#### PCA
-##### VST - Variance Stablised Transformation
-```{r}
-vsd_results_t8_t0 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t8_t0, intgroup=c('batch', 'timepoint'))
-```
-##### rLog
-```{r}
-rld_results_t8_t0 <- rlog(dds, blind=FALSE)
-plotPCA(rld_results_t8_t0, intgroup=c('batch', 'timepoint'))
-```
-#### Heatmap
-##### Euclidian Distance
-
-
-```{r}
-sampleDists_results_t8_t0 <- dist(t(assay(vsd_results_t8_t0)))
-
-sampleDistMatrix_results_t8_t0 <- as.matrix( sampleDists_results_t8_t0 )
-rownames(sampleDistMatrix_results_t8_t0) <- paste( vsd_results_t8_t0$timepoint, vsd_results_t8_t0$batch, sep = "_" )
-colnames(sampleDistMatrix_results_t8_t0) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix_results_t8_t0,
-         clustering_distance_rows = sampleDists_results_t8_t0,
-         clustering_distance_cols = sampleDists_results_t8_t0,
-         col = colors)
-```
-
-
-##### Poission Distance
-
-```{r}
-poisd_results_t8_t0 <- PoissonDistance(t(counts(dds)))
-
-samplePoisDistMatrix_results_t8_t0 <- as.matrix( poisd_results_t8_t0$dd )
-rownames(samplePoisDistMatrix_results_t8_t0) <- paste( vsd_results_t8_t0$timepoint, vsd_results_t8_t0$batch, sep = "_" )
-colnames(samplePoisDistMatrix_results_t8_t0) <- NULL
-pheatmap(samplePoisDistMatrix_results_t8_t0,
-         clustering_distance_rows = poisd_results_t8_t0$dd,
-         clustering_distance_cols = poisd_results_t8_t0$dd,
-         col = colors)
-```
-
-
-
 
 #### Summary
 ##### General Summary
@@ -233,33 +266,13 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 ### Batch Effects 
-We can use the package limma to account for the batch effect:
-https://bioconductor.org/packages/release/bioc/html/limma.html
-
-We can see that there is a clear batch effect.
-```{r}
-vsd_results_t0_t8 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t0_t8, intgroup=c('batch', 'timepoint'))
-
-```
-
-Using limma we can normalise the counts for this.
-```{r}
-mat_results_t0_t8 <- assay(vsd_results_t0_t8)
-mm_results_t0_t8 <- model.matrix(~timepoint, colData(vsd_results_t0_t8))
-mat_results_t0_t8 <- limma::removeBatchEffect(mat_results_t0_t8, batch=vsd_results_t0_t8$batch, design=mm_results_t0_t8)
-assay(vsd_results_t0_t8) <- mat_results_t0_t8
-plotPCA(vsd_results_t0_t8, intgroup=c('batch', 'timepoint'))
-
-```
-
 
 ##### Differential expression analysis with limma
 After we have adjusted counts for the batch effect, 
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t8 <- model.matrix(~ timepoint, colData(vsd_results_t0_t8))
+design_results_t0_t8 <- model.matrix(~ timepoint, colData(vsd_Nutl))
 fit_results_t0_t8 <- lmFit(mat_results_t0_t8, design_results_t0_t8)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t8
@@ -295,58 +308,21 @@ EnhancedVolcano(
 
 ```
 
+```{r include=FALSE}
+results_ordered_results_t0_t8 <- add_annotations_to_results(results_ordered_results_t0_t8)
+results_ordered_results_t0_t8_df <- as.data.frame(results_ordered_results_t0_t8)
+write.csv(results_ordered_results_t0_t8_df, file = "../../../results/batch_corrected_results_t0_t8_data.csv")
+
+```
 
 
 
 
+
+            
 ## Time -- Nutl T0 to T12 {.tabset}
 
 ### Exploratory Analysis {.tabset}
-#### PCA
-##### VST - Variance Stablised Transformation
-```{r}
-vsd_results_t12_t0 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t12_t0, intgroup=c('batch', 'timepoint'))
-```
-##### rLog
-```{r}
-rld_results_t12_t0 <- rlog(dds, blind=FALSE)
-plotPCA(rld_results_t12_t0, intgroup=c('batch', 'timepoint'))
-```
-#### Heatmap
-##### Euclidian Distance
-
-
-```{r}
-sampleDists_results_t12_t0 <- dist(t(assay(vsd_results_t12_t0)))
-
-sampleDistMatrix_results_t12_t0 <- as.matrix( sampleDists_results_t12_t0 )
-rownames(sampleDistMatrix_results_t12_t0) <- paste( vsd_results_t12_t0$timepoint, vsd_results_t12_t0$batch, sep = "_" )
-colnames(sampleDistMatrix_results_t12_t0) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix_results_t12_t0,
-         clustering_distance_rows = sampleDists_results_t12_t0,
-         clustering_distance_cols = sampleDists_results_t12_t0,
-         col = colors)
-```
-
-
-##### Poission Distance
-
-```{r}
-poisd_results_t12_t0 <- PoissonDistance(t(counts(dds)))
-
-samplePoisDistMatrix_results_t12_t0 <- as.matrix( poisd_results_t12_t0$dd )
-rownames(samplePoisDistMatrix_results_t12_t0) <- paste( vsd_results_t12_t0$timepoint, vsd_results_t12_t0$batch, sep = "_" )
-colnames(samplePoisDistMatrix_results_t12_t0) <- NULL
-pheatmap(samplePoisDistMatrix_results_t12_t0,
-         clustering_distance_rows = poisd_results_t12_t0$dd,
-         clustering_distance_cols = poisd_results_t12_t0$dd,
-         col = colors)
-```
-
-
-
 
 #### Summary
 ##### General Summary
@@ -490,33 +466,13 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 ### Batch Effects 
-We can use the package limma to account for the batch effect:
-https://bioconductor.org/packages/release/bioc/html/limma.html
-
-We can see that there is a clear batch effect.
-```{r}
-vsd_results_t0_t12 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t0_t12, intgroup=c('batch', 'timepoint'))
-
-```
-
-Using limma we can normalise the counts for this.
-```{r}
-mat_results_t0_t12 <- assay(vsd_results_t0_t12)
-mm_results_t0_t12 <- model.matrix(~timepoint, colData(vsd_results_t0_t12))
-mat_results_t0_t12 <- limma::removeBatchEffect(mat_results_t0_t12, batch=vsd_results_t0_t12$batch, design=mm_results_t0_t12)
-assay(vsd_results_t0_t12) <- mat_results_t0_t12
-plotPCA(vsd_results_t0_t12, intgroup=c('batch', 'timepoint'))
-
-```
-
 
 ##### Differential expression analysis with limma
 After we have adjusted counts for the batch effect, 
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t12 <- model.matrix(~ timepoint, colData(vsd_results_t0_t12))
+design_results_t0_t12 <- model.matrix(~ timepoint, colData(vsd_Nutl))
 fit_results_t0_t12 <- lmFit(mat_results_t0_t12, design_results_t0_t12)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t12
@@ -552,58 +508,21 @@ EnhancedVolcano(
 
 ```
 
+```{r include=FALSE}
+results_ordered_results_t0_t12 <- add_annotations_to_results(results_ordered_results_t0_t12)
+results_ordered_results_t0_t12_df <- as.data.frame(results_ordered_results_t0_t12)
+write.csv(results_ordered_results_t0_t12_df, file = "../../../results/batch_corrected_results_t0_t12_data.csv")
+
+```
 
 
 
 
+
+            
 ## Time -- Nutl T0 to T16 {.tabset}
 
 ### Exploratory Analysis {.tabset}
-#### PCA
-##### VST - Variance Stablised Transformation
-```{r}
-vsd_results_t16_t0 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t16_t0, intgroup=c('batch', 'timepoint'))
-```
-##### rLog
-```{r}
-rld_results_t16_t0 <- rlog(dds, blind=FALSE)
-plotPCA(rld_results_t16_t0, intgroup=c('batch', 'timepoint'))
-```
-#### Heatmap
-##### Euclidian Distance
-
-
-```{r}
-sampleDists_results_t16_t0 <- dist(t(assay(vsd_results_t16_t0)))
-
-sampleDistMatrix_results_t16_t0 <- as.matrix( sampleDists_results_t16_t0 )
-rownames(sampleDistMatrix_results_t16_t0) <- paste( vsd_results_t16_t0$timepoint, vsd_results_t16_t0$batch, sep = "_" )
-colnames(sampleDistMatrix_results_t16_t0) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix_results_t16_t0,
-         clustering_distance_rows = sampleDists_results_t16_t0,
-         clustering_distance_cols = sampleDists_results_t16_t0,
-         col = colors)
-```
-
-
-##### Poission Distance
-
-```{r}
-poisd_results_t16_t0 <- PoissonDistance(t(counts(dds)))
-
-samplePoisDistMatrix_results_t16_t0 <- as.matrix( poisd_results_t16_t0$dd )
-rownames(samplePoisDistMatrix_results_t16_t0) <- paste( vsd_results_t16_t0$timepoint, vsd_results_t16_t0$batch, sep = "_" )
-colnames(samplePoisDistMatrix_results_t16_t0) <- NULL
-pheatmap(samplePoisDistMatrix_results_t16_t0,
-         clustering_distance_rows = poisd_results_t16_t0$dd,
-         clustering_distance_cols = poisd_results_t16_t0$dd,
-         col = colors)
-```
-
-
-
 
 #### Summary
 ##### General Summary
@@ -747,33 +666,13 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 ### Batch Effects 
-We can use the package limma to account for the batch effect:
-https://bioconductor.org/packages/release/bioc/html/limma.html
-
-We can see that there is a clear batch effect.
-```{r}
-vsd_results_t0_t16 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t0_t16, intgroup=c('batch', 'timepoint'))
-
-```
-
-Using limma we can normalise the counts for this.
-```{r}
-mat_results_t0_t16 <- assay(vsd_results_t0_t16)
-mm_results_t0_t16 <- model.matrix(~timepoint, colData(vsd_results_t0_t16))
-mat_results_t0_t16 <- limma::removeBatchEffect(mat_results_t0_t16, batch=vsd_results_t0_t16$batch, design=mm_results_t0_t16)
-assay(vsd_results_t0_t16) <- mat_results_t0_t16
-plotPCA(vsd_results_t0_t16, intgroup=c('batch', 'timepoint'))
-
-```
-
 
 ##### Differential expression analysis with limma
 After we have adjusted counts for the batch effect, 
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t16 <- model.matrix(~ timepoint, colData(vsd_results_t0_t16))
+design_results_t0_t16 <- model.matrix(~ timepoint, colData(vsd_Nutl))
 fit_results_t0_t16 <- lmFit(mat_results_t0_t16, design_results_t0_t16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
@@ -809,58 +708,21 @@ EnhancedVolcano(
 
 ```
 
+```{r include=FALSE}
+results_ordered_results_t0_t16 <- add_annotations_to_results(results_ordered_results_t0_t16)
+results_ordered_results_t0_t16_df <- as.data.frame(results_ordered_results_t0_t16)
+write.csv(results_ordered_results_t0_t16_df, file = "../../../results/batch_corrected_results_t0_t16_data.csv")
+
+```
 
 
 
 
+
+            
 ## Time -- Nutl T0 to T24 {.tabset}
 
 ### Exploratory Analysis {.tabset}
-#### PCA
-##### VST - Variance Stablised Transformation
-```{r}
-vsd_results_t24_t0 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t24_t0, intgroup=c('batch', 'timepoint'))
-```
-##### rLog
-```{r}
-rld_results_t24_t0 <- rlog(dds, blind=FALSE)
-plotPCA(rld_results_t24_t0, intgroup=c('batch', 'timepoint'))
-```
-#### Heatmap
-##### Euclidian Distance
-
-
-```{r}
-sampleDists_results_t24_t0 <- dist(t(assay(vsd_results_t24_t0)))
-
-sampleDistMatrix_results_t24_t0 <- as.matrix( sampleDists_results_t24_t0 )
-rownames(sampleDistMatrix_results_t24_t0) <- paste( vsd_results_t24_t0$timepoint, vsd_results_t24_t0$batch, sep = "_" )
-colnames(sampleDistMatrix_results_t24_t0) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix_results_t24_t0,
-         clustering_distance_rows = sampleDists_results_t24_t0,
-         clustering_distance_cols = sampleDists_results_t24_t0,
-         col = colors)
-```
-
-
-##### Poission Distance
-
-```{r}
-poisd_results_t24_t0 <- PoissonDistance(t(counts(dds)))
-
-samplePoisDistMatrix_results_t24_t0 <- as.matrix( poisd_results_t24_t0$dd )
-rownames(samplePoisDistMatrix_results_t24_t0) <- paste( vsd_results_t24_t0$timepoint, vsd_results_t24_t0$batch, sep = "_" )
-colnames(samplePoisDistMatrix_results_t24_t0) <- NULL
-pheatmap(samplePoisDistMatrix_results_t24_t0,
-         clustering_distance_rows = poisd_results_t24_t0$dd,
-         clustering_distance_cols = poisd_results_t24_t0$dd,
-         col = colors)
-```
-
-
-
 
 #### Summary
 ##### General Summary
@@ -1004,33 +866,13 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 ### Batch Effects 
-We can use the package limma to account for the batch effect:
-https://bioconductor.org/packages/release/bioc/html/limma.html
-
-We can see that there is a clear batch effect.
-```{r}
-vsd_results_t0_t24 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t0_t24, intgroup=c('batch', 'timepoint'))
-
-```
-
-Using limma we can normalise the counts for this.
-```{r}
-mat_results_t0_t24 <- assay(vsd_results_t0_t24)
-mm_results_t0_t24 <- model.matrix(~timepoint, colData(vsd_results_t0_t24))
-mat_results_t0_t24 <- limma::removeBatchEffect(mat_results_t0_t24, batch=vsd_results_t0_t24$batch, design=mm_results_t0_t24)
-assay(vsd_results_t0_t24) <- mat_results_t0_t24
-plotPCA(vsd_results_t0_t24, intgroup=c('batch', 'timepoint'))
-
-```
-
 
 ##### Differential expression analysis with limma
 After we have adjusted counts for the batch effect, 
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t24 <- model.matrix(~ timepoint, colData(vsd_results_t0_t24))
+design_results_t0_t24 <- model.matrix(~ timepoint, colData(vsd_Nutl))
 fit_results_t0_t24 <- lmFit(mat_results_t0_t24, design_results_t0_t24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
@@ -1066,58 +908,21 @@ EnhancedVolcano(
 
 ```
 
+```{r include=FALSE}
+results_ordered_results_t0_t24 <- add_annotations_to_results(results_ordered_results_t0_t24)
+results_ordered_results_t0_t24_df <- as.data.frame(results_ordered_results_t0_t24)
+write.csv(results_ordered_results_t0_t24_df, file = "../../../results/batch_corrected_results_t0_t24_data.csv")
+
+```
 
 
 
 
+
+            
 ## Time -- Nutl T0 to T48 {.tabset}
 
 ### Exploratory Analysis {.tabset}
-#### PCA
-##### VST - Variance Stablised Transformation
-```{r}
-vsd_results_t48_t0 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t48_t0, intgroup=c('batch', 'timepoint'))
-```
-##### rLog
-```{r}
-rld_results_t48_t0 <- rlog(dds, blind=FALSE)
-plotPCA(rld_results_t48_t0, intgroup=c('batch', 'timepoint'))
-```
-#### Heatmap
-##### Euclidian Distance
-
-
-```{r}
-sampleDists_results_t48_t0 <- dist(t(assay(vsd_results_t48_t0)))
-
-sampleDistMatrix_results_t48_t0 <- as.matrix( sampleDists_results_t48_t0 )
-rownames(sampleDistMatrix_results_t48_t0) <- paste( vsd_results_t48_t0$timepoint, vsd_results_t48_t0$batch, sep = "_" )
-colnames(sampleDistMatrix_results_t48_t0) <- NULL
-colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
-pheatmap(sampleDistMatrix_results_t48_t0,
-         clustering_distance_rows = sampleDists_results_t48_t0,
-         clustering_distance_cols = sampleDists_results_t48_t0,
-         col = colors)
-```
-
-
-##### Poission Distance
-
-```{r}
-poisd_results_t48_t0 <- PoissonDistance(t(counts(dds)))
-
-samplePoisDistMatrix_results_t48_t0 <- as.matrix( poisd_results_t48_t0$dd )
-rownames(samplePoisDistMatrix_results_t48_t0) <- paste( vsd_results_t48_t0$timepoint, vsd_results_t48_t0$batch, sep = "_" )
-colnames(samplePoisDistMatrix_results_t48_t0) <- NULL
-pheatmap(samplePoisDistMatrix_results_t48_t0,
-         clustering_distance_rows = poisd_results_t48_t0$dd,
-         clustering_distance_cols = poisd_results_t48_t0$dd,
-         col = colors)
-```
-
-
-
 
 #### Summary
 ##### General Summary
@@ -1261,33 +1066,13 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 ### Batch Effects 
-We can use the package limma to account for the batch effect:
-https://bioconductor.org/packages/release/bioc/html/limma.html
-
-We can see that there is a clear batch effect.
-```{r}
-vsd_results_t0_t48 <- vst(dds, blind=FALSE)
-plotPCA(vsd_results_t0_t48, intgroup=c('batch', 'timepoint'))
-
-```
-
-Using limma we can normalise the counts for this.
-```{r}
-mat_results_t0_t48 <- assay(vsd_results_t0_t48)
-mm_results_t0_t48 <- model.matrix(~timepoint, colData(vsd_results_t0_t48))
-mat_results_t0_t48 <- limma::removeBatchEffect(mat_results_t0_t48, batch=vsd_results_t0_t48$batch, design=mm_results_t0_t48)
-assay(vsd_results_t0_t48) <- mat_results_t0_t48
-plotPCA(vsd_results_t0_t48, intgroup=c('batch', 'timepoint'))
-
-```
-
 
 ##### Differential expression analysis with limma
 After we have adjusted counts for the batch effect, 
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t48 <- model.matrix(~ timepoint, colData(vsd_results_t0_t48))
+design_results_t0_t48 <- model.matrix(~ timepoint, colData(vsd_Nutl))
 fit_results_t0_t48 <- lmFit(mat_results_t0_t48, design_results_t0_t48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
@@ -1320,6 +1105,13 @@ EnhancedVolcano(
     pointSize = 3.0,
     labSize = 3.0
 )
+
+```
+
+```{r include=FALSE}
+results_ordered_results_t0_t48 <- add_annotations_to_results(results_ordered_results_t0_t48)
+results_ordered_results_t0_t48_df <- as.data.frame(results_ordered_results_t0_t48)
+write.csv(results_ordered_results_t0_t48_df, file = "../../../results/batch_corrected_results_t0_t48_data.csv")
 
 ```
 

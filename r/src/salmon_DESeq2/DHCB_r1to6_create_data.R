@@ -6,8 +6,7 @@ source("r/src/pca_utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "DHCB"
-data_directory = file.path('/Volumes/bs_external/villunger', glue('organised/{treatment}/output_salmon'))
-
+data_directory = file.path('/Volumes/bs_external/villunger', glue('data/organised/{treatment}/output_salmon'))
 
 dds <- create_dds('DHCB', data_directory, times, "salmon_quant", 1:6)
 # Create the data and then save it
@@ -19,7 +18,5 @@ resOrdered <- add_annotations_to_results(resOrdered)
 
 head(resOrdered)
 
-resOrderedDF <- as.data.frame(resOrdered)[1:100, ]
+resOrderedDF <- as.data.frame(resOrdered)
 write.csv(resOrderedDF, file = "results/DHCB_r1to6_data.csv")
-
-        
