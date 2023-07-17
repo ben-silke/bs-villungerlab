@@ -263,7 +263,7 @@ summary({variable_name}_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(%s)
+plotMA(%s, ylim=c(-3,3))
 ```
 
         """ % variable
