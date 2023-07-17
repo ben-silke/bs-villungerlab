@@ -395,9 +395,9 @@ library("PoiClaClu")
 library("limma")
 
 load("../../../data/%s_data.RData")
-dds
-results <- results(dds)
-resultsNames(dds)
+dds_%s
+results <- results(dds_%s)
+resultsNames(dds_%s)
 
 add_annotations_to_results <- function(res) {
 ens.str <- substr(rownames(res), 1, 15)
@@ -414,80 +414,7 @@ res$entrez <- mapIds(org.Hs.eg.db,
 return (res)
 }
 ```
-        """ % (f'{self.treatment}_{replicate_file_name}', f'{self.treatment}_{replicate_file_name}')
-
-        if include_data_create:
-            replicate = "1:6" if self.all_replicates else "1:3"
-            times = self.time_dict[self.treatment][0]
-            replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-            function = """
-add_annotations_to_results <- function(res) {
-ens.str <- substr(rownames(res), 1, 15)
-res$symbol <- mapIds(org.Hs.eg.db,
-                    keys=ens.str,
-                    column="SYMBOL",
-                    keytype="ENSEMBL",
-                    multiVals="first")
-res$entrez <- mapIds(org.Hs.eg.db,
-                    keys=ens.str,
-                    column="ENTREZID",
-                    keytype="ENSEMBL",
-                    multiVals="first")
-return (res)
-}
-"""         
-            included_content = 'r include_source, include=FALSE, code = readLines("r/src/utils.R"), code = readLines("r/src/pca_utils.R")'
-            content = f"""
----
-title: "Salmon Analysis - {self.treatment}: {replicate_file_name}"
-output: html_document
----
-
-```{self._r_setup}
-knitr::opts_chunk$set(echo = TRUE)
-library(DESeq2)
-library("apeglm")
-library("ashr")
-library(EnhancedVolcano)
-library(org.Hs.eg.db)
-library("pheatmap")
-library("limma")
-library("RColorBrewer")
-library("PoiClaClu")
-library("vsn")
-library("genefilter")
-
-```
-
-
-```{included_content}
-
-times = {times}
-treatment <- "{self.treatment}"
-{self.file_location}
-
-dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
-# Create the data and then save it
-# save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
-
-res <- results(dds)
-resOrdered <- res[order(res$padj),]
-resOrdered <- add_annotations_to_results(resOrdered)
-
-head(resOrdered)
-
-resOrderedDF <- as.data.frame(resOrdered)
-write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
-
-# load("../../../data/%s_data.RData")
-dds
-results <- results(dds)
-resultsNames(dds)
-
-{function}
-
-```
-            """
+        """ % f'{self.treatment}_{replicate_file_name}'
 
         return content
 
