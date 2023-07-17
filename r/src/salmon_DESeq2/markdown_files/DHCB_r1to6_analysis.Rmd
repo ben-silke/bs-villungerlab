@@ -130,16 +130,16 @@ plotPCA(vsd_DHCB, intgroup=c('batch', 'timepoint'))
 #### Summary
 ##### General Summary
 ```{r}
-results_t16_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t16", "t0"))
+results_DHCB_t16_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t16", "t0"))
 
-results_t16_t0 = add_annotations_to_results(results_t16_t0)
+results_DHCB_t16_t0 = add_annotations_to_results(results_DHCB_t16_t0)
 
-summary(results_t16_t0)
+summary(results_DHCB_t16_t0)
 
 ```
 ##### Restricted Values
 ```{r}
-results_t16_t0_restricted <-
+results_DHCB_t16_t0_restricted <-
 results(
     dds_DHCB_r1to6,
     alpha = 0.1,
@@ -147,14 +147,14 @@ results(
     lfcThreshold = 1,
     contrast = c("timepoint", "t16", "t0")
 )
-summary(results_t16_t0_restricted)
+summary(results_DHCB_t16_t0_restricted)
 
 ```
 
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t16_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t16_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -168,8 +168,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t16_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t16_vs_t0", type="apeglm")
-summary(results_t16_t0_shrunk_apeglm)
+results_DHCB_t16_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t16_vs_t0", type="apeglm")
+summary(results_DHCB_t16_t0_shrunk_apeglm)
 
 ```
 ###### MA - Plot
@@ -177,7 +177,7 @@ summary(results_t16_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t16_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t16_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -187,16 +187,16 @@ DESeq2::plotMA(results_t16_t0_shrunk_apeglm, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t16_t0_shrunk_apeglm <- add_annotations_to_results(results_t16_t0_shrunk_apeglm)
-selected_genes <- as.character(results_t16_t0_shrunk_apeglm$symbol)
+results_DHCB_t16_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t16_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t16_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t16_t0_shrunk_apeglm,
+EnhancedVolcano(results_DHCB_t16_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t16_t0_shrunk_apeglm',
+                title = 'Differential expression for results_DHCB_t16_t0_shrunk_apeglm',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -208,8 +208,8 @@ EnhancedVolcano(results_t16_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t16_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t16_vs_t0", type="ashr")
-summary(results_t16_t0_shrunk_ashr)
+results_DHCB_t16_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t16_vs_t0", type="ashr")
+summary(results_DHCB_t16_t0_shrunk_ashr)
 
 ```
 ###### MA - Plot
@@ -217,7 +217,7 @@ summary(results_t16_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t16_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t16_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -227,16 +227,16 @@ DESeq2::plotMA(results_t16_t0_shrunk_ashr, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t16_t0_shrunk_ashr <- add_annotations_to_results(results_t16_t0_shrunk_ashr)
-selected_genes <- as.character(results_t16_t0_shrunk_ashr$symbol)
+results_DHCB_t16_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t16_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t16_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t16_t0_shrunk_ashr,
+EnhancedVolcano(results_DHCB_t16_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t16_t0_shrunk_ashr',
+                title = 'Differential expression for results_DHCB_t16_t0_shrunk_ashr',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -248,7 +248,7 @@ EnhancedVolcano(results_t16_t0_shrunk_ashr,
 #### P-Adjusted Analysis
 
 ```{r}
-resSig <- subset(results_t16_t0, padj < 0.1) 
+resSig <- subset(results_DHCB_t16_t0, padj < 0.1) 
 summary(resSig)
 ```
 
@@ -275,28 +275,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t16 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit_results_t0_t16 <- lmFit(mat_DHCB, design_results_t0_t16)
+design_results_DHCB_t0_t16 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_results_DHCB_t0_t16 <- lmFit(mat_DHCB, design_results_DHCB_t0_t16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
-contrast.matrix <- makeContrasts(timepointt16, levels=design_results_t0_t16)
-fit2_results_t0_t16 <- contrasts.fit(fit_results_t0_t16, contrast.matrix)
-fit2_results_t0_t16 <- eBayes(fit2_results_t0_t16)
+contrast.matrix <- makeContrasts(timepointt16, levels=design_results_DHCB_t0_t16)
+fit2_results_DHCB_t0_t16 <- contrasts.fit(fit_results_DHCB_t0_t16, contrast.matrix)
+fit2_results_DHCB_t0_t16 <- eBayes(fit2_results_DHCB_t0_t16)
 
-results_results_t0_t16 <- topTable(fit2_results_t0_t16, adjust.method="BH", number=Inf)
-results_results_t0_t16 <- add_annotations_to_results(results_results_t0_t16)
+results_DHCB_DHCB_results_DHCB_t0_t16 <- topTable(fit2_results_DHCB_t0_t16, adjust.method="BH", number=Inf)
+results_DHCB_results_DHCB_t0_t16 <- add_annotations_to_results(results_DHCB_results_DHCB_t0_t16)
 
-results_clean__results_t0_t16 <- results_results_t0_t16[!is.na(results_results_t0_t16$logFC), ]
+results_DHCB_clean__results_DHCB_t0_t16 <- results_DHCB_results_DHCB_t0_t16[!is.na(results_DHCB_results_DHCB_t0_t16$logFC), ]
 
-results_ordered_results_t0_t16 <- results_clean__results_t0_t16[order(results_clean__results_t0_t16$logFC), ]
+results_DHCB_ordered_results_DHCB_t0_t16 <- results_DHCB_clean__results_DHCB_t0_t16[order(results_DHCB_clean__results_DHCB_t0_t16$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_t0_t16 <- as.character(results_ordered_results_t0_t16$symbol)
+selected_genes_results_DHCB_t0_t16 <- as.character(results_DHCB_ordered_results_DHCB_t0_t16$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_t0_t16,
-    lab = selected_genes_results_t0_t16,
+    results_DHCB_ordered_results_DHCB_t0_t16,
+    lab = selected_genes_results_DHCB_t0_t16,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t16 (limma)',
@@ -312,9 +312,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_t0_t16 <- add_annotations_to_results(results_ordered_results_t0_t16)
-results_ordered_results_t0_t16_df <- as.data.frame(results_ordered_results_t0_t16)
-write.csv(results_ordered_results_t0_t16_df, file = "../../../../results/batch_corrected_results_t0_t16_data.csv")
+results_DHCB_ordered_results_DHCB_t0_t16 <- add_annotations_to_results(results_DHCB_ordered_results_DHCB_t0_t16)
+results_DHCB_ordered_results_DHCB_t0_t16_df <- as.data.frame(results_DHCB_ordered_results_DHCB_t0_t16)
+write.csv(results_DHCB_ordered_results_DHCB_t0_t16_df, file = "../../../../results/batch_corrected_results_DHCB_t0_t16_data.csv")
 ```
 
 
@@ -329,16 +329,16 @@ write.csv(results_ordered_results_t0_t16_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t20_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t20", "t0"))
+results_DHCB_t20_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t20", "t0"))
 
-results_t20_t0 = add_annotations_to_results(results_t20_t0)
+results_DHCB_t20_t0 = add_annotations_to_results(results_DHCB_t20_t0)
 
-summary(results_t20_t0)
+summary(results_DHCB_t20_t0)
 
 ```
 ##### Restricted Values
 ```{r}
-results_t20_t0_restricted <-
+results_DHCB_t20_t0_restricted <-
 results(
     dds_DHCB_r1to6,
     alpha = 0.1,
@@ -346,14 +346,14 @@ results(
     lfcThreshold = 1,
     contrast = c("timepoint", "t20", "t0")
 )
-summary(results_t20_t0_restricted)
+summary(results_DHCB_t20_t0_restricted)
 
 ```
 
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t20_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t20_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -367,8 +367,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t20_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t20_vs_t0", type="apeglm")
-summary(results_t20_t0_shrunk_apeglm)
+results_DHCB_t20_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t20_vs_t0", type="apeglm")
+summary(results_DHCB_t20_t0_shrunk_apeglm)
 
 ```
 ###### MA - Plot
@@ -376,7 +376,7 @@ summary(results_t20_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t20_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t20_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -386,16 +386,16 @@ DESeq2::plotMA(results_t20_t0_shrunk_apeglm, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t20_t0_shrunk_apeglm <- add_annotations_to_results(results_t20_t0_shrunk_apeglm)
-selected_genes <- as.character(results_t20_t0_shrunk_apeglm$symbol)
+results_DHCB_t20_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t20_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t20_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t20_t0_shrunk_apeglm,
+EnhancedVolcano(results_DHCB_t20_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t20_t0_shrunk_apeglm',
+                title = 'Differential expression for results_DHCB_t20_t0_shrunk_apeglm',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -407,8 +407,8 @@ EnhancedVolcano(results_t20_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t20_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t20_vs_t0", type="ashr")
-summary(results_t20_t0_shrunk_ashr)
+results_DHCB_t20_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t20_vs_t0", type="ashr")
+summary(results_DHCB_t20_t0_shrunk_ashr)
 
 ```
 ###### MA - Plot
@@ -416,7 +416,7 @@ summary(results_t20_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t20_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t20_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -426,16 +426,16 @@ DESeq2::plotMA(results_t20_t0_shrunk_ashr, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t20_t0_shrunk_ashr <- add_annotations_to_results(results_t20_t0_shrunk_ashr)
-selected_genes <- as.character(results_t20_t0_shrunk_ashr$symbol)
+results_DHCB_t20_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t20_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t20_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t20_t0_shrunk_ashr,
+EnhancedVolcano(results_DHCB_t20_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t20_t0_shrunk_ashr',
+                title = 'Differential expression for results_DHCB_t20_t0_shrunk_ashr',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -447,7 +447,7 @@ EnhancedVolcano(results_t20_t0_shrunk_ashr,
 #### P-Adjusted Analysis
 
 ```{r}
-resSig <- subset(results_t20_t0, padj < 0.1) 
+resSig <- subset(results_DHCB_t20_t0, padj < 0.1) 
 summary(resSig)
 ```
 
@@ -474,28 +474,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t20 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit_results_t0_t20 <- lmFit(mat_DHCB, design_results_t0_t20)
+design_results_DHCB_t0_t20 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_results_DHCB_t0_t20 <- lmFit(mat_DHCB, design_results_DHCB_t0_t20)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t20
-contrast.matrix <- makeContrasts(timepointt20, levels=design_results_t0_t20)
-fit2_results_t0_t20 <- contrasts.fit(fit_results_t0_t20, contrast.matrix)
-fit2_results_t0_t20 <- eBayes(fit2_results_t0_t20)
+contrast.matrix <- makeContrasts(timepointt20, levels=design_results_DHCB_t0_t20)
+fit2_results_DHCB_t0_t20 <- contrasts.fit(fit_results_DHCB_t0_t20, contrast.matrix)
+fit2_results_DHCB_t0_t20 <- eBayes(fit2_results_DHCB_t0_t20)
 
-results_results_t0_t20 <- topTable(fit2_results_t0_t20, adjust.method="BH", number=Inf)
-results_results_t0_t20 <- add_annotations_to_results(results_results_t0_t20)
+results_DHCB_DHCB_results_DHCB_t0_t20 <- topTable(fit2_results_DHCB_t0_t20, adjust.method="BH", number=Inf)
+results_DHCB_results_DHCB_t0_t20 <- add_annotations_to_results(results_DHCB_results_DHCB_t0_t20)
 
-results_clean__results_t0_t20 <- results_results_t0_t20[!is.na(results_results_t0_t20$logFC), ]
+results_DHCB_clean__results_DHCB_t0_t20 <- results_DHCB_results_DHCB_t0_t20[!is.na(results_DHCB_results_DHCB_t0_t20$logFC), ]
 
-results_ordered_results_t0_t20 <- results_clean__results_t0_t20[order(results_clean__results_t0_t20$logFC), ]
+results_DHCB_ordered_results_DHCB_t0_t20 <- results_DHCB_clean__results_DHCB_t0_t20[order(results_DHCB_clean__results_DHCB_t0_t20$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_t0_t20 <- as.character(results_ordered_results_t0_t20$symbol)
+selected_genes_results_DHCB_t0_t20 <- as.character(results_DHCB_ordered_results_DHCB_t0_t20$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_t0_t20,
-    lab = selected_genes_results_t0_t20,
+    results_DHCB_ordered_results_DHCB_t0_t20,
+    lab = selected_genes_results_DHCB_t0_t20,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t20 (limma)',
@@ -511,9 +511,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_t0_t20 <- add_annotations_to_results(results_ordered_results_t0_t20)
-results_ordered_results_t0_t20_df <- as.data.frame(results_ordered_results_t0_t20)
-write.csv(results_ordered_results_t0_t20_df, file = "../../../../results/batch_corrected_results_t0_t20_data.csv")
+results_DHCB_ordered_results_DHCB_t0_t20 <- add_annotations_to_results(results_DHCB_ordered_results_DHCB_t0_t20)
+results_DHCB_ordered_results_DHCB_t0_t20_df <- as.data.frame(results_DHCB_ordered_results_DHCB_t0_t20)
+write.csv(results_DHCB_ordered_results_DHCB_t0_t20_df, file = "../../../../results/batch_corrected_results_DHCB_t0_t20_data.csv")
 ```
 
 
@@ -528,16 +528,16 @@ write.csv(results_ordered_results_t0_t20_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t24_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t24", "t0"))
+results_DHCB_t24_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t24", "t0"))
 
-results_t24_t0 = add_annotations_to_results(results_t24_t0)
+results_DHCB_t24_t0 = add_annotations_to_results(results_DHCB_t24_t0)
 
-summary(results_t24_t0)
+summary(results_DHCB_t24_t0)
 
 ```
 ##### Restricted Values
 ```{r}
-results_t24_t0_restricted <-
+results_DHCB_t24_t0_restricted <-
 results(
     dds_DHCB_r1to6,
     alpha = 0.1,
@@ -545,14 +545,14 @@ results(
     lfcThreshold = 1,
     contrast = c("timepoint", "t24", "t0")
 )
-summary(results_t24_t0_restricted)
+summary(results_DHCB_t24_t0_restricted)
 
 ```
 
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t24_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t24_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -566,8 +566,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t24_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t24_vs_t0", type="apeglm")
-summary(results_t24_t0_shrunk_apeglm)
+results_DHCB_t24_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t24_vs_t0", type="apeglm")
+summary(results_DHCB_t24_t0_shrunk_apeglm)
 
 ```
 ###### MA - Plot
@@ -575,7 +575,7 @@ summary(results_t24_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t24_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t24_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -585,16 +585,16 @@ DESeq2::plotMA(results_t24_t0_shrunk_apeglm, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t24_t0_shrunk_apeglm <- add_annotations_to_results(results_t24_t0_shrunk_apeglm)
-selected_genes <- as.character(results_t24_t0_shrunk_apeglm$symbol)
+results_DHCB_t24_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t24_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t24_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t24_t0_shrunk_apeglm,
+EnhancedVolcano(results_DHCB_t24_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t24_t0_shrunk_apeglm',
+                title = 'Differential expression for results_DHCB_t24_t0_shrunk_apeglm',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -606,8 +606,8 @@ EnhancedVolcano(results_t24_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t24_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t24_vs_t0", type="ashr")
-summary(results_t24_t0_shrunk_ashr)
+results_DHCB_t24_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t24_vs_t0", type="ashr")
+summary(results_DHCB_t24_t0_shrunk_ashr)
 
 ```
 ###### MA - Plot
@@ -615,7 +615,7 @@ summary(results_t24_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t24_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t24_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -625,16 +625,16 @@ DESeq2::plotMA(results_t24_t0_shrunk_ashr, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t24_t0_shrunk_ashr <- add_annotations_to_results(results_t24_t0_shrunk_ashr)
-selected_genes <- as.character(results_t24_t0_shrunk_ashr$symbol)
+results_DHCB_t24_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t24_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t24_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t24_t0_shrunk_ashr,
+EnhancedVolcano(results_DHCB_t24_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t24_t0_shrunk_ashr',
+                title = 'Differential expression for results_DHCB_t24_t0_shrunk_ashr',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -646,7 +646,7 @@ EnhancedVolcano(results_t24_t0_shrunk_ashr,
 #### P-Adjusted Analysis
 
 ```{r}
-resSig <- subset(results_t24_t0, padj < 0.1) 
+resSig <- subset(results_DHCB_t24_t0, padj < 0.1) 
 summary(resSig)
 ```
 
@@ -673,28 +673,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t24 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit_results_t0_t24 <- lmFit(mat_DHCB, design_results_t0_t24)
+design_results_DHCB_t0_t24 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_results_DHCB_t0_t24 <- lmFit(mat_DHCB, design_results_DHCB_t0_t24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
-contrast.matrix <- makeContrasts(timepointt24, levels=design_results_t0_t24)
-fit2_results_t0_t24 <- contrasts.fit(fit_results_t0_t24, contrast.matrix)
-fit2_results_t0_t24 <- eBayes(fit2_results_t0_t24)
+contrast.matrix <- makeContrasts(timepointt24, levels=design_results_DHCB_t0_t24)
+fit2_results_DHCB_t0_t24 <- contrasts.fit(fit_results_DHCB_t0_t24, contrast.matrix)
+fit2_results_DHCB_t0_t24 <- eBayes(fit2_results_DHCB_t0_t24)
 
-results_results_t0_t24 <- topTable(fit2_results_t0_t24, adjust.method="BH", number=Inf)
-results_results_t0_t24 <- add_annotations_to_results(results_results_t0_t24)
+results_DHCB_DHCB_results_DHCB_t0_t24 <- topTable(fit2_results_DHCB_t0_t24, adjust.method="BH", number=Inf)
+results_DHCB_results_DHCB_t0_t24 <- add_annotations_to_results(results_DHCB_results_DHCB_t0_t24)
 
-results_clean__results_t0_t24 <- results_results_t0_t24[!is.na(results_results_t0_t24$logFC), ]
+results_DHCB_clean__results_DHCB_t0_t24 <- results_DHCB_results_DHCB_t0_t24[!is.na(results_DHCB_results_DHCB_t0_t24$logFC), ]
 
-results_ordered_results_t0_t24 <- results_clean__results_t0_t24[order(results_clean__results_t0_t24$logFC), ]
+results_DHCB_ordered_results_DHCB_t0_t24 <- results_DHCB_clean__results_DHCB_t0_t24[order(results_DHCB_clean__results_DHCB_t0_t24$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_t0_t24 <- as.character(results_ordered_results_t0_t24$symbol)
+selected_genes_results_DHCB_t0_t24 <- as.character(results_DHCB_ordered_results_DHCB_t0_t24$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_t0_t24,
-    lab = selected_genes_results_t0_t24,
+    results_DHCB_ordered_results_DHCB_t0_t24,
+    lab = selected_genes_results_DHCB_t0_t24,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t24 (limma)',
@@ -710,9 +710,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_t0_t24 <- add_annotations_to_results(results_ordered_results_t0_t24)
-results_ordered_results_t0_t24_df <- as.data.frame(results_ordered_results_t0_t24)
-write.csv(results_ordered_results_t0_t24_df, file = "../../../../results/batch_corrected_results_t0_t24_data.csv")
+results_DHCB_ordered_results_DHCB_t0_t24 <- add_annotations_to_results(results_DHCB_ordered_results_DHCB_t0_t24)
+results_DHCB_ordered_results_DHCB_t0_t24_df <- as.data.frame(results_DHCB_ordered_results_DHCB_t0_t24)
+write.csv(results_DHCB_ordered_results_DHCB_t0_t24_df, file = "../../../../results/batch_corrected_results_DHCB_t0_t24_data.csv")
 ```
 
 
@@ -727,16 +727,16 @@ write.csv(results_ordered_results_t0_t24_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t36_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t36", "t0"))
+results_DHCB_t36_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t36", "t0"))
 
-results_t36_t0 = add_annotations_to_results(results_t36_t0)
+results_DHCB_t36_t0 = add_annotations_to_results(results_DHCB_t36_t0)
 
-summary(results_t36_t0)
+summary(results_DHCB_t36_t0)
 
 ```
 ##### Restricted Values
 ```{r}
-results_t36_t0_restricted <-
+results_DHCB_t36_t0_restricted <-
 results(
     dds_DHCB_r1to6,
     alpha = 0.1,
@@ -744,14 +744,14 @@ results(
     lfcThreshold = 1,
     contrast = c("timepoint", "t36", "t0")
 )
-summary(results_t36_t0_restricted)
+summary(results_DHCB_t36_t0_restricted)
 
 ```
 
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t36_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t36_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -765,8 +765,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t36_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t36_vs_t0", type="apeglm")
-summary(results_t36_t0_shrunk_apeglm)
+results_DHCB_t36_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t36_vs_t0", type="apeglm")
+summary(results_DHCB_t36_t0_shrunk_apeglm)
 
 ```
 ###### MA - Plot
@@ -774,7 +774,7 @@ summary(results_t36_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t36_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t36_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -784,16 +784,16 @@ DESeq2::plotMA(results_t36_t0_shrunk_apeglm, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t36_t0_shrunk_apeglm <- add_annotations_to_results(results_t36_t0_shrunk_apeglm)
-selected_genes <- as.character(results_t36_t0_shrunk_apeglm$symbol)
+results_DHCB_t36_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t36_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t36_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t36_t0_shrunk_apeglm,
+EnhancedVolcano(results_DHCB_t36_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t36_t0_shrunk_apeglm',
+                title = 'Differential expression for results_DHCB_t36_t0_shrunk_apeglm',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -805,8 +805,8 @@ EnhancedVolcano(results_t36_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t36_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t36_vs_t0", type="ashr")
-summary(results_t36_t0_shrunk_ashr)
+results_DHCB_t36_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t36_vs_t0", type="ashr")
+summary(results_DHCB_t36_t0_shrunk_ashr)
 
 ```
 ###### MA - Plot
@@ -814,7 +814,7 @@ summary(results_t36_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t36_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t36_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -824,16 +824,16 @@ DESeq2::plotMA(results_t36_t0_shrunk_ashr, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t36_t0_shrunk_ashr <- add_annotations_to_results(results_t36_t0_shrunk_ashr)
-selected_genes <- as.character(results_t36_t0_shrunk_ashr$symbol)
+results_DHCB_t36_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t36_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t36_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t36_t0_shrunk_ashr,
+EnhancedVolcano(results_DHCB_t36_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t36_t0_shrunk_ashr',
+                title = 'Differential expression for results_DHCB_t36_t0_shrunk_ashr',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -845,7 +845,7 @@ EnhancedVolcano(results_t36_t0_shrunk_ashr,
 #### P-Adjusted Analysis
 
 ```{r}
-resSig <- subset(results_t36_t0, padj < 0.1) 
+resSig <- subset(results_DHCB_t36_t0, padj < 0.1) 
 summary(resSig)
 ```
 
@@ -872,28 +872,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t36 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit_results_t0_t36 <- lmFit(mat_DHCB, design_results_t0_t36)
+design_results_DHCB_t0_t36 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_results_DHCB_t0_t36 <- lmFit(mat_DHCB, design_results_DHCB_t0_t36)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t36
-contrast.matrix <- makeContrasts(timepointt36, levels=design_results_t0_t36)
-fit2_results_t0_t36 <- contrasts.fit(fit_results_t0_t36, contrast.matrix)
-fit2_results_t0_t36 <- eBayes(fit2_results_t0_t36)
+contrast.matrix <- makeContrasts(timepointt36, levels=design_results_DHCB_t0_t36)
+fit2_results_DHCB_t0_t36 <- contrasts.fit(fit_results_DHCB_t0_t36, contrast.matrix)
+fit2_results_DHCB_t0_t36 <- eBayes(fit2_results_DHCB_t0_t36)
 
-results_results_t0_t36 <- topTable(fit2_results_t0_t36, adjust.method="BH", number=Inf)
-results_results_t0_t36 <- add_annotations_to_results(results_results_t0_t36)
+results_DHCB_DHCB_results_DHCB_t0_t36 <- topTable(fit2_results_DHCB_t0_t36, adjust.method="BH", number=Inf)
+results_DHCB_results_DHCB_t0_t36 <- add_annotations_to_results(results_DHCB_results_DHCB_t0_t36)
 
-results_clean__results_t0_t36 <- results_results_t0_t36[!is.na(results_results_t0_t36$logFC), ]
+results_DHCB_clean__results_DHCB_t0_t36 <- results_DHCB_results_DHCB_t0_t36[!is.na(results_DHCB_results_DHCB_t0_t36$logFC), ]
 
-results_ordered_results_t0_t36 <- results_clean__results_t0_t36[order(results_clean__results_t0_t36$logFC), ]
+results_DHCB_ordered_results_DHCB_t0_t36 <- results_DHCB_clean__results_DHCB_t0_t36[order(results_DHCB_clean__results_DHCB_t0_t36$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_t0_t36 <- as.character(results_ordered_results_t0_t36$symbol)
+selected_genes_results_DHCB_t0_t36 <- as.character(results_DHCB_ordered_results_DHCB_t0_t36$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_t0_t36,
-    lab = selected_genes_results_t0_t36,
+    results_DHCB_ordered_results_DHCB_t0_t36,
+    lab = selected_genes_results_DHCB_t0_t36,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t36 (limma)',
@@ -909,9 +909,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_t0_t36 <- add_annotations_to_results(results_ordered_results_t0_t36)
-results_ordered_results_t0_t36_df <- as.data.frame(results_ordered_results_t0_t36)
-write.csv(results_ordered_results_t0_t36_df, file = "../../../../results/batch_corrected_results_t0_t36_data.csv")
+results_DHCB_ordered_results_DHCB_t0_t36 <- add_annotations_to_results(results_DHCB_ordered_results_DHCB_t0_t36)
+results_DHCB_ordered_results_DHCB_t0_t36_df <- as.data.frame(results_DHCB_ordered_results_DHCB_t0_t36)
+write.csv(results_DHCB_ordered_results_DHCB_t0_t36_df, file = "../../../../results/batch_corrected_results_DHCB_t0_t36_data.csv")
 ```
 
 
@@ -926,16 +926,16 @@ write.csv(results_ordered_results_t0_t36_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t48_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t48", "t0"))
+results_DHCB_t48_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t48", "t0"))
 
-results_t48_t0 = add_annotations_to_results(results_t48_t0)
+results_DHCB_t48_t0 = add_annotations_to_results(results_DHCB_t48_t0)
 
-summary(results_t48_t0)
+summary(results_DHCB_t48_t0)
 
 ```
 ##### Restricted Values
 ```{r}
-results_t48_t0_restricted <-
+results_DHCB_t48_t0_restricted <-
 results(
     dds_DHCB_r1to6,
     alpha = 0.1,
@@ -943,14 +943,14 @@ results(
     lfcThreshold = 1,
     contrast = c("timepoint", "t48", "t0")
 )
-summary(results_t48_t0_restricted)
+summary(results_DHCB_t48_t0_restricted)
 
 ```
 
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t48_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t48_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -964,8 +964,8 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t48_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t48_vs_t0", type="apeglm")
-summary(results_t48_t0_shrunk_apeglm)
+results_DHCB_t48_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t48_vs_t0", type="apeglm")
+summary(results_DHCB_t48_t0_shrunk_apeglm)
 
 ```
 ###### MA - Plot
@@ -973,7 +973,7 @@ summary(results_t48_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t48_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t48_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -983,16 +983,16 @@ DESeq2::plotMA(results_t48_t0_shrunk_apeglm, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t48_t0_shrunk_apeglm <- add_annotations_to_results(results_t48_t0_shrunk_apeglm)
-selected_genes <- as.character(results_t48_t0_shrunk_apeglm$symbol)
+results_DHCB_t48_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t48_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t48_t0_shrunk_apeglm$symbol)
 
-EnhancedVolcano(results_t48_t0_shrunk_apeglm,
+EnhancedVolcano(results_DHCB_t48_t0_shrunk_apeglm,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t48_t0_shrunk_apeglm',
+                title = 'Differential expression for results_DHCB_t48_t0_shrunk_apeglm',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -1004,8 +1004,8 @@ EnhancedVolcano(results_t48_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t48_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t48_vs_t0", type="ashr")
-summary(results_t48_t0_shrunk_ashr)
+results_DHCB_t48_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t48_vs_t0", type="ashr")
+summary(results_DHCB_t48_t0_shrunk_ashr)
 
 ```
 ###### MA - Plot
@@ -1013,7 +1013,7 @@ summary(results_t48_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-DESeq2::plotMA(results_t48_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_DHCB_t48_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -1023,16 +1023,16 @@ DESeq2::plotMA(results_t48_t0_shrunk_ashr, ylim=c(-3,3))
 V- Plot
 
 ```{r}
-results_t48_t0_shrunk_ashr <- add_annotations_to_results(results_t48_t0_shrunk_ashr)
-selected_genes <- as.character(results_t48_t0_shrunk_ashr$symbol)
+results_DHCB_t48_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t48_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t48_t0_shrunk_ashr$symbol)
 
-EnhancedVolcano(results_t48_t0_shrunk_ashr,
+EnhancedVolcano(results_DHCB_t48_t0_shrunk_ashr,
                 lab = selected_genes,
                 x = 'log2FoldChange',
                 y = 'padj',
                 xlim = c(-8,8),
                 ylab = expression(paste('-Log'[10],' adj P')),
-                title = 'Differential expression for results_t48_t0_shrunk_ashr',
+                title = 'Differential expression for results_DHCB_t48_t0_shrunk_ashr',
                 pCutoff = 0.05,
                 # at least double, or less than half
                 FCcutoff = 1,
@@ -1044,7 +1044,7 @@ EnhancedVolcano(results_t48_t0_shrunk_ashr,
 #### P-Adjusted Analysis
 
 ```{r}
-resSig <- subset(results_t48_t0, padj < 0.1) 
+resSig <- subset(results_DHCB_t48_t0, padj < 0.1) 
 summary(resSig)
 ```
 
@@ -1071,28 +1071,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_t0_t48 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit_results_t0_t48 <- lmFit(mat_DHCB, design_results_t0_t48)
+design_results_DHCB_t0_t48 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_results_DHCB_t0_t48 <- lmFit(mat_DHCB, design_results_DHCB_t0_t48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
-contrast.matrix <- makeContrasts(timepointt48, levels=design_results_t0_t48)
-fit2_results_t0_t48 <- contrasts.fit(fit_results_t0_t48, contrast.matrix)
-fit2_results_t0_t48 <- eBayes(fit2_results_t0_t48)
+contrast.matrix <- makeContrasts(timepointt48, levels=design_results_DHCB_t0_t48)
+fit2_results_DHCB_t0_t48 <- contrasts.fit(fit_results_DHCB_t0_t48, contrast.matrix)
+fit2_results_DHCB_t0_t48 <- eBayes(fit2_results_DHCB_t0_t48)
 
-results_results_t0_t48 <- topTable(fit2_results_t0_t48, adjust.method="BH", number=Inf)
-results_results_t0_t48 <- add_annotations_to_results(results_results_t0_t48)
+results_DHCB_DHCB_results_DHCB_t0_t48 <- topTable(fit2_results_DHCB_t0_t48, adjust.method="BH", number=Inf)
+results_DHCB_results_DHCB_t0_t48 <- add_annotations_to_results(results_DHCB_results_DHCB_t0_t48)
 
-results_clean__results_t0_t48 <- results_results_t0_t48[!is.na(results_results_t0_t48$logFC), ]
+results_DHCB_clean__results_DHCB_t0_t48 <- results_DHCB_results_DHCB_t0_t48[!is.na(results_DHCB_results_DHCB_t0_t48$logFC), ]
 
-results_ordered_results_t0_t48 <- results_clean__results_t0_t48[order(results_clean__results_t0_t48$logFC), ]
+results_DHCB_ordered_results_DHCB_t0_t48 <- results_DHCB_clean__results_DHCB_t0_t48[order(results_DHCB_clean__results_DHCB_t0_t48$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_t0_t48 <- as.character(results_ordered_results_t0_t48$symbol)
+selected_genes_results_DHCB_t0_t48 <- as.character(results_DHCB_ordered_results_DHCB_t0_t48$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_t0_t48,
-    lab = selected_genes_results_t0_t48,
+    results_DHCB_ordered_results_DHCB_t0_t48,
+    lab = selected_genes_results_DHCB_t0_t48,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t48 (limma)',
@@ -1108,9 +1108,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_t0_t48 <- add_annotations_to_results(results_ordered_results_t0_t48)
-results_ordered_results_t0_t48_df <- as.data.frame(results_ordered_results_t0_t48)
-write.csv(results_ordered_results_t0_t48_df, file = "../../../../results/batch_corrected_results_t0_t48_data.csv")
+results_DHCB_ordered_results_DHCB_t0_t48 <- add_annotations_to_results(results_DHCB_ordered_results_DHCB_t0_t48)
+results_DHCB_ordered_results_DHCB_t0_t48_df <- as.data.frame(results_DHCB_ordered_results_DHCB_t0_t48)
+write.csv(results_DHCB_ordered_results_DHCB_t0_t48_df, file = "../../../../results/batch_corrected_results_DHCB_t0_t48_data.csv")
 ```
 
 
