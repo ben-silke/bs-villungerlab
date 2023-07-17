@@ -30,6 +30,10 @@ class RFileWriter():
     def write_markdown_file(self, include_data_create):
         outline = self.markdown_outline(include_data_create)
         tabset_detail = "{.tabset}"
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+        self.replicate = replicate_file_name
+
+
         content = f"""
 {outline}
 # {self.treatment} Analysis {tabset_detail}
@@ -53,8 +57,6 @@ class RFileWriter():
 """
             content = content + time_content
         
-        # file = f'{self.directory}/{self.treatment}_analysis.Rmd'
-        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
 
         file = f'{self.treatment}_{replicate_file_name}_analysis.Rmd'
 
