@@ -69,7 +69,7 @@ class RFileWriter():
 ### PCA
 #### VST - Variance Stablised Transformation
 ```{self._r}
-vsd_{self.treatment} <- vst(dds, blind=FALSE)
+vsd_{self.treatment} <- vst(dds_{self.treatment}_{self.replicate}, blind=FALSE)
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 ```
 
@@ -77,7 +77,7 @@ plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 #### rLog
 
 ```{self._r}
-rld_{self.treatment} <- rlog(dds, blind=FALSE)
+rld_{self.treatment} <- rlog(dds_{self.treatment}_{self.replicate}, blind=FALSE)
 plotPCA(rld_{self.treatment}, intgroup=c('batch', 'timepoint'))
 ```
 
@@ -99,7 +99,7 @@ https://bioconductor.org/packages/release/bioc/html/limma.html
 
 We can see that there is a clear batch effect.
 ```{self._r}
-vsd_{self.treatment} <- vst(dds, blind=FALSE)
+vsd_{self.treatment} <- vst(dds_{self.treatment}_{self.replicate}, blind=FALSE)
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 
 ```
@@ -129,7 +129,7 @@ plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 #### Summary
 ##### General Summary
 ```{self._r}
-{variable_name} <- results(dds, contrast = c("timepoint", "t{end}", "t{start}"))
+{variable_name} <- results(dds_{self.treatment}_{self.replicate}, contrast = c("timepoint", "t{end}", "t{start}"))
 
 {variable_name} = add_annotations_to_results({variable_name})
 
@@ -140,7 +140,7 @@ summary({variable_name})
 ```{self._r}
 {variable_name}_restricted <-
 results(
-    dds,
+    dds_{self.treatment}_{self.replicate},
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -166,7 +166,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{self._r}
 
-{variable_name}_shrunk_apeglm <- lfcShrink(dds, coef="{timepoint_name}", type="apeglm")
+{variable_name}_shrunk_apeglm <- lfcShrink(dds_{self.treatment}_{self.replicate}, coef="{timepoint_name}", type="apeglm")
 summary({variable_name}_shrunk_apeglm)
 
 ```
@@ -179,7 +179,7 @@ summary({variable_name}_shrunk_apeglm)
 
 #### ASHR
 ```{self._r}
-{variable_name}_shrunk_ashr <- lfcShrink(dds, coef="{timepoint_name}", type="ashr")
+{variable_name}_shrunk_ashr <- lfcShrink(dds_{self.treatment}_{self.replicate}, coef="{timepoint_name}", type="ashr")
 summary({variable_name}_shrunk_ashr)
 
 ```
@@ -204,7 +204,7 @@ summary({variable_name}_shrunk_ashr)
 ### Unrestricted
 #### Summary
 ```{self._r}
-{variable_name} <- results(dds, contrast = c("timepoint", "t{end}", "t{start}"))
+{variable_name} <- results(dds_{self.treatment}_{self.replicate}, contrast = c("timepoint", "t{end}", "t{start}"))
 
 {variable_name} = add_annotations_to_results({variable_name})
 
@@ -217,7 +217,7 @@ summary({variable_name})
 ```{self._r}
 {variable_name}_restricted <-
 results(
-    dds,
+    dds_{self.treatment}_{self.replicate},
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -234,7 +234,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APE GLM
 ```{self._r}
 
-{variable_name}_shrunk_apeglm <- lfcShrink(dds, coef="{timepoint_name}", type="apeglm")
+{variable_name}_shrunk_apeglm <- lfcShrink(dds_{self.treatment}_{self.replicate}, coef="{timepoint_name}", type="apeglm")
 summary({variable_name}_shrunk_apeglm)
 
 ```
@@ -244,7 +244,7 @@ summary({variable_name}_shrunk_apeglm)
 
 #### ashr
 ```{self._r}
-{variable_name}_shrunk_ashr <- lfcShrink(dds, coef="{timepoint_name}", type="ashr")
+{variable_name}_shrunk_ashr <- lfcShrink(dds_{self.treatment}_{self.replicate}, coef="{timepoint_name}", type="ashr")
 summary({variable_name}_shrunk_ashr)
 
 ```
@@ -375,30 +375,9 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
     def markdown_outline(self, include_data_create=False):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-
-        content = """
----
-title: "Salmon Analysis - %s "
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(DESeq2)
-library("apeglm")
-library("ashr")
-library(EnhancedVolcano)
-library(org.Hs.eg.db)
-library("pheatmap")
-library("RColorBrewer")
-library("PoiClaClu")
-library("limma")
-
-load("../../../data/%s_data.RData")
-dds_%s
-results <- results(dds_%s)
-resultsNames(dds_%s)
-
+        variable = f"{self.treatment}_{replicate_file_name}"
+        _r_setup = "{r setup, include=FALSE}"
+        _functions = """
 add_annotations_to_results <- function(res) {
 ens.str <- substr(rownames(res), 1, 15)
 res$symbol <- mapIds(org.Hs.eg.db,
@@ -413,8 +392,33 @@ res$entrez <- mapIds(org.Hs.eg.db,
                     multiVals="first")
 return (res)
 }
+"""
+        content = f"""
+---
+title: "Salmon Analysis - {variable}"
+output: html_document
+---
+
+```{_r_setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+library("limma")
+
+load("../../../data/{variable}_data.RData")
+dds_{variable}
+results <- results(dds_{variable})
+resultsNames(dds_{variable})
+
+{_functions}
 ```
-        """ % f'{self.treatment}_{replicate_file_name}'
+        """
 
         return content
 
@@ -441,7 +445,7 @@ pheatmap(sampleDistMatrix_{variable},
     def write_poi_heatmap(self, variable):
         content = f"""
 ```{self._r}
-poisd_{variable} <- PoissonDistance(t(counts(dds)))
+poisd_{variable} <- PoissonDistance(t(counts(dds_{self.treatment}_{self.replicate})))
 
 samplePoisDistMatrix_{variable} <- as.matrix( poisd_{variable}$dd )
 rownames(samplePoisDistMatrix_{variable}) <- paste( vsd_{variable}$timepoint, vsd_{variable}$batch, sep = "_" )
@@ -458,12 +462,14 @@ class SalmonRFileWriter(RFileWriter):
 
     def write_r_file(self):
         replicate = "1:6" if self.all_replicates else "1:3"
+        self.replicate = replicate
         times = self.time_dict[self.treatment][0]
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-
+        variable = f"{self.treatment}_{replicate_file_name}"
         content = f"""
 library("vsn")
 library("genefilter")
+setwd("/Users/bsilke/bs-villungerlab")
 source("r/src/utils.R")
 source("r/src/pca_utils.R")
 
@@ -471,11 +477,11 @@ times = {times}
 treatment <- "{self.treatment}"
 {self.file_location}
 
-dds <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
+dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
+save(dds_{variable}, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
 
-res <- results(dds)
+res <- results(dds_{variable})
 resOrdered <- res[order(res$padj),]
 resOrdered <- add_annotations_to_results(resOrdered)
 
