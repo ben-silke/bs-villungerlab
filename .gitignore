@@ -190,3 +190,5 @@ cluster/logs
 
 *.log
 *.err
+
+*.DS_Store
