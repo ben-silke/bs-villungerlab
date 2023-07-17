@@ -1,6 +1,5 @@
 from metaprogramming_r import SalmonRFileWriter
 
-
 import click
 
 @click.command()
