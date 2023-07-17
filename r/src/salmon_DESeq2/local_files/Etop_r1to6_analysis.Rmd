@@ -47,7 +47,7 @@ return (res)
 ### PCA
 #### VST - Variance Stablised Transformation
 ```{r}
-vsd_Etop <- vst(dds_Etop_1:6, blind=FALSE)
+vsd_Etop <- vst(dds_Etop_r1to6, blind=FALSE)
 plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
 ```
 
@@ -55,7 +55,7 @@ plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
 #### rLog
 
 ```{r}
-rld_Etop <- rlog(dds_Etop_1:6, blind=FALSE)
+rld_Etop <- rlog(dds_Etop_r1to6, blind=FALSE)
 plotPCA(rld_Etop, intgroup=c('batch', 'timepoint'))
 ```
 
@@ -83,7 +83,7 @@ pheatmap(sampleDistMatrix_Etop,
 #### Poission Distance
 
 ```{r}
-poisd_Etop <- PoissonDistance(t(counts(dds_Etop_1:6)))
+poisd_Etop <- PoissonDistance(t(counts(dds_Etop_r1to6)))
 
 samplePoisDistMatrix_Etop <- as.matrix( poisd_Etop$dd )
 rownames(samplePoisDistMatrix_Etop) <- paste( vsd_Etop$timepoint, vsd_Etop$batch, sep = "_" )
@@ -103,7 +103,7 @@ https://bioconductor.org/packages/release/bioc/html/limma.html
 
 We can see that there is a clear batch effect.
 ```{r}
-vsd_Etop <- vst(dds_Etop_1:6, blind=FALSE)
+vsd_Etop <- vst(dds_Etop_r1to6, blind=FALSE)
 plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
 
 ```
@@ -130,7 +130,7 @@ plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
 #### Summary
 ##### General Summary
 ```{r}
-results_t8_t0 <- results(dds_Etop_1:6, contrast = c("timepoint", "t8", "t0"))
+results_t8_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t8", "t0"))
 
 results_t8_t0 = add_annotations_to_results(results_t8_t0)
 
@@ -141,7 +141,7 @@ summary(results_t8_t0)
 ```{r}
 results_t8_t0_restricted <-
 results(
-    dds_Etop_1:6,
+    dds_Etop_r1to6,
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -154,7 +154,7 @@ summary(results_t8_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t8_t0_restricted)
+plotMA(results_t8_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -168,7 +168,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t8_t0_shrunk_apeglm <- lfcShrink(dds_Etop_1:6, coef="timepoint_t8_vs_t0", type="apeglm")
+results_t8_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t8_vs_t0", type="apeglm")
 summary(results_t8_t0_shrunk_apeglm)
 
 ```
@@ -177,7 +177,7 @@ summary(results_t8_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t8_t0_shrunk_apeglm)
+plotMA(results_t8_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -208,7 +208,7 @@ EnhancedVolcano(results_t8_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t8_t0_shrunk_ashr <- lfcShrink(dds_Etop_1:6, coef="timepoint_t8_vs_t0", type="ashr")
+results_t8_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t8_vs_t0", type="ashr")
 summary(results_t8_t0_shrunk_ashr)
 
 ```
@@ -217,7 +217,7 @@ summary(results_t8_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t8_t0_shrunk_ashr)
+plotMA(results_t8_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -329,7 +329,7 @@ write.csv(results_ordered_results_t0_t8_df, file = "../../../../results/batch_co
 #### Summary
 ##### General Summary
 ```{r}
-results_t12_t0 <- results(dds_Etop_1:6, contrast = c("timepoint", "t12", "t0"))
+results_t12_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t12", "t0"))
 
 results_t12_t0 = add_annotations_to_results(results_t12_t0)
 
@@ -340,7 +340,7 @@ summary(results_t12_t0)
 ```{r}
 results_t12_t0_restricted <-
 results(
-    dds_Etop_1:6,
+    dds_Etop_r1to6,
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -353,7 +353,7 @@ summary(results_t12_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t12_t0_restricted)
+plotMA(results_t12_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -367,7 +367,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t12_t0_shrunk_apeglm <- lfcShrink(dds_Etop_1:6, coef="timepoint_t12_vs_t0", type="apeglm")
+results_t12_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t12_vs_t0", type="apeglm")
 summary(results_t12_t0_shrunk_apeglm)
 
 ```
@@ -376,7 +376,7 @@ summary(results_t12_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t12_t0_shrunk_apeglm)
+plotMA(results_t12_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -407,7 +407,7 @@ EnhancedVolcano(results_t12_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t12_t0_shrunk_ashr <- lfcShrink(dds_Etop_1:6, coef="timepoint_t12_vs_t0", type="ashr")
+results_t12_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t12_vs_t0", type="ashr")
 summary(results_t12_t0_shrunk_ashr)
 
 ```
@@ -416,7 +416,7 @@ summary(results_t12_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t12_t0_shrunk_ashr)
+plotMA(results_t12_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -528,7 +528,7 @@ write.csv(results_ordered_results_t0_t12_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t16_t0 <- results(dds_Etop_1:6, contrast = c("timepoint", "t16", "t0"))
+results_t16_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t16", "t0"))
 
 results_t16_t0 = add_annotations_to_results(results_t16_t0)
 
@@ -539,7 +539,7 @@ summary(results_t16_t0)
 ```{r}
 results_t16_t0_restricted <-
 results(
-    dds_Etop_1:6,
+    dds_Etop_r1to6,
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -552,7 +552,7 @@ summary(results_t16_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t16_t0_restricted)
+plotMA(results_t16_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -566,7 +566,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t16_t0_shrunk_apeglm <- lfcShrink(dds_Etop_1:6, coef="timepoint_t16_vs_t0", type="apeglm")
+results_t16_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t16_vs_t0", type="apeglm")
 summary(results_t16_t0_shrunk_apeglm)
 
 ```
@@ -575,7 +575,7 @@ summary(results_t16_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t16_t0_shrunk_apeglm)
+plotMA(results_t16_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -606,7 +606,7 @@ EnhancedVolcano(results_t16_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t16_t0_shrunk_ashr <- lfcShrink(dds_Etop_1:6, coef="timepoint_t16_vs_t0", type="ashr")
+results_t16_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t16_vs_t0", type="ashr")
 summary(results_t16_t0_shrunk_ashr)
 
 ```
@@ -615,7 +615,7 @@ summary(results_t16_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t16_t0_shrunk_ashr)
+plotMA(results_t16_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -727,7 +727,7 @@ write.csv(results_ordered_results_t0_t16_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t24_t0 <- results(dds_Etop_1:6, contrast = c("timepoint", "t24", "t0"))
+results_t24_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t24", "t0"))
 
 results_t24_t0 = add_annotations_to_results(results_t24_t0)
 
@@ -738,7 +738,7 @@ summary(results_t24_t0)
 ```{r}
 results_t24_t0_restricted <-
 results(
-    dds_Etop_1:6,
+    dds_Etop_r1to6,
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -751,7 +751,7 @@ summary(results_t24_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t24_t0_restricted)
+plotMA(results_t24_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -765,7 +765,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t24_t0_shrunk_apeglm <- lfcShrink(dds_Etop_1:6, coef="timepoint_t24_vs_t0", type="apeglm")
+results_t24_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t24_vs_t0", type="apeglm")
 summary(results_t24_t0_shrunk_apeglm)
 
 ```
@@ -774,7 +774,7 @@ summary(results_t24_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t24_t0_shrunk_apeglm)
+plotMA(results_t24_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -805,7 +805,7 @@ EnhancedVolcano(results_t24_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t24_t0_shrunk_ashr <- lfcShrink(dds_Etop_1:6, coef="timepoint_t24_vs_t0", type="ashr")
+results_t24_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t24_vs_t0", type="ashr")
 summary(results_t24_t0_shrunk_ashr)
 
 ```
@@ -814,7 +814,7 @@ summary(results_t24_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t24_t0_shrunk_ashr)
+plotMA(results_t24_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -926,7 +926,7 @@ write.csv(results_ordered_results_t0_t24_df, file = "../../../../results/batch_c
 #### Summary
 ##### General Summary
 ```{r}
-results_t48_t0 <- results(dds_Etop_1:6, contrast = c("timepoint", "t48", "t0"))
+results_t48_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t48", "t0"))
 
 results_t48_t0 = add_annotations_to_results(results_t48_t0)
 
@@ -937,7 +937,7 @@ summary(results_t48_t0)
 ```{r}
 results_t48_t0_restricted <-
 results(
-    dds_Etop_1:6,
+    dds_Etop_r1to6,
     alpha = 0.1,
     ## We are looking for genes which have at least doubled, or decreased by more than half
     lfcThreshold = 1,
@@ -950,7 +950,7 @@ summary(results_t48_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t48_t0_restricted)
+plotMA(results_t48_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -964,7 +964,7 @@ It is more useful visualize the MA-plot for the shrunken log2 fold changes, whic
 #### APEGLM
 ```{r}
 
-results_t48_t0_shrunk_apeglm <- lfcShrink(dds_Etop_1:6, coef="timepoint_t48_vs_t0", type="apeglm")
+results_t48_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t48_vs_t0", type="apeglm")
 summary(results_t48_t0_shrunk_apeglm)
 
 ```
@@ -973,7 +973,7 @@ summary(results_t48_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t48_t0_shrunk_apeglm)
+plotMA(results_t48_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -1004,7 +1004,7 @@ EnhancedVolcano(results_t48_t0_shrunk_apeglm,
 
 #### ASHR
 ```{r}
-results_t48_t0_shrunk_ashr <- lfcShrink(dds_Etop_1:6, coef="timepoint_t48_vs_t0", type="ashr")
+results_t48_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t48_vs_t0", type="ashr")
 summary(results_t48_t0_shrunk_ashr)
 
 ```
@@ -1013,7 +1013,7 @@ summary(results_t48_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t48_t0_shrunk_ashr)
+plotMA(results_t48_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
