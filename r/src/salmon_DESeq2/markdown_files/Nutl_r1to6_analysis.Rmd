@@ -154,7 +154,7 @@ summary(results_t8_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t8_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_t8_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -177,7 +177,7 @@ summary(results_t8_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t8_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_t8_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -217,7 +217,7 @@ summary(results_t8_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t8_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_t8_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -353,7 +353,7 @@ summary(results_t12_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t12_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_t12_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -376,7 +376,7 @@ summary(results_t12_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t12_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_t12_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -416,7 +416,7 @@ summary(results_t12_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t12_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_t12_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -552,7 +552,7 @@ summary(results_t16_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t16_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_t16_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -575,7 +575,7 @@ summary(results_t16_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t16_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_t16_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -615,7 +615,7 @@ summary(results_t16_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t16_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_t16_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -751,7 +751,7 @@ summary(results_t24_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t24_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_t24_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -774,7 +774,7 @@ summary(results_t24_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t24_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_t24_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -814,7 +814,7 @@ summary(results_t24_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t24_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_t24_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
@@ -950,7 +950,7 @@ summary(results_t48_t0_restricted)
 MA Plot
 ```{r}
 
-plotMA(results_t48_t0_restricted, ylim=c(-3,3))
+DESeq2::plotMA(results_t48_t0_restricted, ylim=c(-3,3))
 ```
 
         
@@ -973,7 +973,7 @@ summary(results_t48_t0_shrunk_apeglm)
 MA Plot
 ```{r}
 
-plotMA(results_t48_t0_shrunk_apeglm, ylim=c(-3,3))
+DESeq2::plotMA(results_t48_t0_shrunk_apeglm, ylim=c(-3,3))
 ```
 
         
@@ -1013,7 +1013,7 @@ summary(results_t48_t0_shrunk_ashr)
 MA Plot
 ```{r}
 
-plotMA(results_t48_t0_shrunk_ashr, ylim=c(-3,3))
+DESeq2::plotMA(results_t48_t0_shrunk_ashr, ylim=c(-3,3))
 ```
 
         
