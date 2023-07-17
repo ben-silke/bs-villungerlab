@@ -10,8 +10,8 @@ times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
-### ATTENTION
-treatments=("ZM")
+treatments=("Nutl" "Noc" "Etop" "DHCB")
+
 
 # This command should run the STAR mapping process for all treatments/ times.
 for treatment in ${treatments[@]}; do
