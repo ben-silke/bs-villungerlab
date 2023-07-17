@@ -344,9 +344,9 @@ EnhancedVolcano(
 ```
 
 ```{self._r_false_include}
-results_ordered_{variable} <- add_annotations_to_results(results_ordered_{variable})
-results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})
-write.csv(results_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
+results_ordered_{self.treatment}_{timepoint} <- add_annotations_to_results(results_ordered_{self.treatment}_{timepoint})
+results_ordered_{self.treatment}_{timepoint}_df <- as.data.frame(results_ordered_{self.treatment}_{timepoint})
+write.csv(results_ordered_{self.treatment}_{timepoint}_df, file = "../../../../results/batch_corrected_{self.treatment}_{timepoint}_data.csv")
 ```
 
 """
