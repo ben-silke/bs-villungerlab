@@ -276,12 +276,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_Noc_16 <- model.matrix(~ timepoint, colData(vsd_Noc))
-fit__Noc_16 <- lmFit(mat_Noc, design__Noc_16)
+fit_Noc_16 <- lmFit(mat_Noc, design_Noc_16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
-contrast.matrix <- makeContrasts(timepointt16, levels=design__Noc_16)
-fit2__Noc_16 <- contrasts.fit(fit__Noc_16, contrast.matrix)
-fit2__Noc_16 <- eBayes(fit2__Noc_16)
+contrast.matrix <- makeContrasts(timepointt16, levels=design_Noc_16)
+fit2_Noc_16 <- contrasts.fit(fit_Noc_16, contrast.matrix)
+fit2_Noc_16 <- eBayes(fit2_Noc_16)
 
 results_Noc_16 <- topTable(fit2_Noc_16, adjust.method="BH", number=Inf)
 results_Noc_16 <- add_annotations_to_results(results_Noc_16)
@@ -475,12 +475,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_Noc_20 <- model.matrix(~ timepoint, colData(vsd_Noc))
-fit__Noc_20 <- lmFit(mat_Noc, design__Noc_20)
+fit_Noc_20 <- lmFit(mat_Noc, design_Noc_20)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t20
-contrast.matrix <- makeContrasts(timepointt20, levels=design__Noc_20)
-fit2__Noc_20 <- contrasts.fit(fit__Noc_20, contrast.matrix)
-fit2__Noc_20 <- eBayes(fit2__Noc_20)
+contrast.matrix <- makeContrasts(timepointt20, levels=design_Noc_20)
+fit2_Noc_20 <- contrasts.fit(fit_Noc_20, contrast.matrix)
+fit2_Noc_20 <- eBayes(fit2_Noc_20)
 
 results_Noc_20 <- topTable(fit2_Noc_20, adjust.method="BH", number=Inf)
 results_Noc_20 <- add_annotations_to_results(results_Noc_20)
@@ -674,12 +674,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_Noc_24 <- model.matrix(~ timepoint, colData(vsd_Noc))
-fit__Noc_24 <- lmFit(mat_Noc, design__Noc_24)
+fit_Noc_24 <- lmFit(mat_Noc, design_Noc_24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
-contrast.matrix <- makeContrasts(timepointt24, levels=design__Noc_24)
-fit2__Noc_24 <- contrasts.fit(fit__Noc_24, contrast.matrix)
-fit2__Noc_24 <- eBayes(fit2__Noc_24)
+contrast.matrix <- makeContrasts(timepointt24, levels=design_Noc_24)
+fit2_Noc_24 <- contrasts.fit(fit_Noc_24, contrast.matrix)
+fit2_Noc_24 <- eBayes(fit2_Noc_24)
 
 results_Noc_24 <- topTable(fit2_Noc_24, adjust.method="BH", number=Inf)
 results_Noc_24 <- add_annotations_to_results(results_Noc_24)
@@ -873,12 +873,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_Noc_36 <- model.matrix(~ timepoint, colData(vsd_Noc))
-fit__Noc_36 <- lmFit(mat_Noc, design__Noc_36)
+fit_Noc_36 <- lmFit(mat_Noc, design_Noc_36)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t36
-contrast.matrix <- makeContrasts(timepointt36, levels=design__Noc_36)
-fit2__Noc_36 <- contrasts.fit(fit__Noc_36, contrast.matrix)
-fit2__Noc_36 <- eBayes(fit2__Noc_36)
+contrast.matrix <- makeContrasts(timepointt36, levels=design_Noc_36)
+fit2_Noc_36 <- contrasts.fit(fit_Noc_36, contrast.matrix)
+fit2_Noc_36 <- eBayes(fit2_Noc_36)
 
 results_Noc_36 <- topTable(fit2_Noc_36, adjust.method="BH", number=Inf)
 results_Noc_36 <- add_annotations_to_results(results_Noc_36)
@@ -1072,12 +1072,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_Noc_48 <- model.matrix(~ timepoint, colData(vsd_Noc))
-fit__Noc_48 <- lmFit(mat_Noc, design__Noc_48)
+fit_Noc_48 <- lmFit(mat_Noc, design_Noc_48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
-contrast.matrix <- makeContrasts(timepointt48, levels=design__Noc_48)
-fit2__Noc_48 <- contrasts.fit(fit__Noc_48, contrast.matrix)
-fit2__Noc_48 <- eBayes(fit2__Noc_48)
+contrast.matrix <- makeContrasts(timepointt48, levels=design_Noc_48)
+fit2_Noc_48 <- contrasts.fit(fit_Noc_48, contrast.matrix)
+fit2_Noc_48 <- eBayes(fit2_Noc_48)
 
 results_Noc_48 <- topTable(fit2_Noc_48, adjust.method="BH", number=Inf)
 results_Noc_48 <- add_annotations_to_results(results_Noc_48)

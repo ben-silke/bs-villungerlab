@@ -276,12 +276,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_DHCB_16 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit__DHCB_16 <- lmFit(mat_DHCB, design__DHCB_16)
+fit_DHCB_16 <- lmFit(mat_DHCB, design_DHCB_16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
-contrast.matrix <- makeContrasts(timepointt16, levels=design__DHCB_16)
-fit2__DHCB_16 <- contrasts.fit(fit__DHCB_16, contrast.matrix)
-fit2__DHCB_16 <- eBayes(fit2__DHCB_16)
+contrast.matrix <- makeContrasts(timepointt16, levels=design_DHCB_16)
+fit2_DHCB_16 <- contrasts.fit(fit_DHCB_16, contrast.matrix)
+fit2_DHCB_16 <- eBayes(fit2_DHCB_16)
 
 results_DHCB_16 <- topTable(fit2_DHCB_16, adjust.method="BH", number=Inf)
 results_DHCB_16 <- add_annotations_to_results(results_DHCB_16)
@@ -475,12 +475,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_DHCB_20 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit__DHCB_20 <- lmFit(mat_DHCB, design__DHCB_20)
+fit_DHCB_20 <- lmFit(mat_DHCB, design_DHCB_20)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t20
-contrast.matrix <- makeContrasts(timepointt20, levels=design__DHCB_20)
-fit2__DHCB_20 <- contrasts.fit(fit__DHCB_20, contrast.matrix)
-fit2__DHCB_20 <- eBayes(fit2__DHCB_20)
+contrast.matrix <- makeContrasts(timepointt20, levels=design_DHCB_20)
+fit2_DHCB_20 <- contrasts.fit(fit_DHCB_20, contrast.matrix)
+fit2_DHCB_20 <- eBayes(fit2_DHCB_20)
 
 results_DHCB_20 <- topTable(fit2_DHCB_20, adjust.method="BH", number=Inf)
 results_DHCB_20 <- add_annotations_to_results(results_DHCB_20)
@@ -674,12 +674,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_DHCB_24 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit__DHCB_24 <- lmFit(mat_DHCB, design__DHCB_24)
+fit_DHCB_24 <- lmFit(mat_DHCB, design_DHCB_24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
-contrast.matrix <- makeContrasts(timepointt24, levels=design__DHCB_24)
-fit2__DHCB_24 <- contrasts.fit(fit__DHCB_24, contrast.matrix)
-fit2__DHCB_24 <- eBayes(fit2__DHCB_24)
+contrast.matrix <- makeContrasts(timepointt24, levels=design_DHCB_24)
+fit2_DHCB_24 <- contrasts.fit(fit_DHCB_24, contrast.matrix)
+fit2_DHCB_24 <- eBayes(fit2_DHCB_24)
 
 results_DHCB_24 <- topTable(fit2_DHCB_24, adjust.method="BH", number=Inf)
 results_DHCB_24 <- add_annotations_to_results(results_DHCB_24)
@@ -873,12 +873,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_DHCB_36 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit__DHCB_36 <- lmFit(mat_DHCB, design__DHCB_36)
+fit_DHCB_36 <- lmFit(mat_DHCB, design_DHCB_36)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t36
-contrast.matrix <- makeContrasts(timepointt36, levels=design__DHCB_36)
-fit2__DHCB_36 <- contrasts.fit(fit__DHCB_36, contrast.matrix)
-fit2__DHCB_36 <- eBayes(fit2__DHCB_36)
+contrast.matrix <- makeContrasts(timepointt36, levels=design_DHCB_36)
+fit2_DHCB_36 <- contrasts.fit(fit_DHCB_36, contrast.matrix)
+fit2_DHCB_36 <- eBayes(fit2_DHCB_36)
 
 results_DHCB_36 <- topTable(fit2_DHCB_36, adjust.method="BH", number=Inf)
 results_DHCB_36 <- add_annotations_to_results(results_DHCB_36)
@@ -1072,12 +1072,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_DHCB_48 <- model.matrix(~ timepoint, colData(vsd_DHCB))
-fit__DHCB_48 <- lmFit(mat_DHCB, design__DHCB_48)
+fit_DHCB_48 <- lmFit(mat_DHCB, design_DHCB_48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
-contrast.matrix <- makeContrasts(timepointt48, levels=design__DHCB_48)
-fit2__DHCB_48 <- contrasts.fit(fit__DHCB_48, contrast.matrix)
-fit2__DHCB_48 <- eBayes(fit2__DHCB_48)
+contrast.matrix <- makeContrasts(timepointt48, levels=design_DHCB_48)
+fit2_DHCB_48 <- contrasts.fit(fit_DHCB_48, contrast.matrix)
+fit2_DHCB_48 <- eBayes(fit2_DHCB_48)
 
 results_DHCB_48 <- topTable(fit2_DHCB_48, adjust.method="BH", number=Inf)
 results_DHCB_48 <- add_annotations_to_results(results_DHCB_48)

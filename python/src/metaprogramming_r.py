@@ -308,12 +308,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{self._r}
 design_{self.treatment}_{timepoint} <- model.matrix(~ timepoint, colData(vsd_{treatment}))
-fit__{self.treatment}_{timepoint} <- lmFit(mat_{self.treatment}, design__{self.treatment}_{timepoint})
+fit_{self.treatment}_{timepoint} <- lmFit(mat_{self.treatment}, design_{self.treatment}_{timepoint})
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t{timepoint}
-contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design__{self.treatment}_{timepoint})
-fit2__{self.treatment}_{timepoint} <- contrasts.fit(fit__{self.treatment}_{timepoint}, contrast.matrix)
-fit2__{self.treatment}_{timepoint} <- eBayes(fit2__{self.treatment}_{timepoint})
+contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design_{self.treatment}_{timepoint})
+fit2_{self.treatment}_{timepoint} <- contrasts.fit(fit_{self.treatment}_{timepoint}, contrast.matrix)
+fit2_{self.treatment}_{timepoint} <- eBayes(fit2_{self.treatment}_{timepoint})
 
 results_{self.treatment}_{timepoint} <- topTable(fit2_{self.treatment}_{timepoint}, adjust.method="BH", number=Inf)
 results_{self.treatment}_{timepoint} <- add_annotations_to_results(results_{self.treatment}_{timepoint})

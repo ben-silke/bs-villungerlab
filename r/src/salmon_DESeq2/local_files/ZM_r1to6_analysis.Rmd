@@ -276,12 +276,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_ZM_16 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit__ZM_16 <- lmFit(mat_ZM, design__ZM_16)
+fit_ZM_16 <- lmFit(mat_ZM, design_ZM_16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
-contrast.matrix <- makeContrasts(timepointt16, levels=design__ZM_16)
-fit2__ZM_16 <- contrasts.fit(fit__ZM_16, contrast.matrix)
-fit2__ZM_16 <- eBayes(fit2__ZM_16)
+contrast.matrix <- makeContrasts(timepointt16, levels=design_ZM_16)
+fit2_ZM_16 <- contrasts.fit(fit_ZM_16, contrast.matrix)
+fit2_ZM_16 <- eBayes(fit2_ZM_16)
 
 results_ZM_16 <- topTable(fit2_ZM_16, adjust.method="BH", number=Inf)
 results_ZM_16 <- add_annotations_to_results(results_ZM_16)
@@ -475,12 +475,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_ZM_20 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit__ZM_20 <- lmFit(mat_ZM, design__ZM_20)
+fit_ZM_20 <- lmFit(mat_ZM, design_ZM_20)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t20
-contrast.matrix <- makeContrasts(timepointt20, levels=design__ZM_20)
-fit2__ZM_20 <- contrasts.fit(fit__ZM_20, contrast.matrix)
-fit2__ZM_20 <- eBayes(fit2__ZM_20)
+contrast.matrix <- makeContrasts(timepointt20, levels=design_ZM_20)
+fit2_ZM_20 <- contrasts.fit(fit_ZM_20, contrast.matrix)
+fit2_ZM_20 <- eBayes(fit2_ZM_20)
 
 results_ZM_20 <- topTable(fit2_ZM_20, adjust.method="BH", number=Inf)
 results_ZM_20 <- add_annotations_to_results(results_ZM_20)
@@ -674,12 +674,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_ZM_24 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit__ZM_24 <- lmFit(mat_ZM, design__ZM_24)
+fit_ZM_24 <- lmFit(mat_ZM, design_ZM_24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
-contrast.matrix <- makeContrasts(timepointt24, levels=design__ZM_24)
-fit2__ZM_24 <- contrasts.fit(fit__ZM_24, contrast.matrix)
-fit2__ZM_24 <- eBayes(fit2__ZM_24)
+contrast.matrix <- makeContrasts(timepointt24, levels=design_ZM_24)
+fit2_ZM_24 <- contrasts.fit(fit_ZM_24, contrast.matrix)
+fit2_ZM_24 <- eBayes(fit2_ZM_24)
 
 results_ZM_24 <- topTable(fit2_ZM_24, adjust.method="BH", number=Inf)
 results_ZM_24 <- add_annotations_to_results(results_ZM_24)
@@ -873,12 +873,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_ZM_36 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit__ZM_36 <- lmFit(mat_ZM, design__ZM_36)
+fit_ZM_36 <- lmFit(mat_ZM, design_ZM_36)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t36
-contrast.matrix <- makeContrasts(timepointt36, levels=design__ZM_36)
-fit2__ZM_36 <- contrasts.fit(fit__ZM_36, contrast.matrix)
-fit2__ZM_36 <- eBayes(fit2__ZM_36)
+contrast.matrix <- makeContrasts(timepointt36, levels=design_ZM_36)
+fit2_ZM_36 <- contrasts.fit(fit_ZM_36, contrast.matrix)
+fit2_ZM_36 <- eBayes(fit2_ZM_36)
 
 results_ZM_36 <- topTable(fit2_ZM_36, adjust.method="BH", number=Inf)
 results_ZM_36 <- add_annotations_to_results(results_ZM_36)
@@ -1072,12 +1072,12 @@ we can see if different genes are highlighted for differential expression
 
 ```{r}
 design_ZM_48 <- model.matrix(~ timepoint, colData(vsd_ZM))
-fit__ZM_48 <- lmFit(mat_ZM, design__ZM_48)
+fit_ZM_48 <- lmFit(mat_ZM, design_ZM_48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
-contrast.matrix <- makeContrasts(timepointt48, levels=design__ZM_48)
-fit2__ZM_48 <- contrasts.fit(fit__ZM_48, contrast.matrix)
-fit2__ZM_48 <- eBayes(fit2__ZM_48)
+contrast.matrix <- makeContrasts(timepointt48, levels=design_ZM_48)
+fit2_ZM_48 <- contrasts.fit(fit_ZM_48, contrast.matrix)
+fit2_ZM_48 <- eBayes(fit2_ZM_48)
 
 results_ZM_48 <- topTable(fit2_ZM_48, adjust.method="BH", number=Inf)
 results_ZM_48 <- add_annotations_to_results(results_ZM_48)
