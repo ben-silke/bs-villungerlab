@@ -283,19 +283,19 @@ contrast.matrix <- makeContrasts(timepointt8, levels=design_results_Nutl_t0_t8)
 fit2_results_Nutl_t0_t8 <- contrasts.fit(fit_results_Nutl_t0_t8, contrast.matrix)
 fit2_results_Nutl_t0_t8 <- eBayes(fit2_results_Nutl_t0_t8)
 
-results_Nutl_Nutl_results_Nutl_t0_t8 <- topTable(fit2_results_Nutl_t0_t8, adjust.method="BH", number=Inf)
-results_Nutl_results_Nutl_t0_t8 <- add_annotations_to_results(results_Nutl_results_Nutl_t0_t8)
+results_results_Nutl_t0_t8 <- topTable(fit2_results_Nutl_t0_t8, adjust.method="BH", number=Inf)
+results_results_Nutl_t0_t8 <- add_annotations_to_results(results_results_Nutl_t0_t8)
 
-results_Nutl_clean__results_Nutl_t0_t8 <- results_Nutl_results_Nutl_t0_t8[!is.na(results_Nutl_results_Nutl_t0_t8$logFC), ]
+results_clean__results_Nutl_t0_t8 <- results_results_Nutl_t0_t8[!is.na(results_results_Nutl_t0_t8$logFC), ]
 
-results_Nutl_ordered_results_Nutl_t0_t8 <- results_Nutl_clean__results_Nutl_t0_t8[order(results_Nutl_clean__results_Nutl_t0_t8$logFC), ]
+results_ordered_results_Nutl_t0_t8 <- results_clean__results_Nutl_t0_t8[order(results_clean__results_Nutl_t0_t8$logFC), ]
 ```
 
 ```{r}
 selected_genes_results_Nutl_t0_t8 <- as.character(results_Nutl_ordered_results_Nutl_t0_t8$symbol)
 
 EnhancedVolcano(
-    results_Nutl_ordered_results_Nutl_t0_t8,
+    results_ordered_results_Nutl_t0_t8,
     lab = selected_genes_results_Nutl_t0_t8,
     x = 'logFC',
     y = 'adj.P.Val',
@@ -312,8 +312,8 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_Nutl_ordered_results_Nutl_t0_t8 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t8)
-results_Nutl_ordered_results_Nutl_t0_t8_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t8)
+results_ordered_results_Nutl_t0_t8 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t8)
+results_ordered_results_Nutl_t0_t8_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t8)
 write.csv(results_Nutl_ordered_results_Nutl_t0_t8_df, file = "../../../../results/batch_corrected_results_Nutl_t0_t8_data.csv")
 ```
 
@@ -482,19 +482,19 @@ contrast.matrix <- makeContrasts(timepointt12, levels=design_results_Nutl_t0_t12
 fit2_results_Nutl_t0_t12 <- contrasts.fit(fit_results_Nutl_t0_t12, contrast.matrix)
 fit2_results_Nutl_t0_t12 <- eBayes(fit2_results_Nutl_t0_t12)
 
-results_Nutl_Nutl_results_Nutl_t0_t12 <- topTable(fit2_results_Nutl_t0_t12, adjust.method="BH", number=Inf)
-results_Nutl_results_Nutl_t0_t12 <- add_annotations_to_results(results_Nutl_results_Nutl_t0_t12)
+results_results_Nutl_t0_t12 <- topTable(fit2_results_Nutl_t0_t12, adjust.method="BH", number=Inf)
+results_results_Nutl_t0_t12 <- add_annotations_to_results(results_results_Nutl_t0_t12)
 
-results_Nutl_clean__results_Nutl_t0_t12 <- results_Nutl_results_Nutl_t0_t12[!is.na(results_Nutl_results_Nutl_t0_t12$logFC), ]
+results_clean__results_Nutl_t0_t12 <- results_results_Nutl_t0_t12[!is.na(results_results_Nutl_t0_t12$logFC), ]
 
-results_Nutl_ordered_results_Nutl_t0_t12 <- results_Nutl_clean__results_Nutl_t0_t12[order(results_Nutl_clean__results_Nutl_t0_t12$logFC), ]
+results_ordered_results_Nutl_t0_t12 <- results_clean__results_Nutl_t0_t12[order(results_clean__results_Nutl_t0_t12$logFC), ]
 ```
 
 ```{r}
 selected_genes_results_Nutl_t0_t12 <- as.character(results_Nutl_ordered_results_Nutl_t0_t12$symbol)
 
 EnhancedVolcano(
-    results_Nutl_ordered_results_Nutl_t0_t12,
+    results_ordered_results_Nutl_t0_t12,
     lab = selected_genes_results_Nutl_t0_t12,
     x = 'logFC',
     y = 'adj.P.Val',
@@ -511,8 +511,8 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_Nutl_ordered_results_Nutl_t0_t12 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t12)
-results_Nutl_ordered_results_Nutl_t0_t12_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t12)
+results_ordered_results_Nutl_t0_t12 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t12)
+results_ordered_results_Nutl_t0_t12_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t12)
 write.csv(results_Nutl_ordered_results_Nutl_t0_t12_df, file = "../../../../results/batch_corrected_results_Nutl_t0_t12_data.csv")
 ```
 
@@ -681,19 +681,19 @@ contrast.matrix <- makeContrasts(timepointt16, levels=design_results_Nutl_t0_t16
 fit2_results_Nutl_t0_t16 <- contrasts.fit(fit_results_Nutl_t0_t16, contrast.matrix)
 fit2_results_Nutl_t0_t16 <- eBayes(fit2_results_Nutl_t0_t16)
 
-results_Nutl_Nutl_results_Nutl_t0_t16 <- topTable(fit2_results_Nutl_t0_t16, adjust.method="BH", number=Inf)
-results_Nutl_results_Nutl_t0_t16 <- add_annotations_to_results(results_Nutl_results_Nutl_t0_t16)
+results_results_Nutl_t0_t16 <- topTable(fit2_results_Nutl_t0_t16, adjust.method="BH", number=Inf)
+results_results_Nutl_t0_t16 <- add_annotations_to_results(results_results_Nutl_t0_t16)
 
-results_Nutl_clean__results_Nutl_t0_t16 <- results_Nutl_results_Nutl_t0_t16[!is.na(results_Nutl_results_Nutl_t0_t16$logFC), ]
+results_clean__results_Nutl_t0_t16 <- results_results_Nutl_t0_t16[!is.na(results_results_Nutl_t0_t16$logFC), ]
 
-results_Nutl_ordered_results_Nutl_t0_t16 <- results_Nutl_clean__results_Nutl_t0_t16[order(results_Nutl_clean__results_Nutl_t0_t16$logFC), ]
+results_ordered_results_Nutl_t0_t16 <- results_clean__results_Nutl_t0_t16[order(results_clean__results_Nutl_t0_t16$logFC), ]
 ```
 
 ```{r}
 selected_genes_results_Nutl_t0_t16 <- as.character(results_Nutl_ordered_results_Nutl_t0_t16$symbol)
 
 EnhancedVolcano(
-    results_Nutl_ordered_results_Nutl_t0_t16,
+    results_ordered_results_Nutl_t0_t16,
     lab = selected_genes_results_Nutl_t0_t16,
     x = 'logFC',
     y = 'adj.P.Val',
@@ -710,8 +710,8 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_Nutl_ordered_results_Nutl_t0_t16 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t16)
-results_Nutl_ordered_results_Nutl_t0_t16_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t16)
+results_ordered_results_Nutl_t0_t16 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t16)
+results_ordered_results_Nutl_t0_t16_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t16)
 write.csv(results_Nutl_ordered_results_Nutl_t0_t16_df, file = "../../../../results/batch_corrected_results_Nutl_t0_t16_data.csv")
 ```
 
@@ -880,19 +880,19 @@ contrast.matrix <- makeContrasts(timepointt24, levels=design_results_Nutl_t0_t24
 fit2_results_Nutl_t0_t24 <- contrasts.fit(fit_results_Nutl_t0_t24, contrast.matrix)
 fit2_results_Nutl_t0_t24 <- eBayes(fit2_results_Nutl_t0_t24)
 
-results_Nutl_Nutl_results_Nutl_t0_t24 <- topTable(fit2_results_Nutl_t0_t24, adjust.method="BH", number=Inf)
-results_Nutl_results_Nutl_t0_t24 <- add_annotations_to_results(results_Nutl_results_Nutl_t0_t24)
+results_results_Nutl_t0_t24 <- topTable(fit2_results_Nutl_t0_t24, adjust.method="BH", number=Inf)
+results_results_Nutl_t0_t24 <- add_annotations_to_results(results_results_Nutl_t0_t24)
 
-results_Nutl_clean__results_Nutl_t0_t24 <- results_Nutl_results_Nutl_t0_t24[!is.na(results_Nutl_results_Nutl_t0_t24$logFC), ]
+results_clean__results_Nutl_t0_t24 <- results_results_Nutl_t0_t24[!is.na(results_results_Nutl_t0_t24$logFC), ]
 
-results_Nutl_ordered_results_Nutl_t0_t24 <- results_Nutl_clean__results_Nutl_t0_t24[order(results_Nutl_clean__results_Nutl_t0_t24$logFC), ]
+results_ordered_results_Nutl_t0_t24 <- results_clean__results_Nutl_t0_t24[order(results_clean__results_Nutl_t0_t24$logFC), ]
 ```
 
 ```{r}
 selected_genes_results_Nutl_t0_t24 <- as.character(results_Nutl_ordered_results_Nutl_t0_t24$symbol)
 
 EnhancedVolcano(
-    results_Nutl_ordered_results_Nutl_t0_t24,
+    results_ordered_results_Nutl_t0_t24,
     lab = selected_genes_results_Nutl_t0_t24,
     x = 'logFC',
     y = 'adj.P.Val',
@@ -909,8 +909,8 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_Nutl_ordered_results_Nutl_t0_t24 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t24)
-results_Nutl_ordered_results_Nutl_t0_t24_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t24)
+results_ordered_results_Nutl_t0_t24 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t24)
+results_ordered_results_Nutl_t0_t24_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t24)
 write.csv(results_Nutl_ordered_results_Nutl_t0_t24_df, file = "../../../../results/batch_corrected_results_Nutl_t0_t24_data.csv")
 ```
 
@@ -1079,19 +1079,19 @@ contrast.matrix <- makeContrasts(timepointt48, levels=design_results_Nutl_t0_t48
 fit2_results_Nutl_t0_t48 <- contrasts.fit(fit_results_Nutl_t0_t48, contrast.matrix)
 fit2_results_Nutl_t0_t48 <- eBayes(fit2_results_Nutl_t0_t48)
 
-results_Nutl_Nutl_results_Nutl_t0_t48 <- topTable(fit2_results_Nutl_t0_t48, adjust.method="BH", number=Inf)
-results_Nutl_results_Nutl_t0_t48 <- add_annotations_to_results(results_Nutl_results_Nutl_t0_t48)
+results_results_Nutl_t0_t48 <- topTable(fit2_results_Nutl_t0_t48, adjust.method="BH", number=Inf)
+results_results_Nutl_t0_t48 <- add_annotations_to_results(results_results_Nutl_t0_t48)
 
-results_Nutl_clean__results_Nutl_t0_t48 <- results_Nutl_results_Nutl_t0_t48[!is.na(results_Nutl_results_Nutl_t0_t48$logFC), ]
+results_clean__results_Nutl_t0_t48 <- results_results_Nutl_t0_t48[!is.na(results_results_Nutl_t0_t48$logFC), ]
 
-results_Nutl_ordered_results_Nutl_t0_t48 <- results_Nutl_clean__results_Nutl_t0_t48[order(results_Nutl_clean__results_Nutl_t0_t48$logFC), ]
+results_ordered_results_Nutl_t0_t48 <- results_clean__results_Nutl_t0_t48[order(results_clean__results_Nutl_t0_t48$logFC), ]
 ```
 
 ```{r}
 selected_genes_results_Nutl_t0_t48 <- as.character(results_Nutl_ordered_results_Nutl_t0_t48$symbol)
 
 EnhancedVolcano(
-    results_Nutl_ordered_results_Nutl_t0_t48,
+    results_ordered_results_Nutl_t0_t48,
     lab = selected_genes_results_Nutl_t0_t48,
     x = 'logFC',
     y = 'adj.P.Val',
@@ -1108,8 +1108,8 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_Nutl_ordered_results_Nutl_t0_t48 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t48)
-results_Nutl_ordered_results_Nutl_t0_t48_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t48)
+results_ordered_results_Nutl_t0_t48 <- add_annotations_to_results(results_Nutl_ordered_results_Nutl_t0_t48)
+results_ordered_results_Nutl_t0_t48_df <- as.data.frame(results_Nutl_ordered_results_Nutl_t0_t48)
 write.csv(results_Nutl_ordered_results_Nutl_t0_t48_df, file = "../../../../results/batch_corrected_results_Nutl_t0_t48_data.csv")
 ```
 

@@ -65,7 +65,7 @@ class RFileWriter():
 
     def write_intro_analysis(self):
         tabset_detail = "{.tabset}"
-        variable = f'results_{self.treatment}_{self.treatment}'
+        variable = f'results_{self.treatment}_{self.replicate}'
         content = f"""
 
 ### PCA
@@ -315,19 +315,19 @@ contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design_{variable}
 fit2_{variable} <- contrasts.fit(fit_{variable}, contrast.matrix)
 fit2_{variable} <- eBayes(fit2_{variable})
 
-results_{self.treatment}_{self.treatment}_{variable} <- topTable(fit2_{variable}, adjust.method="BH", number=Inf)
-results_{self.treatment}_{variable} <- add_annotations_to_results(results_{self.treatment}_{variable})
+results_{variable} <- topTable(fit2_{variable}, adjust.method="BH", number=Inf)
+results_{variable} <- add_annotations_to_results(results_{variable})
 
-results_{self.treatment}_clean__{variable} <- results_{self.treatment}_{variable}[!is.na(results_{self.treatment}_{variable}$logFC), ]
+results_clean__{variable} <- results_{variable}[!is.na(results_{variable}$logFC), ]
 
-results_{self.treatment}_ordered_{variable} <- results_{self.treatment}_clean__{variable}[order(results_{self.treatment}_clean__{variable}$logFC), ]
+results_ordered_{variable} <- results_clean__{variable}[order(results_clean__{variable}$logFC), ]
 ```
 
 ```{self._r}
 selected_genes_{variable} <- as.character(results_{self.treatment}_ordered_{variable}$symbol)
 
 EnhancedVolcano(
-    results_{self.treatment}_ordered_{variable},
+    results_ordered_{variable},
     lab = selected_genes_{variable},
     x = 'logFC',
     y = 'adj.P.Val',
@@ -344,8 +344,8 @@ EnhancedVolcano(
 ```
 
 ```{self._r_false_include}
-results_{self.treatment}_ordered_{variable} <- add_annotations_to_results(results_{self.treatment}_ordered_{variable})
-results_{self.treatment}_ordered_{variable}_df <- as.data.frame(results_{self.treatment}_ordered_{variable})
+results_ordered_{variable} <- add_annotations_to_results(results_{self.treatment}_ordered_{variable})
+results_ordered_{variable}_df <- as.data.frame(results_{self.treatment}_ordered_{variable})
 write.csv(results_{self.treatment}_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
 ```
 
@@ -483,14 +483,14 @@ dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_
 # Create the data and then save it
 save(dds_{variable}, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
 
-res <- results(dds_{variable})
-resOrdered <- res[order(res$padj),]
-resOrdered <- add_annotations_to_results(resOrdered)
+res_{variable} <- results(dds_{variable})
+resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
+resOrdered_{variable} <- add_annotations_to_results(resOrdered_{variable})
 
-head(resOrdered)
+head(resOrdered_{variable})
 
-resOrderedDF <- as.data.frame(resOrdered)
-write.csv(resOrderedDF, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
+resOrderedDF_{variable} <- as.data.frame(resOrdered_{variable})
+write.csv(resOrderedDF_{variable}, file = "results/{self.treatment}_{replicate_file_name}_data.csv")
 """
 
         file = f"{self.treatment}_{replicate_file_name}_create_data.R"

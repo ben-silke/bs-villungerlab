@@ -14,11 +14,11 @@ dds_Etop_r1to6 <- create_dds('Etop', data_directory, times, "salmon_quant", 1:6)
 # Create the data and then save it
 save(dds_Etop_r1to6, file = glue('r/data/', "Etop_r1to6_data.RData"))
 
-res <- results(dds_Etop_r1to6)
-resOrdered <- res[order(res$padj),]
-resOrdered <- add_annotations_to_results(resOrdered)
+res_Etop_r1to6 <- results(dds_Etop_r1to6)
+resOrdered_Etop_r1to6 <- res_Etop_r1to6[order(res_Etop_r1to6$padj),]
+resOrdered_Etop_r1to6 <- add_annotations_to_results(resOrdered_Etop_r1to6)
 
-head(resOrdered)
+head(resOrdered_Etop_r1to6)
 
-resOrderedDF <- as.data.frame(resOrdered)
-write.csv(resOrderedDF, file = "results/Etop_r1to6_data.csv")
+resOrderedDF_Etop_r1to6 <- as.data.frame(resOrdered_Etop_r1to6)
+write.csv(resOrderedDF_Etop_r1to6, file = "results/Etop_r1to6_data.csv")
