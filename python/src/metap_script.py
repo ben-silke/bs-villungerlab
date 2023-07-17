@@ -5,7 +5,7 @@ import click
 @click.command()
 @click.option('--treatment', '-t', help='treatment (e.g. ZM)')
 @click.option('--directory', '-d', help='Where should the files be saved?')
-@click.option('--file_location', '-f', default="data_directory = file.path('/nobackup/lab_villunger/bsilke', glue('organised/{treatment}/output_salmon'))", help="Where are the files?")
+@click.option('--file_location', '-f', help="Where are the files?")
 @click.option('--all_replicates', '-r', is_flag=True, help="include all replicates? or just 1-3?")
 @click.option('--all_treatments', '-a', is_flag=True, help='run for all replicates?')
 @click.option('--include_data_create', '-mdf', is_flag=True, help='run for all replicates?')
