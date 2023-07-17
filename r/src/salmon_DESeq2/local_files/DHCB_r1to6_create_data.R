@@ -7,7 +7,8 @@ source("r/src/pca_utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "DHCB"
-data_directory = file.path('/nobackup/lab_villunger/bsilke', glue('organised/{treatment}/output_salmon'))
+data_directory = file.path('../../../Volumes/bs_external/lab_villunger', glue('organised/{treatment}/output_salmon'))
+
 
 dds_DHCB_r1to6 <- create_dds('DHCB', data_directory, times, "salmon_quant", 1:6)
 # Create the data and then save it
