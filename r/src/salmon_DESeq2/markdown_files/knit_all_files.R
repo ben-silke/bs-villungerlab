@@ -1,6 +1,6 @@
 library(rmarkdown)
 
-
+getwd()
 files <- c("DHCB_r1to6_analysis.Rmd",
            "Etop_r1to6_analysis.Rmd",
            "Noc_r1to6_analysis.Rmd",

@@ -307,28 +307,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{self._r}
-design_{variable} <- model.matrix(~ timepoint, colData(vsd_{treatment}))
-fit_{variable} <- lmFit(mat_{self.treatment}, design_{variable})
+design_{self.treatment}_{timepoint} <- model.matrix(~ timepoint, colData(vsd_{treatment}))
+fit__{self.treatment}_{timepoint} <- lmFit(mat_{self.treatment}, design__{self.treatment}_{timepoint})
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t{timepoint}
-contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design_{variable})
-fit2_{variable} <- contrasts.fit(fit_{variable}, contrast.matrix)
-fit2_{variable} <- eBayes(fit2_{variable})
+contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design__{self.treatment}_{timepoint})
+fit2__{self.treatment}_{timepoint} <- contrasts.fit(fit__{self.treatment}_{timepoint}, contrast.matrix)
+fit2__{self.treatment}_{timepoint} <- eBayes(fit2__{self.treatment}_{timepoint})
 
-results_{variable} <- topTable(fit2_{variable}, adjust.method="BH", number=Inf)
-results_{variable} <- add_annotations_to_results(results_{variable})
+results_{self.treatment}_{timepoint} <- topTable(fit2_{self.treatment}_{timepoint}, adjust.method="BH", number=Inf)
+results_{self.treatment}_{timepoint} <- add_annotations_to_results(results_{self.treatment}_{timepoint})
 
-results_clean__{variable} <- results_{variable}[!is.na(results_{variable}$logFC), ]
+results_clean_{self.treatment}_{timepoint} <- results_{self.treatment}_{timepoint}[!is.na(results_{self.treatment}_{timepoint}$logFC), ]
 
-results_ordered_{variable} <- results_clean__{variable}[order(results_clean__{variable}$logFC), ]
+results_ordered_{self.treatment}_{timepoint} <- results_clean_{self.treatment}_{timepoint}[order(results_clean_{self.treatment}_{timepoint}$logFC), ]
 ```
 
 ```{self._r}
-selected_genes_{variable} <- as.character(results_{self.treatment}_ordered_{variable}$symbol)
+selected_genes_{self.treatment}_{timepoint} <- as.character(results_ordered_{self.treatment}_{timepoint}$symbol)
 
 EnhancedVolcano(
-    results_ordered_{variable},
-    lab = selected_genes_{variable},
+    results_ordered_{self.treatment}_{timepoint},
+    lab = selected_genes_{self.treatment}_{timepoint},
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t{timepoint} (limma)',
@@ -344,9 +344,9 @@ EnhancedVolcano(
 ```
 
 ```{self._r_false_include}
-results_ordered_{variable} <- add_annotations_to_results(results_{self.treatment}_ordered_{variable})
-results_ordered_{variable}_df <- as.data.frame(results_{self.treatment}_ordered_{variable})
-write.csv(results_{self.treatment}_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
+results_ordered_{variable} <- add_annotations_to_results(results_ordered_{variable})
+results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})
+write.csv(results_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
 ```
 
 """

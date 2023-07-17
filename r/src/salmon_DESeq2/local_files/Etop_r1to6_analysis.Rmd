@@ -275,28 +275,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_Etop_t0_t8 <- model.matrix(~ timepoint, colData(vsd_Etop))
-fit_results_Etop_t0_t8 <- lmFit(mat_Etop, design_results_Etop_t0_t8)
+design_Etop_8 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit__Etop_8 <- lmFit(mat_Etop, design__Etop_8)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t8
-contrast.matrix <- makeContrasts(timepointt8, levels=design_results_Etop_t0_t8)
-fit2_results_Etop_t0_t8 <- contrasts.fit(fit_results_Etop_t0_t8, contrast.matrix)
-fit2_results_Etop_t0_t8 <- eBayes(fit2_results_Etop_t0_t8)
+contrast.matrix <- makeContrasts(timepointt8, levels=design__Etop_8)
+fit2__Etop_8 <- contrasts.fit(fit__Etop_8, contrast.matrix)
+fit2__Etop_8 <- eBayes(fit2__Etop_8)
 
-results_results_Etop_t0_t8 <- topTable(fit2_results_Etop_t0_t8, adjust.method="BH", number=Inf)
-results_results_Etop_t0_t8 <- add_annotations_to_results(results_results_Etop_t0_t8)
+results_Etop_8 <- topTable(fit2_Etop_8, adjust.method="BH", number=Inf)
+results_Etop_8 <- add_annotations_to_results(results_Etop_8)
 
-results_clean__results_Etop_t0_t8 <- results_results_Etop_t0_t8[!is.na(results_results_Etop_t0_t8$logFC), ]
+results_clean_Etop_8 <- results_Etop_8[!is.na(results_Etop_8$logFC), ]
 
-results_ordered_results_Etop_t0_t8 <- results_clean__results_Etop_t0_t8[order(results_clean__results_Etop_t0_t8$logFC), ]
+results_ordered_Etop_8 <- results_clean_Etop_8[order(results_clean_Etop_8$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_Etop_t0_t8 <- as.character(results_Etop_ordered_results_Etop_t0_t8$symbol)
+selected_genes_Etop_8 <- as.character(results_ordered_Etop_8$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_Etop_t0_t8,
-    lab = selected_genes_results_Etop_t0_t8,
+    results_ordered_Etop_8,
+    lab = selected_genes_Etop_8,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t8 (limma)',
@@ -312,9 +312,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_Etop_t0_t8 <- add_annotations_to_results(results_Etop_ordered_results_Etop_t0_t8)
-results_ordered_results_Etop_t0_t8_df <- as.data.frame(results_Etop_ordered_results_Etop_t0_t8)
-write.csv(results_Etop_ordered_results_Etop_t0_t8_df, file = "../../../../results/batch_corrected_results_Etop_t0_t8_data.csv")
+results_ordered_results_Etop_t0_t8 <- add_annotations_to_results(results_ordered_results_Etop_t0_t8)
+results_ordered_results_Etop_t0_t8_df <- as.data.frame(results_ordered_results_Etop_t0_t8)
+write.csv(results_ordered_results_Etop_t0_t8_df, file = "../../../../results/batch_corrected_results_Etop_t0_t8_data.csv")
 ```
 
 
@@ -474,28 +474,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_Etop_t0_t12 <- model.matrix(~ timepoint, colData(vsd_Etop))
-fit_results_Etop_t0_t12 <- lmFit(mat_Etop, design_results_Etop_t0_t12)
+design_Etop_12 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit__Etop_12 <- lmFit(mat_Etop, design__Etop_12)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t12
-contrast.matrix <- makeContrasts(timepointt12, levels=design_results_Etop_t0_t12)
-fit2_results_Etop_t0_t12 <- contrasts.fit(fit_results_Etop_t0_t12, contrast.matrix)
-fit2_results_Etop_t0_t12 <- eBayes(fit2_results_Etop_t0_t12)
+contrast.matrix <- makeContrasts(timepointt12, levels=design__Etop_12)
+fit2__Etop_12 <- contrasts.fit(fit__Etop_12, contrast.matrix)
+fit2__Etop_12 <- eBayes(fit2__Etop_12)
 
-results_results_Etop_t0_t12 <- topTable(fit2_results_Etop_t0_t12, adjust.method="BH", number=Inf)
-results_results_Etop_t0_t12 <- add_annotations_to_results(results_results_Etop_t0_t12)
+results_Etop_12 <- topTable(fit2_Etop_12, adjust.method="BH", number=Inf)
+results_Etop_12 <- add_annotations_to_results(results_Etop_12)
 
-results_clean__results_Etop_t0_t12 <- results_results_Etop_t0_t12[!is.na(results_results_Etop_t0_t12$logFC), ]
+results_clean_Etop_12 <- results_Etop_12[!is.na(results_Etop_12$logFC), ]
 
-results_ordered_results_Etop_t0_t12 <- results_clean__results_Etop_t0_t12[order(results_clean__results_Etop_t0_t12$logFC), ]
+results_ordered_Etop_12 <- results_clean_Etop_12[order(results_clean_Etop_12$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_Etop_t0_t12 <- as.character(results_Etop_ordered_results_Etop_t0_t12$symbol)
+selected_genes_Etop_12 <- as.character(results_ordered_Etop_12$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_Etop_t0_t12,
-    lab = selected_genes_results_Etop_t0_t12,
+    results_ordered_Etop_12,
+    lab = selected_genes_Etop_12,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t12 (limma)',
@@ -511,9 +511,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_Etop_t0_t12 <- add_annotations_to_results(results_Etop_ordered_results_Etop_t0_t12)
-results_ordered_results_Etop_t0_t12_df <- as.data.frame(results_Etop_ordered_results_Etop_t0_t12)
-write.csv(results_Etop_ordered_results_Etop_t0_t12_df, file = "../../../../results/batch_corrected_results_Etop_t0_t12_data.csv")
+results_ordered_results_Etop_t0_t12 <- add_annotations_to_results(results_ordered_results_Etop_t0_t12)
+results_ordered_results_Etop_t0_t12_df <- as.data.frame(results_ordered_results_Etop_t0_t12)
+write.csv(results_ordered_results_Etop_t0_t12_df, file = "../../../../results/batch_corrected_results_Etop_t0_t12_data.csv")
 ```
 
 
@@ -673,28 +673,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_Etop_t0_t16 <- model.matrix(~ timepoint, colData(vsd_Etop))
-fit_results_Etop_t0_t16 <- lmFit(mat_Etop, design_results_Etop_t0_t16)
+design_Etop_16 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit__Etop_16 <- lmFit(mat_Etop, design__Etop_16)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t16
-contrast.matrix <- makeContrasts(timepointt16, levels=design_results_Etop_t0_t16)
-fit2_results_Etop_t0_t16 <- contrasts.fit(fit_results_Etop_t0_t16, contrast.matrix)
-fit2_results_Etop_t0_t16 <- eBayes(fit2_results_Etop_t0_t16)
+contrast.matrix <- makeContrasts(timepointt16, levels=design__Etop_16)
+fit2__Etop_16 <- contrasts.fit(fit__Etop_16, contrast.matrix)
+fit2__Etop_16 <- eBayes(fit2__Etop_16)
 
-results_results_Etop_t0_t16 <- topTable(fit2_results_Etop_t0_t16, adjust.method="BH", number=Inf)
-results_results_Etop_t0_t16 <- add_annotations_to_results(results_results_Etop_t0_t16)
+results_Etop_16 <- topTable(fit2_Etop_16, adjust.method="BH", number=Inf)
+results_Etop_16 <- add_annotations_to_results(results_Etop_16)
 
-results_clean__results_Etop_t0_t16 <- results_results_Etop_t0_t16[!is.na(results_results_Etop_t0_t16$logFC), ]
+results_clean_Etop_16 <- results_Etop_16[!is.na(results_Etop_16$logFC), ]
 
-results_ordered_results_Etop_t0_t16 <- results_clean__results_Etop_t0_t16[order(results_clean__results_Etop_t0_t16$logFC), ]
+results_ordered_Etop_16 <- results_clean_Etop_16[order(results_clean_Etop_16$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_Etop_t0_t16 <- as.character(results_Etop_ordered_results_Etop_t0_t16$symbol)
+selected_genes_Etop_16 <- as.character(results_ordered_Etop_16$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_Etop_t0_t16,
-    lab = selected_genes_results_Etop_t0_t16,
+    results_ordered_Etop_16,
+    lab = selected_genes_Etop_16,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t16 (limma)',
@@ -710,9 +710,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_Etop_t0_t16 <- add_annotations_to_results(results_Etop_ordered_results_Etop_t0_t16)
-results_ordered_results_Etop_t0_t16_df <- as.data.frame(results_Etop_ordered_results_Etop_t0_t16)
-write.csv(results_Etop_ordered_results_Etop_t0_t16_df, file = "../../../../results/batch_corrected_results_Etop_t0_t16_data.csv")
+results_ordered_results_Etop_t0_t16 <- add_annotations_to_results(results_ordered_results_Etop_t0_t16)
+results_ordered_results_Etop_t0_t16_df <- as.data.frame(results_ordered_results_Etop_t0_t16)
+write.csv(results_ordered_results_Etop_t0_t16_df, file = "../../../../results/batch_corrected_results_Etop_t0_t16_data.csv")
 ```
 
 
@@ -872,28 +872,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_Etop_t0_t24 <- model.matrix(~ timepoint, colData(vsd_Etop))
-fit_results_Etop_t0_t24 <- lmFit(mat_Etop, design_results_Etop_t0_t24)
+design_Etop_24 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit__Etop_24 <- lmFit(mat_Etop, design__Etop_24)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t24
-contrast.matrix <- makeContrasts(timepointt24, levels=design_results_Etop_t0_t24)
-fit2_results_Etop_t0_t24 <- contrasts.fit(fit_results_Etop_t0_t24, contrast.matrix)
-fit2_results_Etop_t0_t24 <- eBayes(fit2_results_Etop_t0_t24)
+contrast.matrix <- makeContrasts(timepointt24, levels=design__Etop_24)
+fit2__Etop_24 <- contrasts.fit(fit__Etop_24, contrast.matrix)
+fit2__Etop_24 <- eBayes(fit2__Etop_24)
 
-results_results_Etop_t0_t24 <- topTable(fit2_results_Etop_t0_t24, adjust.method="BH", number=Inf)
-results_results_Etop_t0_t24 <- add_annotations_to_results(results_results_Etop_t0_t24)
+results_Etop_24 <- topTable(fit2_Etop_24, adjust.method="BH", number=Inf)
+results_Etop_24 <- add_annotations_to_results(results_Etop_24)
 
-results_clean__results_Etop_t0_t24 <- results_results_Etop_t0_t24[!is.na(results_results_Etop_t0_t24$logFC), ]
+results_clean_Etop_24 <- results_Etop_24[!is.na(results_Etop_24$logFC), ]
 
-results_ordered_results_Etop_t0_t24 <- results_clean__results_Etop_t0_t24[order(results_clean__results_Etop_t0_t24$logFC), ]
+results_ordered_Etop_24 <- results_clean_Etop_24[order(results_clean_Etop_24$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_Etop_t0_t24 <- as.character(results_Etop_ordered_results_Etop_t0_t24$symbol)
+selected_genes_Etop_24 <- as.character(results_ordered_Etop_24$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_Etop_t0_t24,
-    lab = selected_genes_results_Etop_t0_t24,
+    results_ordered_Etop_24,
+    lab = selected_genes_Etop_24,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t24 (limma)',
@@ -909,9 +909,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_Etop_t0_t24 <- add_annotations_to_results(results_Etop_ordered_results_Etop_t0_t24)
-results_ordered_results_Etop_t0_t24_df <- as.data.frame(results_Etop_ordered_results_Etop_t0_t24)
-write.csv(results_Etop_ordered_results_Etop_t0_t24_df, file = "../../../../results/batch_corrected_results_Etop_t0_t24_data.csv")
+results_ordered_results_Etop_t0_t24 <- add_annotations_to_results(results_ordered_results_Etop_t0_t24)
+results_ordered_results_Etop_t0_t24_df <- as.data.frame(results_ordered_results_Etop_t0_t24)
+write.csv(results_ordered_results_Etop_t0_t24_df, file = "../../../../results/batch_corrected_results_Etop_t0_t24_data.csv")
 ```
 
 
@@ -1071,28 +1071,28 @@ After we have adjusted counts for the batch effect,
 we can see if different genes are highlighted for differential expression
 
 ```{r}
-design_results_Etop_t0_t48 <- model.matrix(~ timepoint, colData(vsd_Etop))
-fit_results_Etop_t0_t48 <- lmFit(mat_Etop, design_results_Etop_t0_t48)
+design_Etop_48 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit__Etop_48 <- lmFit(mat_Etop, design__Etop_48)
 # Replace 'treatment' and 'control' with your specific time points.
 # Demonstrates difference between t0 and t48
-contrast.matrix <- makeContrasts(timepointt48, levels=design_results_Etop_t0_t48)
-fit2_results_Etop_t0_t48 <- contrasts.fit(fit_results_Etop_t0_t48, contrast.matrix)
-fit2_results_Etop_t0_t48 <- eBayes(fit2_results_Etop_t0_t48)
+contrast.matrix <- makeContrasts(timepointt48, levels=design__Etop_48)
+fit2__Etop_48 <- contrasts.fit(fit__Etop_48, contrast.matrix)
+fit2__Etop_48 <- eBayes(fit2__Etop_48)
 
-results_results_Etop_t0_t48 <- topTable(fit2_results_Etop_t0_t48, adjust.method="BH", number=Inf)
-results_results_Etop_t0_t48 <- add_annotations_to_results(results_results_Etop_t0_t48)
+results_Etop_48 <- topTable(fit2_Etop_48, adjust.method="BH", number=Inf)
+results_Etop_48 <- add_annotations_to_results(results_Etop_48)
 
-results_clean__results_Etop_t0_t48 <- results_results_Etop_t0_t48[!is.na(results_results_Etop_t0_t48$logFC), ]
+results_clean_Etop_48 <- results_Etop_48[!is.na(results_Etop_48$logFC), ]
 
-results_ordered_results_Etop_t0_t48 <- results_clean__results_Etop_t0_t48[order(results_clean__results_Etop_t0_t48$logFC), ]
+results_ordered_Etop_48 <- results_clean_Etop_48[order(results_clean_Etop_48$logFC), ]
 ```
 
 ```{r}
-selected_genes_results_Etop_t0_t48 <- as.character(results_Etop_ordered_results_Etop_t0_t48$symbol)
+selected_genes_Etop_48 <- as.character(results_ordered_Etop_48$symbol)
 
 EnhancedVolcano(
-    results_ordered_results_Etop_t0_t48,
-    lab = selected_genes_results_Etop_t0_t48,
+    results_ordered_Etop_48,
+    lab = selected_genes_Etop_48,
     x = 'logFC',
     y = 'adj.P.Val',
     title = 'Batch controlled ZM t0_t48 (limma)',
@@ -1108,9 +1108,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_results_Etop_t0_t48 <- add_annotations_to_results(results_Etop_ordered_results_Etop_t0_t48)
-results_ordered_results_Etop_t0_t48_df <- as.data.frame(results_Etop_ordered_results_Etop_t0_t48)
-write.csv(results_Etop_ordered_results_Etop_t0_t48_df, file = "../../../../results/batch_corrected_results_Etop_t0_t48_data.csv")
+results_ordered_results_Etop_t0_t48 <- add_annotations_to_results(results_ordered_results_Etop_t0_t48)
+results_ordered_results_Etop_t0_t48_df <- as.data.frame(results_ordered_results_Etop_t0_t48)
+write.csv(results_ordered_results_Etop_t0_t48_df, file = "../../../../results/batch_corrected_results_Etop_t0_t48_data.csv")
 ```
 
 
