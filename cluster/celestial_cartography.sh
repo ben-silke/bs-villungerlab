@@ -1,6 +1,9 @@
 #!/bin/bash
 # Mapping step using STAR
 
+treatment=$1
+echo "We are now operating on $treatment"
+
 # Move to the data folder
 datadir="/nobackup/lab_villunger/bsilke"
 cd $datadir
@@ -17,33 +20,33 @@ treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 ls
 # This command should run the STAR mapping process for all treatments/ times.
-for treatment in ${treatments[@]}; do
-    output_htseq="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_htseq_counts"
-    mkdir $output_htseq
+# for treatment in ${treatments[@]}; do
+output_htseq="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_htseq_counts"
+mkdir $output_htseq
 
-    # where do you store stars?
-    night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR"
-    mkdir $night_sky
-    echo "Night Sky: $night_sky"
+# where do you store stars?
+night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR"
+mkdir $night_sky
+echo "Night Sky: $night_sky"
 
-    input_trimmed_folder="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_trimmed"
+input_trimmed_folder="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_trimmed"
 
-    for time in ${times[@]}; do
-        for replicate in ${replicates[@]}; do
-            file="${treatment}_${time}_${replicate}"
+for time in ${times[@]}; do
+    for replicate in ${replicates[@]}; do
+        file="${treatment}_${time}_${replicate}"
 
-            echo "Mapping STARS in $file"
+        echo "Mapping STARS in $file"
 
-            input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${file}.fastq"
-            output_file="${night_sky}/${file}"
+        input_trimmed_file="${input_trimmed_folder}/trimmed_fq_${file}.fastq"
+        output_file="${night_sky}/${file}"
 
-            STAR \
-            --runThreadN 4 \
-            --genomeDir /nobackup/lab_villunger/bsilke/star_index \
-            --readFilesIn "$input_trimmed_file" \
-            --outFileNamePrefix "${night_sky}/${file}"
-            # Now we should delete the old file
-            # rm $input_trimmed_file
-        done
+        STAR \
+        --runThreadN 4 \
+        --genomeDir /nobackup/lab_villunger/bsilke/star_index \
+        --readFilesIn "$input_trimmed_file" \
+        --outFileNamePrefix "${night_sky}/${file}"
+        # Now we should delete the old file
+        # rm $input_trimmed_file
     done
 done
+# done
