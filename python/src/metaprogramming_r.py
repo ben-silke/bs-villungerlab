@@ -501,6 +501,47 @@ write.csv(resOrderedDF_{variable}, file = "results/{self.treatment}_{replicate_f
     
 
 class StarRFileWriter(RFileWriter):
-    def write_r_data_file(self):
-        pass
+    def write_r_file(self):
+        replicate = "1:6" if self.all_replicates else "1:3"
+        self.replicate = replicate
+        times = self.time_dict[self.treatment][0]
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+        variable = f"{self.treatment}_{replicate_file_name}"
+        content = f"""
+
+library("glue")
+library("Rsubread")
+library("stringr")
+library("DESeq2")
+
+source("r/src/star_analysis/star_utils.R")
+source("r/src/pca_utils.R")
+source("r/src/utils.R")
+library("vsn")
+library("genefilter")
+setwd("/Users/bsilke/bs-villungerlab")
+
+times = {times}
+treatment <- "{self.treatment}"
+{self.file_location}
+annotation_file <- "INSERT_ANNOTATION_FILE"
+
+dds_{variable} <- create_star_dds('{self.treatment}', data_directory, times, {replicate}, annotation_file)
+# Create the data and then save it
+save(dds_{variable}, file = glue('r/data/STAR', "{self.treatment}_{replicate_file_name}_stardata.RData"))
+
+res_{variable} <- results(dds_{variable})
+resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
+resOrdered_{variable} <- add_annotations_to_results(resOrdered_{variable})
+
+head(resOrdered_{variable})
+
+resOrderedDF_{variable} <- as.data.frame(resOrdered_{variable})
+write.csv(resOrderedDF_{variable}, file = "results/STAR/{self.treatment}_{replicate_file_name}_stardata.csv")
+"""
+
+        file = f"{self.treatment}_{replicate_file_name}_create_stardata.R"
+        with open(file, 'w') as f:
+            f.write(content) 
+
     
