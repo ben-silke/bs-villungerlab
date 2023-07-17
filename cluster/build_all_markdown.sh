@@ -6,7 +6,7 @@
 #SBATCH --nodes=1 # number of physical nodes
 #SBATCH --ntasks=1 # 1 task
 #SBATCH --cpus-per-task=1 # 1 task on 1 CPU
-#SBATCH --time=12:00:00 #
+#SBATCH --time=02:00:00 #
 # Optional parameters
 #SBATCH --mem=10000 # using 10gb of memory
 #SBATCH --error /nobackup/lab_villunger/bsilke/logs/markdown_creation_%j.err # error log file location (stderr), %j stands for unique job ID
@@ -28,21 +28,17 @@ echo "======================"
 
 # *** setup environment ***
 # load the required environmental modules that your script depends upon
-module load R
-module load R-bundle-Bioconductor/3.15-foss-2022a-R-4.2.1
+module load Java/11.0.2
+module load R/4.3.0-foss-2022b
+# module load R-bundle-Bioconductor/3.15-foss-2022a-R-4.2.1
+
+export TMPDIR=/nobackup/lab_villunger/bsilke/Rtmp
+
 # *** run the job ***
+
 date
 
-Rscript r/src/salmon_DESeq2/markdown_files/DHCB_r1to6_create_data.R
-Rscript r/src/salmon_DESeq2/markdown_files/ZM_r1to6_create_data.R
-Rscript r/src/salmon_DESeq2/markdown_files/Etop_r1to6_create_data.R
-Rscript r/src/salmon_DESeq2/markdown_files/Nutl_r1to6_create_data.R
-Rscript r/src/salmon_DESeq2/markdown_files/Noc_r1to6_create_data.R
-
-
-sleep 100
-
-Rscript r/src/salmon_DESeq2/markdown_files/knit_all_files.R
+./run_markdown.sh
 
 date
 
