@@ -42,7 +42,7 @@ class RFileWriter():
 """
 
         for time in self.time_dict[self.treatment][1]:
-            variable_name = f'results_t{0}_t{time}'
+            variable_name = f'results_{self.treatment}_t{0}_t{time}'
 
             time_content = f"""
 
@@ -65,7 +65,7 @@ class RFileWriter():
 
     def write_intro_analysis(self):
         tabset_detail = "{.tabset}"
-        variable = f'results_{self.treatment}'
+        variable = f'results_{self.treatment}_{self.treatment}'
         content = f"""
 
 ### PCA
@@ -123,7 +123,7 @@ plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
     def exploration_analyis(self, start, end):
         tabset_detail = "{.tabset}"
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
-        variable_name = f'results_t{end}_t{start}'
+        variable_name = f'results_{self.treatment}_t{end}_t{start}'
 
         content = f"""
 ### Exploratory Analysis {tabset_detail}
@@ -159,7 +159,7 @@ summary({variable_name}_restricted)
     def differential_expression_analysis(self, start, end):
         tabset_detail = "{.tabset}"
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
-        variable_name = f'results_t{end}_t{start}'
+        variable_name = f'results_{self.treatment}_t{end}_t{start}'
 
         content = f"""
 ### Differential Expression Analysis {tabset_detail}
@@ -201,7 +201,7 @@ summary({variable_name}_shrunk_ashr)
 
     def time_analysis(self, start, end):
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
-        variable_name = f'results_t{end}_t{start}'
+        variable_name = f'results_{self.treatment}_t{end}_t{start}'
         content = f"""
 ### Unrestricted
 #### Summary
@@ -315,19 +315,19 @@ contrast.matrix <- makeContrasts(timepointt{timepoint}, levels=design_{variable}
 fit2_{variable} <- contrasts.fit(fit_{variable}, contrast.matrix)
 fit2_{variable} <- eBayes(fit2_{variable})
 
-results_{variable} <- topTable(fit2_{variable}, adjust.method="BH", number=Inf)
-results_{variable} <- add_annotations_to_results(results_{variable})
+results_{self.treatment}_{self.treatment}_{variable} <- topTable(fit2_{variable}, adjust.method="BH", number=Inf)
+results_{self.treatment}_{variable} <- add_annotations_to_results(results_{self.treatment}_{variable})
 
-results_clean__{variable} <- results_{variable}[!is.na(results_{variable}$logFC), ]
+results_{self.treatment}_clean__{variable} <- results_{self.treatment}_{variable}[!is.na(results_{self.treatment}_{variable}$logFC), ]
 
-results_ordered_{variable} <- results_clean__{variable}[order(results_clean__{variable}$logFC), ]
+results_{self.treatment}_ordered_{variable} <- results_{self.treatment}_clean__{variable}[order(results_{self.treatment}_clean__{variable}$logFC), ]
 ```
 
 ```{self._r}
-selected_genes_{variable} <- as.character(results_ordered_{variable}$symbol)
+selected_genes_{variable} <- as.character(results_{self.treatment}_ordered_{variable}$symbol)
 
 EnhancedVolcano(
-    results_ordered_{variable},
+    results_{self.treatment}_ordered_{variable},
     lab = selected_genes_{variable},
     x = 'logFC',
     y = 'adj.P.Val',
@@ -344,9 +344,9 @@ EnhancedVolcano(
 ```
 
 ```{self._r_false_include}
-results_ordered_{variable} <- add_annotations_to_results(results_ordered_{variable})
-results_ordered_{variable}_df <- as.data.frame(results_ordered_{variable})
-write.csv(results_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
+results_{self.treatment}_ordered_{variable} <- add_annotations_to_results(results_{self.treatment}_ordered_{variable})
+results_{self.treatment}_ordered_{variable}_df <- as.data.frame(results_{self.treatment}_ordered_{variable})
+write.csv(results_{self.treatment}_ordered_{variable}_df, file = "../../../../results/batch_corrected_{variable}_data.csv")
 ```
 
 """
