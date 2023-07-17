@@ -16,7 +16,8 @@ source("r/src/pca_utils.R")
 # # Create the data and then save it
 # save(dds, file = glue('r/data/', glue(treatment, "_data.RData")))
 getwd()
-load("r/data/ZM_data.RData")
+
+load("bs-villungerlab/r/data/ZM_r1to6_data.RData")
 ###
 
 ####### 
