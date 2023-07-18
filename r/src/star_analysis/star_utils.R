@@ -27,7 +27,7 @@ create_star_dataframe <- function(treatment_name, data_directory, times, replica
   files <- list()
   for (time in times) {
     for (replicate in replicates) {
-      file_path <- (file.path(data_directory, glue("{treatment_name}_{time}_{replicate}Aligned.out.SAM")))
+      file_path <- (file.path(data_directory, glue("{treatment_name}_{time}_{replicate}Aligned.out.sam")))
       files <- append(files, file_path)
     }
   }
