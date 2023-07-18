@@ -10,32 +10,35 @@ source("r/src/utils.R")
 #####
 # ##### main
 times = c(0, 16, 20, 24, 36, 48)
-treatment <- "ZM"
+times = c(0, 8, 12, 16, 24, 48)
+treatment <- "Etop"
 # data_directory = file.path('../../../Volumes/bs_external/lab_villunger', glue('organised/{treatment}/output_STAR'))
-data_directory = file.path('/Users/bsilke/bs-villungerlab/data/zm_star_output/output_STAR')
-
+# data_directory = file.path('/Users/bsilke/bs-villungerlab/data/etop_star_output/output_STAR')
+data_directory = file.path('/nobackup/lab_villunger/bsilke/organised/Etop/output_STAR')
 data_directory
 
 # Can we do this on the cluster ??
-annotation_file <- "/Users/bsilke/bs-villungerlab/data/hg38_RefSeq_22Apr2022.saf"
+# annotation_file <- "/Users/bsilke/bs-villungerlab/data/hg38_RefSeq_22Apr2022.saf"
+
+annotation_file <- "/nobackup/lab_villunger/bsilke/references/Homo_sapiens.GRCh38.109.gtf"
 
 ##### bam_files
 # /Volumes/nobackup/lab_villunger/bsilke/organised/ZM/output_STAR/ZM_12_r5Aligned.out.sam
-# dds_ZM_r1to6 <- create_dds('ZM', data_directory, times, "salmon_quant", 1:6)
 
 # files_feature_counts <- create_star_dds('ZM', data_directory, times, 1:6)
-files_feature_counts <- create_star_dataframe('ZM', data_directory, times, 1:6)
+files_feature_counts <- create_star_dataframe(treatment, data_directory, times, 1)
+
 # getwd()
 T2T <- read.delim(annotation_file)
-# T2T
+T2T
 type(files_feature_counts$files)
 # files_feature_counts$files
 is.vector(files_feature_counts$files)
 
 fc <- featureCounts(files_feature_counts$files, annot.ext=T2T)
 
-dds <- DESeqDataSetFromMatrix(countData = cts,
-                              colData = coldata,
+dds <- DESeqDataSetFromMatrix(countData = fc$counts,
+                              colData = files_feature_counts,
                               design = ~ condition)
 dds
 
