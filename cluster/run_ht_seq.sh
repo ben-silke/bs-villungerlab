@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task=4 # 1 task on 1 CPU
 #SBATCH --time=12:00:00 #
 # Optional parameters
-#SBATCH --mem=40000 # using 40gb of memory
+#SBATCH --mem=100000 # using 40gb of memory
 #SBATCH --error /nobackup/lab_villunger/bsilke/logs/htseq_counts_%j.err # error log file location (stderr), %j stands for unique job ID
 #SBATCH --mail-type=end # send an email when this job ends
 #SBATCH --mail-user=bsilke@cemm.at # email your CeMM account
