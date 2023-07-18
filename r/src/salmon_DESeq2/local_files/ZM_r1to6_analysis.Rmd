@@ -48,7 +48,11 @@ return (res)
 #### VST - Variance Stablised Transformation
 ```{r}
 vsd_ZM <- vst(dds_ZM_r1to6, blind=FALSE)
-plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
+
+par(mfrow=c(1,2))
+plotPCA(vsd_ZM, intgroup=c('timepoint'))
+plotPCA(vsd_ZM, intgroup=c('batch'))
+
 ```
 
 
@@ -57,6 +61,9 @@ plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
 ```{r}
 rld_ZM <- rlog(dds_ZM_r1to6, blind=FALSE)
 plotPCA(rld_ZM, intgroup=c('batch', 'timepoint'))
+
+plotPCA(rld_ZM, intgroup=c('timepoint'))
+plotPCA(rld_ZM, intgroup=c('batch'))
 ```
 
 

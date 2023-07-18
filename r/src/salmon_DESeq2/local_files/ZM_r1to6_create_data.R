@@ -1,5 +1,6 @@
 
 library("vsn")
+library("openxlsx")
 library("genefilter")
 setwd("/Users/bsilke/bs-villungerlab")
 source("r/src/utils.R")
@@ -22,3 +23,20 @@ head(resOrdered)
 
 resOrderedDF <- as.data.frame(resOrdered)
 write.csv(resOrderedDF, file = "results/ZM_r1to6_data.csv")
+
+# Creating spreadsheets for analysis:::
+zm_workbook <- createWorkbook()
+addWorksheet(zm_workbook, "ZM_all")
+writeData(zm_workbook, "ZM_all", resOrderedDF)
+
+vsd <- vst(dds, blind=FALSE)
+rld <- rlog(dds, blind=FALSE)
+
+addWorksheet(zm_workbook, "ZM_vst")
+writeData(zm_workbook, "ZM_vst", resOrderedDF)
+
+
+
+
+# Save the workbook to an .xlsx file
+saveWorkbook(wb, "zm_all_treatment_data.xlsx", overwrite = TRUE)

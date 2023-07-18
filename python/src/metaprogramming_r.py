@@ -73,6 +73,7 @@ class RFileWriter():
 ```{self._r}
 vsd_{self.treatment} <- vst(dds_{self.treatment}_{self.replicate}, blind=FALSE)
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
+title("PCA plot highlighting batch differences for VST for {self.treatment}: {self.replicate}")
 ```
 
 
@@ -94,17 +95,21 @@ plotPCA(rld_{self.treatment}, intgroup=c('batch', 'timepoint'))
 {self.write_poi_heatmap(self.treatment)}
 
 
-
+### Batch Correction using _Limma_.
         
-We can use the package limma to account for the batch effect:
+We can use the package _limma_ to account for the batch effect:
 https://bioconductor.org/packages/release/bioc/html/limma.html
 
-We can see that there is a clear batch effect.
 ```{self._r}
 vsd_{self.treatment} <- vst(dds_{self.treatment}_{self.replicate}, blind=FALSE)
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
-
 ```
+
+```{self._r}
+plotPCA(vsd_{self.treatment}, intgroup=c('batch'))
+title("PCA plot highlighting batch differences for VST for {self.treatment}: {self.replicate}")
+```
+
 
 Using limma we can normalise the counts for this.
 ```{self._r}
@@ -114,6 +119,11 @@ mat_{self.treatment} <- limma::removeBatchEffect(mat_{self.treatment}, batch=vsd
 assay(vsd_{self.treatment}) <- mat_{self.treatment}
 plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 
+```
+
+It is easier to view the change in timepoints here.
+```{self._r}
+plotPCA(vsd_{self.treatment}, intgroup=c('timepoint'))
 ```
     
 
