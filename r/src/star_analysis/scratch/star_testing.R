@@ -20,12 +20,15 @@ data_directory
 # Can we do this on the cluster ??
 # annotation_file <- "/Users/bsilke/bs-villungerlab/data/hg38_RefSeq_22Apr2022.saf"
 
-annotation_file <- "../../../Volumes/bs_external/lab_villunger/references/Homo_sapiens.GRCh38.109.gtf"
+# annotation_file <- "../../../Volumes/bs_external/lab_villunger/references/Homo_sapiens.GRCh38.109.gff3"
+annotation_file <- "data/Homo_sapiens.GRCh38.109.gff3"
 
 ##### bam_files
 # /Volumes/nobackup/lab_villunger/bsilke/organised/ZM/output_STAR/ZM_12_r5Aligned.out.sam
 
 # files_feature_counts <- create_star_dds('ZM', data_directory, times, 1:6)
+times <- c(0, 8)
+
 files_feature_counts <- create_star_dataframe(treatment, data_directory, times, 1)
 
 # getwd()
@@ -36,9 +39,12 @@ fc <- featureCounts(
   files_feature_counts$files, 
   annot.ext=annotation_file,
   isGTFAnnotationFile = TRUE,
+  GTF.attrType = "exon_id",
+  reportReads = "CORE",
+  verbose = TRUE
   )
 
-fc
+fc$
 
 dds <- DESeqDataSetFromMatrix(countData = fc$counts,
                               colData = files_feature_counts,
