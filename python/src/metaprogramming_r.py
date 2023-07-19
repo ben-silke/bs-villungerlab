@@ -554,4 +554,39 @@ write.csv(resOrderedDF_{variable}, file = "results/STAR/{self.treatment}_{replic
         with open(file, 'w') as f:
             f.write(content) 
 
-    
+
+
+class ResultsSheetWriter:
+
+    directory: str
+    file_location: str
+
+    short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48])
+    long_times = ("c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48])
+
+    all_replicates: bool
+
+    time_dict = {
+        'ZM': long_times,
+        'Noc': long_times,
+        'DHCB': long_times,
+        'Nutl': short_times,
+        'Etop': short_times
+    }
+
+    _r = "{r}"
+    _r_false_include = "{r include=FALSE}"
+    _r_setup = "{r setup, include=FALSE}"
+
+
+    def __init__(self, directory: str, file_location: str, all_replicates: bool) -> None:
+        self.directory = directory
+        self.all_replicates = all_replicates
+        self.file_location = file_location
+
+    def write_result_creation_sheet(self, treatments, program):
+        """
+        Function to write the collection of data, for either star or for salmon data to write to spreadsheets
+        
+        """
+        pass
