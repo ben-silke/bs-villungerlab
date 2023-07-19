@@ -1,9 +1,6 @@
 #!/bin/bash
-
-treatment = $1
-
-#SBATCH --output /nobackup/lab_villunger/bsilke/logs/feature_counts%j.log # log file location (stdout), %j stands for unique job ID
-#SBATCH --job-name=feature_counts$treatment
+#SBATCH --output /nobackup/lab_villunger/bsilke/logs/feature_counts_zm_%j.log # log file location (stdout), %j stands for unique job ID
+#SBATCH --job-name=feature_counts_zm
 #SBATCH --partition=longq # job queue where the job is submitted to
 #SBATCH --qos=longq # qos must match the partition
 #SBATCH --nodes=1 # number of physical nodes
@@ -12,7 +9,7 @@ treatment = $1
 #SBATCH --time=12:00:00 #
 # Optional parameters
 #SBATCH --mem=400000 # using 400gb of memory
-#SBATCH --error /nobackup/lab_villunger/bsilke/logs/feature_counts_%j.err # error log file location (stderr), %j stands for unique job ID
+#SBATCH --error /nobackup/lab_villunger/bsilke/logs/feature_counts_zm_%j.err # error log file location (stderr), %j stands for unique job ID
 #SBATCH --mail-type=end # send an email when this job ends
 #SBATCH --mail-user=bsilke@cemm.at # email your CeMM account
 
@@ -34,7 +31,7 @@ echo "======================"
 module load Subread
 # *** run the job ***
 date
-./count_features.sh $treatment
+./count_features.sh "ZM"
 date
 
 seff $SLURM_JOB_ID

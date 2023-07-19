@@ -15,7 +15,7 @@ treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 ls
 output_feature_counts="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_feature_counts"
-mkdir $output_htseq
+mkdir $output_feature_counts
 
 # where do you store stars?
 night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR"
