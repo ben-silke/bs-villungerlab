@@ -36,8 +36,9 @@ date
 STAR \
 --runThreadN 8 \
 --runMode genomeGenerate \
---genomeDir "/nobackup/lab_villunger/bsilke/gtf_star_index_gencode" \
---genomeFastaFiles "/nobackup/lab_villunger/bsilke/references/star/GRCh38.primary_assembly.genome.fa" \
+--genomeDir "/nobackup/lab_villunger/bsilke/gtf_star_index_gencode_tscrpt" \dd
+# this doesnt work u need to cat "gencode.v44.transcripts.fa"
+--genomeFastaFiles "/nobackup/lab_villunger/bsilke/references/star/GRCh38.primary_assembly.genome.fa"  \
 --sjdbGTFfile "/nobackup/lab_villunger/bsilke/references/star/gencode.v44.annotation.gtf" \
 --limitGenomeGenerateRAM 350000000000
 date
