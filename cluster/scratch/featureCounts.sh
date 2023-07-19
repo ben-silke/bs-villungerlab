@@ -1,0 +1,1 @@
+featureCounts --verbose -F GTF -a /nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf -o test/star_ZM0r1.counts /nobackup/lab_villunger/bsilke/test/ZM_0_r1Aligned.out.sam
