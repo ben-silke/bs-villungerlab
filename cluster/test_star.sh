@@ -6,7 +6,7 @@
 #SBATCH --nodes=1 # number of physical nodes
 #SBATCH --ntasks=1 # 1 task
 #SBATCH --cpus-per-task=4 # 1 task on 1 CPU
-#SBATCH --time=12:00:00 #
+#SBATCH --time=2:00:00 #
 # Optional parameters
 #SBATCH --mem=400000 # using 400gb of memory
 #SBATCH --error /nobackup/lab_villunger/bsilke/logs/star_counts_%j.err # error log file location (stderr), %j stands for unique job ID
