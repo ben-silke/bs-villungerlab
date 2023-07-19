@@ -21,13 +21,11 @@ replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 ls
 # This command should run the STAR mapping process for all treatments/ times.
 # for treatment in ${treatments[@]}; do
-output_htseq="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_htseq_counts"
-mkdir $output_htseq
 
 # where do you store stars?
 night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR_gencode"
 mkdir $night_sky
-echo "Night Sky: $night_sky"
+echo "Night Sky (Gencode): $night_sky"
 
 input_trimmed_folder="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_trimmed"
 
@@ -42,9 +40,9 @@ for time in ${times[@]}; do
 
         STAR \
         --runThreadN 4 \
-        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index \
+        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index_gencode \
         --readFilesIn "$input_trimmed_file" \
-        --outFileNamePrefix "${night_sky}/gc${file}"
+        --outFileNamePrefix "${night_sky}/gc_${file}"
         # Now we should delete the old file
         # rm $input_trimmed_file
     done
