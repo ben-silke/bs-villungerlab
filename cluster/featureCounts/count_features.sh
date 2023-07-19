@@ -14,13 +14,12 @@ replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
 ls
-output_feature_counts="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_feature_counts"
+output_feature_counts="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_feature_counts_gencode"
 mkdir $output_feature_counts
 
 # where do you store stars?
-night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR"
-
-input_trimmed_folder="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_trimmed"
+night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR_gencode"
+files=()
 
 for time in ${times[@]}; do
     for replicate in ${replicates[@]}; do
@@ -28,14 +27,17 @@ for time in ${times[@]}; do
 
         echo "Mapping STARS in $file"
 
-        input_file="${night_sky}/${file}Aligned.out.sam"
-        output_file="${output_feature_counts}/${file}_fc"
-
-        featureCounts -F GTF \
-        -a /nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf \
-        -o $output_file \
-        $input_file \
-
+        input_file="${night_sky}/gc_${file}Aligned.out.sam"
+        files+=("$input_file")
     done
 done
+
+echo "All Files: ${files[@]}"
+
+output_file="${output_feature_counts}/allgc_${file}_fc"
+
+featureCounts -F GTF \
+-a /nobackup/lab_villunger/bsilke/references/star/gencode.v44.annotation.gtf \
+-o $output_file \
+${files[@]} \
 # done
