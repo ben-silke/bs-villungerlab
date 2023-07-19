@@ -36,9 +36,9 @@ date
 STAR \
 --runThreadN 4 \
 --runMode genomeGenerate \
---genomeDir /nobackup/lab_villunger/bsilke/star_index \
+--genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index \
 --genomeFastaFiles /nobackup/lab_villunger/bsilke/references/STAR/ensembl_genome/combined_reference.fa \
---sjdbGTFfile /nobackup/lab_villunger/bsilke/references/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.chr.gff3 \
+--sjdbGTFfile /nobackup/lab_villunger/bsilke/references/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.gtf \
 --limitGenomeGenerateRAM 350000000000
 date
 
