@@ -36,10 +36,13 @@ date
 STAR \
 --runThreadN 4 \
 --runMode genomeGenerate \
---genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index \
---genomeFastaFiles /nobackup/lab_villunger/bsilke/references/STAR/ensembl_genome/combined_reference.fa \
---sjdbGTFfile /nobackup/lab_villunger/bsilke/references/STAR/ensemble_annotation/homo_sapiens/Homo_sapiens.GRCh38.109.gtf \
+--genomeDir "/nobackup/lab_villunger/bsilke/gtf_star_index" \
+--genomeFastaFiles "/nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.dna.primary_assembly.fa" \
+--sjdbGTFfile "/nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf" \
 --limitGenomeGenerateRAM 350000000000
 date
 
 seff $SLURM_JOB_ID
+
+# rsync -av rsync://ftp.ensembl.org/ensembl/pub/release-110/fasta/homo_sapiens/ .
+# https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/

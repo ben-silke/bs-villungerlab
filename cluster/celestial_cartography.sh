@@ -42,7 +42,7 @@ for time in ${times[@]}; do
 
         STAR \
         --runThreadN 4 \
-        --genomeDir /nobackup/lab_villunger/bsilke/star_index \
+        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index \
         --readFilesIn "$input_trimmed_file" \
         --outFileNamePrefix "${night_sky}/${file}"
         # Now we should delete the old file
