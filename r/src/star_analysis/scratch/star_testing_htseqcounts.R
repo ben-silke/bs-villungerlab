@@ -2,10 +2,22 @@ library("glue")
 library("Rsubread")
 library("stringr")
 library("DESeq2")
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+library("limma")
+
 
 source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
+
+
 
 #####
 # ##### main
@@ -48,6 +60,10 @@ create_htseq_dataframe <- function(treatment_name, data_directory, times, replic
 star_data <- create_htseq_dataframe("ZM", data_directory, times, 1:6)
 star_data
 
+
+
+
+
 file <- star_data$files[1]
 merged_data <- read.table(file)
 df <- data.frame()
@@ -64,23 +80,57 @@ for (file in star_data$files) {
   rm(data)
 }
 
-# merged_df$
-rownames(merged_df) <- merged_df$gene_id
-merged_df <- merged_df[, -1]
+# df.drop('B', axis=1, inplace=True)
+
+merged_df <- df
 merged_df
+
+rownames(merged_df) <- merged_df$gene_id
+merged_df <- merged_df[, -2]
+merged_df <- merged_df[,-1]
 matrix <- as.matrix(merged_df)
 star_data$files = NULL
-star_data
+star_data <- star_data[-1,]
 
 dim(star_data)
 dim(matrix)
 
+
+
 dds <- DESeqDataSetFromMatrix(countData = matrix,
                               colData = star_data,
-                              design= ~ batch + timepoint)
+                              design= ~ timepoint)
+dds <- DESeq(dds)
 
 
+vsd <- vst(dds, blind=FALSE)
+plotPCA(vsd, intgroup=c('batch', 'timepoint'))
 
 
+mat <- assay(vsd)
+mm <- model.matrix(~timepoint, colData(vsd))
+mat <- limma::removeBatchEffect(mat, batch=vsd$batch, design=mm)
+assay(vsd) <- mat
+plotPCA(vsd, intgroup=c('batch', 'timepoint'))
 
+results <- lfcShrink(dds, coef="timepoint_t20_vs_t0", type="apeglm")
+summary(results)
+
+DESeq2::plotMA(results, ylim=c(-3,3))
+
+results <- add_annotations_to_results(results)
+selected_genes <- as.character(results$symbol)
+
+EnhancedVolcano(results,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t8_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
 

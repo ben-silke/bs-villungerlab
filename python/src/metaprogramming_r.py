@@ -693,6 +693,8 @@ class SalmonResultSheetWriter(ResultsSheetWriter):
         def write_treatment_creation(treatment):
             content = f""" 
 
+load("r/data/{treatment}_{self.replicate}_data.RData")
+            
 treatment = '{treatment}'
 data_directory = file.path('{self.file_location}', glue('organised/{treatment}/output_salmon'))
 dds_{treatment}_{self.replicate} <- create_dds(treatment, data_directory, times[treatment], "salmon_quant", 1:6)
