@@ -40,9 +40,9 @@ for time in ${times[@]}; do
 
         STAR \
         --runThreadN 4 \
-        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index_gencode \
+        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index_gencode_tscrpt \
         --readFilesIn "$input_trimmed_file" \
-        --outFileNamePrefix "${night_sky}/gc_${file}"
+        --outFileNamePrefix "${night_sky}/gc_trscrpt_${file}"
         # Now we should delete the old file
         # rm $input_trimmed_file
     done
