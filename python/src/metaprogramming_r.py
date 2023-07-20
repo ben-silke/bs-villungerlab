@@ -33,7 +33,6 @@ class RFileWriter():
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
         self.replicate = replicate_file_name
 
-
         content = f"""
 {outline}
 # {self.treatment} Analysis {tabset_detail}
@@ -584,9 +583,125 @@ class ResultsSheetWriter:
         self.all_replicates = all_replicates
         self.file_location = file_location
 
-    def write_result_creation_sheet(self, treatments, program):
+        replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+        self.replicate = replicate_file_name
+
+    def write_result_creation_sheet(self):
         """
         Function to write the collection of data, for either star or for salmon data to write to spreadsheets
         
         """
-        pass
+
+        content = f"""
+
+{self.write_intro()}
+{self.write_create_data()}
+
+#### TIMEPOINT t0-t16- loop for each time stamp
+{self.write_timepoint_workbook(16)}
+
+#### TIMEPOINT t0-t24
+{self.write_timepoint_workbook(24)}
+
+#### TIMEPOINT t0-t48
+{self.write_timepoint_workbook(48)}
+"""
+
+        file = f'all_results_{self.replicate}.R'
+
+        with open(file, 'w') as f:
+            f.write(content)
+
+    def write_create_data(self):
+        self.created_data = True
+        raise NotImplementedError
+
+    def write_timepoint_workbook(self, timepoint):
+        if not self.created_data: raise ValueError("please create data first")
+        timepoint_variable = f"timepoint_t{timepoint}_vs_t0"
+        workbook_name = f"t0_t{timepoint}_workbook"
+        treatments = [treatment for treatment in self.time_dict.keys() if timepoint in self.time_dict[treatment][1]]
+        
+        def write_treatment_timepoint_data(treatment, timepoint):
+            
+
+            content = f"""
+addWorksheet({workbook_name}, "t0_t16_workbook")
+
+### loop for each treatment Template:
+results_{treatment}_{timepoint} <- lfcShrink(dds_{treatment}_{self.replicate}, coef={timepoint_variable}, type="apeglm")
+results_{treatment}_{timepoint} <- subset(results_{treatment}_{timepoint}, padj < 0.1)  # Restrict to values which are significant
+results_{treatment}_{timepoint} <- add_annotations_to_results(results_{treatment}_{timepoint})
+results_{treatment}_{timepoint}_df <- as.data.frame(results_{treatment}_{timepoint})
+
+addWorksheet({workbook_name}, "results_apelgm_{treatment}_{timepoint}")
+writeData({workbook_name}, "results_subset_dataframe", results_{treatment}_{timepoint}_df)
+"""
+
+            return content
+
+        content = f"""
+        
+## TIMEPOINT t0-t{timepoint}- loop for each time stamp
+{workbook_name} <- createWorkbook()
+
+# Create results 
+"""
+        for treatment in treatments:
+            content = content + write_treatment_timepoint_data(treatment, timepoint)
+
+
+        content = content + f"""
+saveWorkbook({workbook_name}, "{workbook_name}.xlsx", overwrite = TRUE)
+
+"""
+        return content
+
+    def write_intro(self):
+
+        content = f"""
+library("vsn")
+library("genefilter")
+library(dplyr)
+
+setwd("/Users/bsilke/bs-villungerlab")
+source("r/src/utils.R")
+source("r/src/pca_utils.R")
+
+short_times <- c(8,12,16,24,48)
+long_times <- c(16,20,24,36,48)
+
+# Create a named list
+times <- list(
+  'ZM' = long_times,
+  'Noc' = long_times,
+  'DHCB' = long_times,
+  'Nutl' = short_times,
+  'Etop' = short_times
+)
+
+treatments <- c("ZM", "DHCB", "Etop", "Noc", "Nutl")
+path <- {self.file_location}
+"""
+        return content
+    
+
+class SalmonResultSheetWriter(ResultsSheetWriter):
+
+    def write_create_data(self):
+
+        def write_treatment_creation(treatment):
+            content = f""" 
+
+treatment = '{treatment}'
+data_directory = file.path('{self.file_location}', glue('organised/{treatment}/output_salmon'))
+dds_{treatment}_{self.replicate} <- create_dds(treatment, data_directory, times[treatment], "salmon_quant", 1:6)
+save(dds_{treatment}_{self.replicate}, file = glue('r/data/', "{treatment}_{self.replicate}_data.RData"))
+
+"""
+        content = ""
+
+        for treatment in self.time_dict.keys():
+            content = content + write_treatment_creation(treatment)
+
+        return content
