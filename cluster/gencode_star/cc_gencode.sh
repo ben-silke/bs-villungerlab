@@ -23,9 +23,9 @@ ls
 # for treatment in ${treatments[@]}; do
 
 # where do you store stars?
-night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR_gencode"
+night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/ENCODE_output_STAR_gencode"
 mkdir $night_sky
-echo "Night Sky (Gencode): $night_sky"
+echo "Night Sky (Gencode/ encode): $night_sky"
 
 input_trimmed_folder="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_trimmed"
 
@@ -40,11 +40,18 @@ for time in ${times[@]}; do
 
         STAR \
         --runThreadN 4 \
-        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index_gencode_tscrpt \
+        --genomeDir /nobackup/lab_villunger/bsilke/gtf_star_index_gencode \
         --readFilesIn "$input_trimmed_file" \
-        --outFileNamePrefix "${night_sky}/gc_trscrpt_${file}"
-        # Now we should delete the old file
-        # rm $input_trimmed_file
+        --outFileNamePrefix "${night_sky}/gc_encode_${file}" \
+        --outFilterType BySJout \
+        --outFilterMultimapNmax 20 \
+        --alignSJoverhangMin 8 \
+        --alignSJDBoverhangMin 1 \
+        --outFilterMismatchNmax 999 \
+        --outFilterMismatchNoverReadLmax 0.04 \
+        --alignIntronMin 20 \
+        --alignIntronMax 1000000 \
+        --alignMatesGapMax 1000000
     done
 done
 # done
