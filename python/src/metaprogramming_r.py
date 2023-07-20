@@ -597,7 +597,7 @@ class ResultsSheetWriter:
 {self.write_intro()}
 {self.write_create_data()}
 
-#### TIMEPOINT t0-t16- loop for each time stamp
+#### TIMEPOINT t0-t16
 {self.write_timepoint_workbook(16)}
 
 #### TIMEPOINT t0-t24
@@ -617,7 +617,6 @@ class ResultsSheetWriter:
         raise NotImplementedError
 
     def write_timepoint_workbook(self, timepoint):
-        if not self.created_data: raise ValueError("please create data first")
         timepoint_variable = f"timepoint_t{timepoint}_vs_t0"
         workbook_name = f"t0_t{timepoint}_workbook"
         treatments = [treatment for treatment in self.time_dict.keys() if timepoint in self.time_dict[treatment][1]]
@@ -629,7 +628,7 @@ class ResultsSheetWriter:
 addWorksheet({workbook_name}, "t0_t16_workbook")
 
 ### loop for each treatment Template:
-results_{treatment}_{timepoint} <- lfcShrink(dds_{treatment}_{self.replicate}, coef={timepoint_variable}, type="apeglm")
+results_{treatment}_{timepoint} <- lfcShrink(dds_{treatment}_{self.replicate}, coef="{timepoint_variable}", type="apeglm")
 results_{treatment}_{timepoint} <- subset(results_{treatment}_{timepoint}, padj < 0.1)  # Restrict to values which are significant
 results_{treatment}_{timepoint} <- add_annotations_to_results(results_{treatment}_{timepoint})
 results_{treatment}_{timepoint}_df <- as.data.frame(results_{treatment}_{timepoint})
@@ -663,6 +662,7 @@ saveWorkbook({workbook_name}, "{workbook_name}.xlsx", overwrite = TRUE)
 library("vsn")
 library("genefilter")
 library(dplyr)
+library(openxlsx)
 
 setwd("/Users/bsilke/bs-villungerlab")
 source("r/src/utils.R")
@@ -681,7 +681,7 @@ times <- list(
 )
 
 treatments <- c("ZM", "DHCB", "Etop", "Noc", "Nutl")
-path <- {self.file_location}
+path <- "{self.file_location}"
 """
         return content
     
@@ -699,6 +699,7 @@ dds_{treatment}_{self.replicate} <- create_dds(treatment, data_directory, times[
 save(dds_{treatment}_{self.replicate}, file = glue('r/data/', "{treatment}_{self.replicate}_data.RData"))
 
 """
+            return content
         content = ""
 
         for treatment in self.time_dict.keys():
