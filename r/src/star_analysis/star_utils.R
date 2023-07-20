@@ -5,8 +5,9 @@ library("DESeq2")
 
 
 parse_star_filename <- function(filename, file_prefix=default_file_prefix) {
-  
-  name <- str_extract(filename, "(?<=Aligned.out.sam)[^_]*")
+  pattern <- "([A-Z]*)_([0-9]*)_r([0-9]*)"
+  matches <- str_match(filename, pattern)
+  # name <- str_extract(filename, "(?<=.counts)[^_]*")
   time <- str_extract(filename, "(?<=_)[^_]*(?=_r)")
   replicate <- str_extract(filename, "(?<=_r)\\d+")
   
@@ -16,7 +17,7 @@ parse_star_filename <- function(filename, file_prefix=default_file_prefix) {
     batch = 2
   }
   
-  name <- glue("{name}_t{time}_r{replicate}")
+  name <- matches[1]
   
   return(c(name, time, replicate, batch))
 }
