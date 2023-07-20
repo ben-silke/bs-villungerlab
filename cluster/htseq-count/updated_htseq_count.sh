@@ -25,9 +25,18 @@ for time in ${times[@]}; do
         file="${treatment}_${time}_${replicate}"
         echo "Mapping STARS in $file"
         input_file="${night_sky}/${file}Aligned.out.sam"
-        output_file="${output_htseq_count}/htseq_${file}.counts"
-        htseq-count -i "gene_id" $input_file "/nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf" > $output_file
+        files+=("$input_file")
     done
 done
-# [bsilke@d002 output_STAR]$ htseq-count -i "gene_id" ZM_0_r1Aligned.out.sam /nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf=
+
+echo "All Files: ${files[@]}"
+# [bsilke@d002 output_STAR]$ htseq-count -i "gene_id" ZM_0_r1Aligned.out.sam /nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf
+htseq-count \
+-i "gene_id" \
+# -n 8 \
+# --with-header \
+-c "${output_htseq_count}/${treatment}_htseqcount" \
+${files[@]} \
+"/nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf"
+
 # done
