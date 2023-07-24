@@ -22,7 +22,7 @@ source("r/src/utils.R")
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "ZM"
 data_directory = file.path('data/encode_output_htseq_counts')
-ddseq_ZM <- load_all_htseq_data(file.path(data_directory, 'all_ZM_fc.tsv'))
+ddseq_ZM <- load_all_htseq_data(file.path(data_directory, 'all_ZM_htseq_encode_counts.tsv'))
 
 # <- create_htseq_ddseq(ZM, data_directory, times, 1:6)
 

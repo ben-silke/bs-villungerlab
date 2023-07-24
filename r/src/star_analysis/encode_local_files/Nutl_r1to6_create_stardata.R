@@ -22,7 +22,7 @@ source("r/src/utils.R")
 times = c(0, 8, 12, 16, 24, 48)
 treatment <- "Nutl"
 data_directory = file.path('data/encode_output_htseq_counts')
-ddseq_Nutl <- load_all_htseq_data(file.path(data_directory, 'all_Nutl_fc.tsv'))
+ddseq_Nutl <- load_all_htseq_data(file.path(data_directory, 'all_Nutl_htseq_encode_counts.tsv'))
 
 # <- create_htseq_ddseq(Nutl, data_directory, times, 1:6)
 

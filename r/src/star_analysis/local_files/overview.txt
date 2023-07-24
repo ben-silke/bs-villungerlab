@@ -1,0 +1,5 @@
+STAR analysis:
+
+run with ensemble reference and ensemble annotations
+feature counting performed with htseq >2.0
+analysis performed with DESeq2

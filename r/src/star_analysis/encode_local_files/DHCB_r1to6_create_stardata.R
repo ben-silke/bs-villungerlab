@@ -22,7 +22,7 @@ source("r/src/utils.R")
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "DHCB"
 data_directory = file.path('data/encode_output_htseq_counts')
-ddseq_DHCB <- load_all_htseq_data(file.path(data_directory, 'all_DHCB_fc.tsv'))
+ddseq_DHCB <- load_all_htseq_data(file.path(data_directory, 'all_DHCB_htseq_encode_counts.tsv'))
 
 # <- create_htseq_ddseq(DHCB, data_directory, times, 1:6)
 

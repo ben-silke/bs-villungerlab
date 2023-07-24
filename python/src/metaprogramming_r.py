@@ -1,6 +1,6 @@
 class RFileWriter():
     treatment: str
-    directory: str
+    output: str
     file_location: str
     data_location: str
 
@@ -22,11 +22,12 @@ class RFileWriter():
     _r_setup = "{r setup, include=FALSE}"
 
 
-    def __init__(self, treatment: str, directory: str = '', file_location: str = '', all_replicates: bool = False) -> None:
+    def __init__(self, treatment: str, output: str = '', file_location: str = '', all_replicates: bool = False) -> None:
         self.treatment = treatment
-        self.directory = directory
+        self.output = output
         self.all_replicates = all_replicates
         self.file_location = f"'{file_location}'"
+        self.data_location = ''
 
     def write_markdown_file(self):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
@@ -430,8 +431,7 @@ library("stringr")
 library("DESeq2")
 library(dplyr)
 library(openxlsx)
-load('~/bs-villungerlab/r/data/{self.data_location}')
-
+load('~/bs-villungerlab/{self.output}/{self.data_location}')
 
 dds_{variable} <- ddseq_{self.treatment}
 results <- results(dds_{variable})
@@ -505,7 +505,7 @@ data_directory = file.path({self.file_location})
 
 dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds_{variable}, file = 'r/data/{self.data_location}'))
+save(dds_{variable}, file = '{self.output}/{self.data_location}'))
 
 res_{variable} <- results(dds_{variable})
 resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
@@ -529,7 +529,8 @@ class StarRFileWriter(RFileWriter):
         self.replicate = replicate
         times = self.time_dict[self.treatment][0]
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-        self.data_location = f"{self.treatment}_{replicate_file_name}_star.RData"
+        if not self.data_location:
+            self.data_location = f"{self.treatment}_{replicate_file_name}_star.RData"
         for_loop = 'for (time in times) {'
         end_for_loop = '}'
         _time = '{time}'
@@ -558,11 +559,11 @@ source("r/src/utils.R")
 times = {times}
 treatment <- "{self.treatment}"
 data_directory = file.path({self.file_location})
-ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{self.treatment}_fc.tsv'))
+ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{self.treatment}_htseq_encode_counts.tsv'))
 
 # <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
-save(ddseq_{self.treatment}, file = 'r/data/{self.data_location}')
+save(ddseq_{self.treatment}, file = '{self.output}/{self.data_location}')
 
 {self.treatment}_workbook <- createWorkbook()
 times = {self.time_dict[self.treatment][2]}
@@ -577,7 +578,7 @@ times = {self.time_dict[self.treatment][2]}
     writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df, row.names=TRUE)
 {end_for_loop}
 
-saveWorkbook({self.treatment}_workbook, "results/{self.treatment}_workbook.xlsx", overwrite = TRUE)
+saveWorkbook({self.treatment}_workbook, "{self.output}/{self.treatment}_workbook.xlsx", overwrite = TRUE)
 
 """
 
@@ -589,7 +590,7 @@ saveWorkbook({self.treatment}_workbook, "results/{self.treatment}_workbook.xlsx"
 
 class ResultsSheetWriter:
 
-    directory: str
+    output: str
     file_location: str
 
     short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48])
@@ -610,8 +611,8 @@ class ResultsSheetWriter:
     _r_setup = "{r setup, include=FALSE}"
 
 
-    def __init__(self, directory: str, file_location: str, all_replicates: bool) -> None:
-        self.directory = directory
+    def __init__(self, output: str, file_location: str, all_replicates: bool) -> None:
+        self.output = output
         self.all_replicates = all_replicates
         self.file_location = file_location
 
@@ -727,12 +728,12 @@ class SalmonResultSheetWriter(ResultsSheetWriter):
         def write_treatment_creation(treatment):
             content = f""" 
 
-load("r/data/{treatment}_{self.replicate}_data.RData")
+load("{self.output}/{treatment}_{self.replicate}_data.RData")
             
 treatment = '{treatment}'
 data_directory = file.path('{self.file_location}', glue('organised/{treatment}/output_salmon'))
 dds_{treatment}_{self.replicate} <- create_dds(treatment, data_directory, times[treatment], "salmon_quant", 1:6)
-save(dds_{treatment}_{self.replicate}, file = glue('r/data/', "{treatment}_{self.replicate}_data.RData"))
+save(dds_{treatment}_{self.replicate}, file = glue('{self.output}/', "{treatment}_{self.replicate}_data.RData"))
 
 """
             return content
