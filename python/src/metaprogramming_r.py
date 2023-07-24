@@ -559,7 +559,7 @@ ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{se
 save(ddseq_{self.treatment}, file = glue('r/data/', '{self.data_location}'))
 
 {self.treatment}_workbook <- createWorkbook()
-times = {self.time_dict[self.treatment][2]}
+times = {self.time_dict[self.treatment]}
 {for_loop}
     timepoint <- glue("timepoint_t{_time}_vs_t0")
     results_{self.treatment} <- lfcShrink(ddseq_{self.treatment}, coef=timepoint, type="apeglm")
@@ -571,7 +571,7 @@ times = {self.time_dict[self.treatment][2]}
     writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df)
 {end_for_loop}
 
-saveWorkbook({self.treatment}_workbook, "{self.treatment}_workboo.xlsx", overwrite = TRUE)
+saveWorkbook({self.treatment}_workbook, "results/{self.treatment}_workbook.xlsx", overwrite = TRUE)
 
 """
 
