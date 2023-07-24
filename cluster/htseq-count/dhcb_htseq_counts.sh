@@ -28,10 +28,10 @@ echo "======================"
 
 # *** setup environment ***
 # load the required environmental modules that your script depends upon
-module load bio/HTSeq
+module load HTSeq/2.0.2-foss-2022a
 # *** run the job ***
 date
-./htseq_count_features.sh "DHCB"
+./htseqcount_all_features.sh "DHCB"
 date
 
 seff $SLURM_JOB_ID
