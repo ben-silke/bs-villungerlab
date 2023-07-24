@@ -1,0 +1,1135 @@
+
+
+---
+title: "Salmon Analysis - Nutl_r1to6"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/Users/bsilke/bs-villungerlab")
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+library("limma")
+library("glue")
+library("Rsubread")
+library("stringr")
+library("DESeq2")
+library(dplyr)
+library(openxlsx)
+load('~/bs-villungerlab/r/data/Nutl_r1to6_star.RData')
+
+
+dds_Nutl_r1to6 <- ddseq_Nutl
+results <- results(dds_Nutl_r1to6)
+resultsNames(dds_Nutl_r1to6)
+
+
+add_annotations_to_results <- function(res) {
+ens.str <- substr(rownames(res), 1, 15)
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+return (res)
+}
+
+```
+        
+# Nutl Analysis {.tabset}
+## Exploratory Analysis
+
+
+### PCA
+#### VST - Variance Stablised Transformation
+```{r}
+vsd_Nutl <- vst(dds_Nutl_r1to6, blind=FALSE)
+plot <- plotPCA(vsd_Nutl, intgroup=c('batch', 'timepoint'))
+plot + ggtitle("PCA plot highlighting batch differences for VST for Nutl: r1to6")
+```
+
+
+#### rLog
+
+```{r}
+rld_Nutl <- rlog(dds_Nutl_r1to6, blind=FALSE)
+plotPCA(rld_Nutl, intgroup=c('batch', 'timepoint'))
+```
+
+
+### Heatmap
+
+#### Euclidian Distance
+
+
+
+```{r}
+sampleDists_Nutl <- dist(t(assay(vsd_Nutl)))
+
+sampleDistMatrix_Nutl <- as.matrix( sampleDists_Nutl )
+rownames(sampleDistMatrix_Nutl) <- paste( vsd_Nutl$timepoint, vsd_Nutl$batch, sep = "_" )
+colnames(sampleDistMatrix_Nutl) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix_Nutl,
+         clustering_distance_rows = sampleDists_Nutl,
+         clustering_distance_cols = sampleDists_Nutl,
+         col = colors)
+```
+
+
+#### Poission Distance
+
+```{r}
+poisd_Nutl <- PoissonDistance(t(counts(dds_Nutl_r1to6)))
+
+samplePoisDistMatrix_Nutl <- as.matrix( poisd_Nutl$dd )
+rownames(samplePoisDistMatrix_Nutl) <- paste( vsd_Nutl$timepoint, vsd_Nutl$batch, sep = "_" )
+colnames(samplePoisDistMatrix_Nutl) <- NULL
+pheatmap(samplePoisDistMatrix_Nutl,
+         clustering_distance_rows = poisd_Nutl$dd,
+         clustering_distance_cols = poisd_Nutl$dd,
+         col = colors)
+```
+
+
+
+### Batch Correction using _Limma_.
+        
+We can use the package _limma_ to account for the batch effect:
+https://bioconductor.org/packages/release/bioc/html/limma.html
+
+```{r}
+vsd_Nutl <- vst(dds_Nutl_r1to6, blind=FALSE)
+plotPCA(vsd_Nutl, intgroup=c('batch', 'timepoint'))
+```
+
+```{r}
+plot <- plotPCA(vsd_Nutl, intgroup=c('batch'))
+plot + ggtitle("PCA plot highlighting batch differences for VST for Nutl: r1to6")
+```
+
+
+Using limma we can normalise the counts for this.
+```{r}
+mat_Nutl <- assay(vsd_Nutl)
+mm_Nutl <- model.matrix(~timepoint, colData(vsd_Nutl))
+mat_Nutl <- limma::removeBatchEffect(mat_Nutl, batch=vsd_Nutl$batch, design=mm_Nutl)
+assay(vsd_Nutl) <- mat_Nutl
+plotPCA(vsd_Nutl, intgroup=c('batch', 'timepoint'))
+
+```
+
+It is easier to view the change in timepoints here.
+```{r}
+plotPCA(vsd_Nutl, intgroup=c('timepoint'))
+```
+    
+
+
+
+
+            
+## Time -- Nutl T0 to T8 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Nutl_t8_t0 <- results(dds_Nutl_r1to6, contrast = c("timepoint", "t8", "t0"))
+
+results_Nutl_t8_t0 = add_annotations_to_results(results_Nutl_t8_t0)
+
+summary(results_Nutl_t8_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Nutl_t8_t0_restricted <-
+results(
+    dds_Nutl_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t8", "t0")
+)
+summary(results_Nutl_t8_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t8_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Nutl_t8_t0_shrunk_apeglm <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t8_vs_t0", type="apeglm")
+summary(results_Nutl_t8_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t8_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t8_t0_shrunk_apeglm <- add_annotations_to_results(results_Nutl_t8_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Nutl_t8_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Nutl_t8_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t8_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Nutl_t8_t0_shrunk_ashr <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t8_vs_t0", type="ashr")
+summary(results_Nutl_t8_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t8_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t8_t0_shrunk_ashr <- add_annotations_to_results(results_Nutl_t8_t0_shrunk_ashr)
+selected_genes <- as.character(results_Nutl_t8_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Nutl_t8_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t8_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Nutl_t8_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Nutl_8 <- model.matrix(~ timepoint, colData(vsd_Nutl))
+fit_Nutl_8 <- lmFit(mat_Nutl, design_Nutl_8)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t8
+contrast.matrix <- makeContrasts(timepointt8, levels=design_Nutl_8)
+fit2_Nutl_8 <- contrasts.fit(fit_Nutl_8, contrast.matrix)
+fit2_Nutl_8 <- eBayes(fit2_Nutl_8)
+
+results_Nutl_8 <- topTable(fit2_Nutl_8, adjust.method="BH", number=Inf)
+results_Nutl_8 <- add_annotations_to_results(results_Nutl_8)
+
+results_clean_Nutl_8 <- results_Nutl_8[!is.na(results_Nutl_8$logFC), ]
+
+results_ordered_Nutl_8 <- results_clean_Nutl_8[order(results_clean_Nutl_8$logFC), ]
+```
+
+```{r}
+selected_genes_Nutl_8 <- as.character(results_ordered_Nutl_8$symbol)
+
+EnhancedVolcano(
+    results_ordered_Nutl_8,
+    lab = selected_genes_Nutl_8,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Nutl t0_t8 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+# results_ordered_Nutl_8 <- add_annotations_to_results(results_ordered_Nutl_8)
+# results_ordered_Nutl_8_df <- as.data.frame(results_ordered_Nutl_8)
+# write.csv(results_ordered_Nutl_8_df, file = "~/bs-villunger/results/batch_corrected_Nutl_8_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Nutl T0 to T12 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Nutl_t12_t0 <- results(dds_Nutl_r1to6, contrast = c("timepoint", "t12", "t0"))
+
+results_Nutl_t12_t0 = add_annotations_to_results(results_Nutl_t12_t0)
+
+summary(results_Nutl_t12_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Nutl_t12_t0_restricted <-
+results(
+    dds_Nutl_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t12", "t0")
+)
+summary(results_Nutl_t12_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t12_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Nutl_t12_t0_shrunk_apeglm <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t12_vs_t0", type="apeglm")
+summary(results_Nutl_t12_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t12_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t12_t0_shrunk_apeglm <- add_annotations_to_results(results_Nutl_t12_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Nutl_t12_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Nutl_t12_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t12_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Nutl_t12_t0_shrunk_ashr <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t12_vs_t0", type="ashr")
+summary(results_Nutl_t12_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t12_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t12_t0_shrunk_ashr <- add_annotations_to_results(results_Nutl_t12_t0_shrunk_ashr)
+selected_genes <- as.character(results_Nutl_t12_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Nutl_t12_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t12_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Nutl_t12_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Nutl_12 <- model.matrix(~ timepoint, colData(vsd_Nutl))
+fit_Nutl_12 <- lmFit(mat_Nutl, design_Nutl_12)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t12
+contrast.matrix <- makeContrasts(timepointt12, levels=design_Nutl_12)
+fit2_Nutl_12 <- contrasts.fit(fit_Nutl_12, contrast.matrix)
+fit2_Nutl_12 <- eBayes(fit2_Nutl_12)
+
+results_Nutl_12 <- topTable(fit2_Nutl_12, adjust.method="BH", number=Inf)
+results_Nutl_12 <- add_annotations_to_results(results_Nutl_12)
+
+results_clean_Nutl_12 <- results_Nutl_12[!is.na(results_Nutl_12$logFC), ]
+
+results_ordered_Nutl_12 <- results_clean_Nutl_12[order(results_clean_Nutl_12$logFC), ]
+```
+
+```{r}
+selected_genes_Nutl_12 <- as.character(results_ordered_Nutl_12$symbol)
+
+EnhancedVolcano(
+    results_ordered_Nutl_12,
+    lab = selected_genes_Nutl_12,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Nutl t0_t12 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+# results_ordered_Nutl_12 <- add_annotations_to_results(results_ordered_Nutl_12)
+# results_ordered_Nutl_12_df <- as.data.frame(results_ordered_Nutl_12)
+# write.csv(results_ordered_Nutl_12_df, file = "~/bs-villunger/results/batch_corrected_Nutl_12_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Nutl T0 to T16 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Nutl_t16_t0 <- results(dds_Nutl_r1to6, contrast = c("timepoint", "t16", "t0"))
+
+results_Nutl_t16_t0 = add_annotations_to_results(results_Nutl_t16_t0)
+
+summary(results_Nutl_t16_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Nutl_t16_t0_restricted <-
+results(
+    dds_Nutl_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t16", "t0")
+)
+summary(results_Nutl_t16_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t16_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Nutl_t16_t0_shrunk_apeglm <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t16_vs_t0", type="apeglm")
+summary(results_Nutl_t16_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t16_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t16_t0_shrunk_apeglm <- add_annotations_to_results(results_Nutl_t16_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Nutl_t16_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Nutl_t16_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t16_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Nutl_t16_t0_shrunk_ashr <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t16_vs_t0", type="ashr")
+summary(results_Nutl_t16_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t16_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t16_t0_shrunk_ashr <- add_annotations_to_results(results_Nutl_t16_t0_shrunk_ashr)
+selected_genes <- as.character(results_Nutl_t16_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Nutl_t16_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t16_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Nutl_t16_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Nutl_16 <- model.matrix(~ timepoint, colData(vsd_Nutl))
+fit_Nutl_16 <- lmFit(mat_Nutl, design_Nutl_16)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t16
+contrast.matrix <- makeContrasts(timepointt16, levels=design_Nutl_16)
+fit2_Nutl_16 <- contrasts.fit(fit_Nutl_16, contrast.matrix)
+fit2_Nutl_16 <- eBayes(fit2_Nutl_16)
+
+results_Nutl_16 <- topTable(fit2_Nutl_16, adjust.method="BH", number=Inf)
+results_Nutl_16 <- add_annotations_to_results(results_Nutl_16)
+
+results_clean_Nutl_16 <- results_Nutl_16[!is.na(results_Nutl_16$logFC), ]
+
+results_ordered_Nutl_16 <- results_clean_Nutl_16[order(results_clean_Nutl_16$logFC), ]
+```
+
+```{r}
+selected_genes_Nutl_16 <- as.character(results_ordered_Nutl_16$symbol)
+
+EnhancedVolcano(
+    results_ordered_Nutl_16,
+    lab = selected_genes_Nutl_16,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Nutl t0_t16 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+# results_ordered_Nutl_16 <- add_annotations_to_results(results_ordered_Nutl_16)
+# results_ordered_Nutl_16_df <- as.data.frame(results_ordered_Nutl_16)
+# write.csv(results_ordered_Nutl_16_df, file = "~/bs-villunger/results/batch_corrected_Nutl_16_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Nutl T0 to T24 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Nutl_t24_t0 <- results(dds_Nutl_r1to6, contrast = c("timepoint", "t24", "t0"))
+
+results_Nutl_t24_t0 = add_annotations_to_results(results_Nutl_t24_t0)
+
+summary(results_Nutl_t24_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Nutl_t24_t0_restricted <-
+results(
+    dds_Nutl_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t24", "t0")
+)
+summary(results_Nutl_t24_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t24_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Nutl_t24_t0_shrunk_apeglm <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t24_vs_t0", type="apeglm")
+summary(results_Nutl_t24_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t24_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t24_t0_shrunk_apeglm <- add_annotations_to_results(results_Nutl_t24_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Nutl_t24_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Nutl_t24_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t24_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Nutl_t24_t0_shrunk_ashr <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t24_vs_t0", type="ashr")
+summary(results_Nutl_t24_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t24_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t24_t0_shrunk_ashr <- add_annotations_to_results(results_Nutl_t24_t0_shrunk_ashr)
+selected_genes <- as.character(results_Nutl_t24_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Nutl_t24_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t24_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Nutl_t24_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Nutl_24 <- model.matrix(~ timepoint, colData(vsd_Nutl))
+fit_Nutl_24 <- lmFit(mat_Nutl, design_Nutl_24)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t24
+contrast.matrix <- makeContrasts(timepointt24, levels=design_Nutl_24)
+fit2_Nutl_24 <- contrasts.fit(fit_Nutl_24, contrast.matrix)
+fit2_Nutl_24 <- eBayes(fit2_Nutl_24)
+
+results_Nutl_24 <- topTable(fit2_Nutl_24, adjust.method="BH", number=Inf)
+results_Nutl_24 <- add_annotations_to_results(results_Nutl_24)
+
+results_clean_Nutl_24 <- results_Nutl_24[!is.na(results_Nutl_24$logFC), ]
+
+results_ordered_Nutl_24 <- results_clean_Nutl_24[order(results_clean_Nutl_24$logFC), ]
+```
+
+```{r}
+selected_genes_Nutl_24 <- as.character(results_ordered_Nutl_24$symbol)
+
+EnhancedVolcano(
+    results_ordered_Nutl_24,
+    lab = selected_genes_Nutl_24,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Nutl t0_t24 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+# results_ordered_Nutl_24 <- add_annotations_to_results(results_ordered_Nutl_24)
+# results_ordered_Nutl_24_df <- as.data.frame(results_ordered_Nutl_24)
+# write.csv(results_ordered_Nutl_24_df, file = "~/bs-villunger/results/batch_corrected_Nutl_24_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Nutl T0 to T48 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Nutl_t48_t0 <- results(dds_Nutl_r1to6, contrast = c("timepoint", "t48", "t0"))
+
+results_Nutl_t48_t0 = add_annotations_to_results(results_Nutl_t48_t0)
+
+summary(results_Nutl_t48_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Nutl_t48_t0_restricted <-
+results(
+    dds_Nutl_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t48", "t0")
+)
+summary(results_Nutl_t48_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t48_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Nutl_t48_t0_shrunk_apeglm <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t48_vs_t0", type="apeglm")
+summary(results_Nutl_t48_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t48_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t48_t0_shrunk_apeglm <- add_annotations_to_results(results_Nutl_t48_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Nutl_t48_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Nutl_t48_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t48_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Nutl_t48_t0_shrunk_ashr <- lfcShrink(dds_Nutl_r1to6, coef="timepoint_t48_vs_t0", type="ashr")
+summary(results_Nutl_t48_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Nutl_t48_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Nutl_t48_t0_shrunk_ashr <- add_annotations_to_results(results_Nutl_t48_t0_shrunk_ashr)
+selected_genes <- as.character(results_Nutl_t48_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Nutl_t48_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Nutl_t48_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Nutl_t48_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Nutl_48 <- model.matrix(~ timepoint, colData(vsd_Nutl))
+fit_Nutl_48 <- lmFit(mat_Nutl, design_Nutl_48)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t48
+contrast.matrix <- makeContrasts(timepointt48, levels=design_Nutl_48)
+fit2_Nutl_48 <- contrasts.fit(fit_Nutl_48, contrast.matrix)
+fit2_Nutl_48 <- eBayes(fit2_Nutl_48)
+
+results_Nutl_48 <- topTable(fit2_Nutl_48, adjust.method="BH", number=Inf)
+results_Nutl_48 <- add_annotations_to_results(results_Nutl_48)
+
+results_clean_Nutl_48 <- results_Nutl_48[!is.na(results_Nutl_48$logFC), ]
+
+results_ordered_Nutl_48 <- results_clean_Nutl_48[order(results_clean_Nutl_48$logFC), ]
+```
+
+```{r}
+selected_genes_Nutl_48 <- as.character(results_ordered_Nutl_48$symbol)
+
+EnhancedVolcano(
+    results_ordered_Nutl_48,
+    lab = selected_genes_Nutl_48,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Nutl t0_t48 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+# results_ordered_Nutl_48 <- add_annotations_to_results(results_ordered_Nutl_48)
+# results_ordered_Nutl_48_df <- as.data.frame(results_ordered_Nutl_48)
+# write.csv(results_ordered_Nutl_48_df, file = "~/bs-villunger/results/batch_corrected_Nutl_48_data.csv")
+```
+
+
+
