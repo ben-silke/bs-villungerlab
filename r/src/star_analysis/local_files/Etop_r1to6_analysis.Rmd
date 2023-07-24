@@ -1,0 +1,1127 @@
+
+
+---
+title: "Salmon Analysis - Etop_r1to6"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+library("limma")
+
+data/output_htseq_counts_2
+dds_Etop_r1to6
+results <- results(dds_Etop_r1to6)
+resultsNames(dds_Etop_r1to6)
+
+
+add_annotations_to_results <- function(res) {
+ens.str <- substr(rownames(res), 1, 15)
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+return (res)
+}
+
+```
+        
+# Etop Analysis {.tabset}
+## Exploratory Analysis
+
+
+### PCA
+#### VST - Variance Stablised Transformation
+```{r}
+vsd_Etop <- vst(dds_Etop_r1to6, blind=FALSE)
+plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
+title("PCA plot highlighting batch differences for VST for Etop: r1to6")
+```
+
+
+#### rLog
+
+```{r}
+rld_Etop <- rlog(dds_Etop_r1to6, blind=FALSE)
+plotPCA(rld_Etop, intgroup=c('batch', 'timepoint'))
+```
+
+
+### Heatmap
+
+#### Euclidian Distance
+
+
+
+```{r}
+sampleDists_Etop <- dist(t(assay(vsd_Etop)))
+
+sampleDistMatrix_Etop <- as.matrix( sampleDists_Etop )
+rownames(sampleDistMatrix_Etop) <- paste( vsd_Etop$timepoint, vsd_Etop$batch, sep = "_" )
+colnames(sampleDistMatrix_Etop) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix_Etop,
+         clustering_distance_rows = sampleDists_Etop,
+         clustering_distance_cols = sampleDists_Etop,
+         col = colors)
+```
+
+
+#### Poission Distance
+
+```{r}
+poisd_Etop <- PoissonDistance(t(counts(dds_Etop_r1to6)))
+
+samplePoisDistMatrix_Etop <- as.matrix( poisd_Etop$dd )
+rownames(samplePoisDistMatrix_Etop) <- paste( vsd_Etop$timepoint, vsd_Etop$batch, sep = "_" )
+colnames(samplePoisDistMatrix_Etop) <- NULL
+pheatmap(samplePoisDistMatrix_Etop,
+         clustering_distance_rows = poisd_Etop$dd,
+         clustering_distance_cols = poisd_Etop$dd,
+         col = colors)
+```
+
+
+
+### Batch Correction using _Limma_.
+        
+We can use the package _limma_ to account for the batch effect:
+https://bioconductor.org/packages/release/bioc/html/limma.html
+
+```{r}
+vsd_Etop <- vst(dds_Etop_r1to6, blind=FALSE)
+plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
+```
+
+```{r}
+plotPCA(vsd_Etop, intgroup=c('batch'))
+title("PCA plot highlighting batch differences for VST for Etop: r1to6")
+```
+
+
+Using limma we can normalise the counts for this.
+```{r}
+mat_Etop <- assay(vsd_Etop)
+mm_Etop <- model.matrix(~timepoint, colData(vsd_Etop))
+mat_Etop <- limma::removeBatchEffect(mat_Etop, batch=vsd_Etop$batch, design=mm_Etop)
+assay(vsd_Etop) <- mat_Etop
+plotPCA(vsd_Etop, intgroup=c('batch', 'timepoint'))
+
+```
+
+It is easier to view the change in timepoints here.
+```{r}
+plotPCA(vsd_Etop, intgroup=c('timepoint'))
+```
+    
+
+
+
+
+            
+## Time -- Etop T0 to T8 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Etop_t8_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t8", "t0"))
+
+results_Etop_t8_t0 = add_annotations_to_results(results_Etop_t8_t0)
+
+summary(results_Etop_t8_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Etop_t8_t0_restricted <-
+results(
+    dds_Etop_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t8", "t0")
+)
+summary(results_Etop_t8_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t8_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Etop_t8_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t8_vs_t0", type="apeglm")
+summary(results_Etop_t8_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t8_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t8_t0_shrunk_apeglm <- add_annotations_to_results(results_Etop_t8_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Etop_t8_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Etop_t8_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t8_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Etop_t8_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t8_vs_t0", type="ashr")
+summary(results_Etop_t8_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t8_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t8_t0_shrunk_ashr <- add_annotations_to_results(results_Etop_t8_t0_shrunk_ashr)
+selected_genes <- as.character(results_Etop_t8_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Etop_t8_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t8_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Etop_t8_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Etop_8 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit_Etop_8 <- lmFit(mat_Etop, design_Etop_8)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t8
+contrast.matrix <- makeContrasts(timepointt8, levels=design_Etop_8)
+fit2_Etop_8 <- contrasts.fit(fit_Etop_8, contrast.matrix)
+fit2_Etop_8 <- eBayes(fit2_Etop_8)
+
+results_Etop_8 <- topTable(fit2_Etop_8, adjust.method="BH", number=Inf)
+results_Etop_8 <- add_annotations_to_results(results_Etop_8)
+
+results_clean_Etop_8 <- results_Etop_8[!is.na(results_Etop_8$logFC), ]
+
+results_ordered_Etop_8 <- results_clean_Etop_8[order(results_clean_Etop_8$logFC), ]
+```
+
+```{r}
+selected_genes_Etop_8 <- as.character(results_ordered_Etop_8$symbol)
+
+EnhancedVolcano(
+    results_ordered_Etop_8,
+    lab = selected_genes_Etop_8,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Etop t0_t8 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_Etop_8 <- add_annotations_to_results(results_ordered_Etop_8)
+results_ordered_Etop_8_df <- as.data.frame(results_ordered_Etop_8)
+write.csv(results_ordered_Etop_8_df, file = "../../../../results/batch_corrected_Etop_8_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Etop T0 to T12 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Etop_t12_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t12", "t0"))
+
+results_Etop_t12_t0 = add_annotations_to_results(results_Etop_t12_t0)
+
+summary(results_Etop_t12_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Etop_t12_t0_restricted <-
+results(
+    dds_Etop_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t12", "t0")
+)
+summary(results_Etop_t12_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t12_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Etop_t12_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t12_vs_t0", type="apeglm")
+summary(results_Etop_t12_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t12_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t12_t0_shrunk_apeglm <- add_annotations_to_results(results_Etop_t12_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Etop_t12_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Etop_t12_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t12_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Etop_t12_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t12_vs_t0", type="ashr")
+summary(results_Etop_t12_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t12_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t12_t0_shrunk_ashr <- add_annotations_to_results(results_Etop_t12_t0_shrunk_ashr)
+selected_genes <- as.character(results_Etop_t12_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Etop_t12_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t12_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Etop_t12_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Etop_12 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit_Etop_12 <- lmFit(mat_Etop, design_Etop_12)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t12
+contrast.matrix <- makeContrasts(timepointt12, levels=design_Etop_12)
+fit2_Etop_12 <- contrasts.fit(fit_Etop_12, contrast.matrix)
+fit2_Etop_12 <- eBayes(fit2_Etop_12)
+
+results_Etop_12 <- topTable(fit2_Etop_12, adjust.method="BH", number=Inf)
+results_Etop_12 <- add_annotations_to_results(results_Etop_12)
+
+results_clean_Etop_12 <- results_Etop_12[!is.na(results_Etop_12$logFC), ]
+
+results_ordered_Etop_12 <- results_clean_Etop_12[order(results_clean_Etop_12$logFC), ]
+```
+
+```{r}
+selected_genes_Etop_12 <- as.character(results_ordered_Etop_12$symbol)
+
+EnhancedVolcano(
+    results_ordered_Etop_12,
+    lab = selected_genes_Etop_12,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Etop t0_t12 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_Etop_12 <- add_annotations_to_results(results_ordered_Etop_12)
+results_ordered_Etop_12_df <- as.data.frame(results_ordered_Etop_12)
+write.csv(results_ordered_Etop_12_df, file = "../../../../results/batch_corrected_Etop_12_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Etop T0 to T16 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Etop_t16_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t16", "t0"))
+
+results_Etop_t16_t0 = add_annotations_to_results(results_Etop_t16_t0)
+
+summary(results_Etop_t16_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Etop_t16_t0_restricted <-
+results(
+    dds_Etop_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t16", "t0")
+)
+summary(results_Etop_t16_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t16_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Etop_t16_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t16_vs_t0", type="apeglm")
+summary(results_Etop_t16_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t16_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t16_t0_shrunk_apeglm <- add_annotations_to_results(results_Etop_t16_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Etop_t16_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Etop_t16_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t16_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Etop_t16_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t16_vs_t0", type="ashr")
+summary(results_Etop_t16_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t16_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t16_t0_shrunk_ashr <- add_annotations_to_results(results_Etop_t16_t0_shrunk_ashr)
+selected_genes <- as.character(results_Etop_t16_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Etop_t16_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t16_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Etop_t16_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Etop_16 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit_Etop_16 <- lmFit(mat_Etop, design_Etop_16)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t16
+contrast.matrix <- makeContrasts(timepointt16, levels=design_Etop_16)
+fit2_Etop_16 <- contrasts.fit(fit_Etop_16, contrast.matrix)
+fit2_Etop_16 <- eBayes(fit2_Etop_16)
+
+results_Etop_16 <- topTable(fit2_Etop_16, adjust.method="BH", number=Inf)
+results_Etop_16 <- add_annotations_to_results(results_Etop_16)
+
+results_clean_Etop_16 <- results_Etop_16[!is.na(results_Etop_16$logFC), ]
+
+results_ordered_Etop_16 <- results_clean_Etop_16[order(results_clean_Etop_16$logFC), ]
+```
+
+```{r}
+selected_genes_Etop_16 <- as.character(results_ordered_Etop_16$symbol)
+
+EnhancedVolcano(
+    results_ordered_Etop_16,
+    lab = selected_genes_Etop_16,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Etop t0_t16 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_Etop_16 <- add_annotations_to_results(results_ordered_Etop_16)
+results_ordered_Etop_16_df <- as.data.frame(results_ordered_Etop_16)
+write.csv(results_ordered_Etop_16_df, file = "../../../../results/batch_corrected_Etop_16_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Etop T0 to T24 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Etop_t24_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t24", "t0"))
+
+results_Etop_t24_t0 = add_annotations_to_results(results_Etop_t24_t0)
+
+summary(results_Etop_t24_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Etop_t24_t0_restricted <-
+results(
+    dds_Etop_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t24", "t0")
+)
+summary(results_Etop_t24_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t24_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Etop_t24_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t24_vs_t0", type="apeglm")
+summary(results_Etop_t24_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t24_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t24_t0_shrunk_apeglm <- add_annotations_to_results(results_Etop_t24_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Etop_t24_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Etop_t24_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t24_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Etop_t24_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t24_vs_t0", type="ashr")
+summary(results_Etop_t24_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t24_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t24_t0_shrunk_ashr <- add_annotations_to_results(results_Etop_t24_t0_shrunk_ashr)
+selected_genes <- as.character(results_Etop_t24_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Etop_t24_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t24_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Etop_t24_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Etop_24 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit_Etop_24 <- lmFit(mat_Etop, design_Etop_24)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t24
+contrast.matrix <- makeContrasts(timepointt24, levels=design_Etop_24)
+fit2_Etop_24 <- contrasts.fit(fit_Etop_24, contrast.matrix)
+fit2_Etop_24 <- eBayes(fit2_Etop_24)
+
+results_Etop_24 <- topTable(fit2_Etop_24, adjust.method="BH", number=Inf)
+results_Etop_24 <- add_annotations_to_results(results_Etop_24)
+
+results_clean_Etop_24 <- results_Etop_24[!is.na(results_Etop_24$logFC), ]
+
+results_ordered_Etop_24 <- results_clean_Etop_24[order(results_clean_Etop_24$logFC), ]
+```
+
+```{r}
+selected_genes_Etop_24 <- as.character(results_ordered_Etop_24$symbol)
+
+EnhancedVolcano(
+    results_ordered_Etop_24,
+    lab = selected_genes_Etop_24,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Etop t0_t24 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_Etop_24 <- add_annotations_to_results(results_ordered_Etop_24)
+results_ordered_Etop_24_df <- as.data.frame(results_ordered_Etop_24)
+write.csv(results_ordered_Etop_24_df, file = "../../../../results/batch_corrected_Etop_24_data.csv")
+```
+
+
+
+
+
+            
+## Time -- Etop T0 to T48 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_Etop_t48_t0 <- results(dds_Etop_r1to6, contrast = c("timepoint", "t48", "t0"))
+
+results_Etop_t48_t0 = add_annotations_to_results(results_Etop_t48_t0)
+
+summary(results_Etop_t48_t0)
+
+```
+##### Restricted Values
+```{r}
+results_Etop_t48_t0_restricted <-
+results(
+    dds_Etop_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t48", "t0")
+)
+summary(results_Etop_t48_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t48_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_Etop_t48_t0_shrunk_apeglm <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t48_vs_t0", type="apeglm")
+summary(results_Etop_t48_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t48_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t48_t0_shrunk_apeglm <- add_annotations_to_results(results_Etop_t48_t0_shrunk_apeglm)
+selected_genes <- as.character(results_Etop_t48_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_Etop_t48_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t48_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_Etop_t48_t0_shrunk_ashr <- lfcShrink(dds_Etop_r1to6, coef="timepoint_t48_vs_t0", type="ashr")
+summary(results_Etop_t48_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_Etop_t48_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_Etop_t48_t0_shrunk_ashr <- add_annotations_to_results(results_Etop_t48_t0_shrunk_ashr)
+selected_genes <- as.character(results_Etop_t48_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_Etop_t48_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_Etop_t48_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_Etop_t48_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_Etop_48 <- model.matrix(~ timepoint, colData(vsd_Etop))
+fit_Etop_48 <- lmFit(mat_Etop, design_Etop_48)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t48
+contrast.matrix <- makeContrasts(timepointt48, levels=design_Etop_48)
+fit2_Etop_48 <- contrasts.fit(fit_Etop_48, contrast.matrix)
+fit2_Etop_48 <- eBayes(fit2_Etop_48)
+
+results_Etop_48 <- topTable(fit2_Etop_48, adjust.method="BH", number=Inf)
+results_Etop_48 <- add_annotations_to_results(results_Etop_48)
+
+results_clean_Etop_48 <- results_Etop_48[!is.na(results_Etop_48$logFC), ]
+
+results_ordered_Etop_48 <- results_clean_Etop_48[order(results_clean_Etop_48$logFC), ]
+```
+
+```{r}
+selected_genes_Etop_48 <- as.character(results_ordered_Etop_48$symbol)
+
+EnhancedVolcano(
+    results_ordered_Etop_48,
+    lab = selected_genes_Etop_48,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled Etop t0_t48 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_Etop_48 <- add_annotations_to_results(results_ordered_Etop_48)
+results_ordered_Etop_48_df <- as.data.frame(results_ordered_Etop_48)
+write.csv(results_ordered_Etop_48_df, file = "../../../../results/batch_corrected_Etop_48_data.csv")
+```
+
+
+

@@ -15,14 +15,12 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
 
-
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
 parse_star_filename <- function(filename, file_prefix=default_file_prefix) {
   pattern <- "([A-Z]*)_([0-9]*)_r([0-9]*)"
   matches <- str_match(filename, pattern)
-  # name <- str_extract(filename, "(?<=.counts)[^_]*")
   time <- str_extract(filename, "(?<=_)[^_]*(?=_r)")
   replicate <- str_extract(filename, "(?<=_r)\\d+")
   
@@ -178,3 +176,39 @@ create_htseq_ddseq <- function(treatment_name, data_directory, times, replicates
   dds <- DESeq(dds)
   return (dds)
 }
+
+load_all_htseq_data <- function(file_path) {
+  file = file.path(file_path)
+  data <- read.table(file)
+  names <- list()
+  for (name in colnames(data)) {
+    parsed_name <- parse_star_filename(name)
+    names <- append(names, parsed_name[1])
+  }
+  names
+  
+  data_frame <- data.frame(names=unlist(names), stringsAsFactors = FALSE)
+  data_frame
+  parsed_values <- do.call("rbind", lapply(data_frame$names, parse_star_filename))
+  parsed_values
+  
+  data_frame$names <- parsed_values[, 1]
+  data_frame$timepoint <- paste0("t", parsed_values[, 2])
+  data_frame$replicate <- paste0("r", parsed_values[, 3])
+  data_frame$batch <- paste0('b', parsed_values[, 4])
+  colnames(data) <- data_frame$names
+  
+  start = dim(data)[1]-5
+  end = dim(data)[1]-1+1
+  df <- data[-(start:end), ]
+  
+  matrix <- as.matrix(data)
+  dds <- DESeqDataSetFromMatrix(countData = matrix,
+                                colData = data_frame,
+                                design= ~ batch + timepoint)
+  
+  dds <- DESeq(dds)
+  return (dds)
+}
+
+

@@ -1,0 +1,1127 @@
+
+
+---
+title: "Salmon Analysis - DHCB_r1to6"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+library("limma")
+
+data/output_htseq_counts_2
+dds_DHCB_r1to6
+results <- results(dds_DHCB_r1to6)
+resultsNames(dds_DHCB_r1to6)
+
+
+add_annotations_to_results <- function(res) {
+ens.str <- substr(rownames(res), 1, 15)
+res$symbol <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="SYMBOL",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+res$entrez <- mapIds(org.Hs.eg.db,
+                    keys=ens.str,
+                    column="ENTREZID",
+                    keytype="ENSEMBL",
+                    multiVals="first")
+return (res)
+}
+
+```
+        
+# DHCB Analysis {.tabset}
+## Exploratory Analysis
+
+
+### PCA
+#### VST - Variance Stablised Transformation
+```{r}
+vsd_DHCB <- vst(dds_DHCB_r1to6, blind=FALSE)
+plotPCA(vsd_DHCB, intgroup=c('batch', 'timepoint'))
+title("PCA plot highlighting batch differences for VST for DHCB: r1to6")
+```
+
+
+#### rLog
+
+```{r}
+rld_DHCB <- rlog(dds_DHCB_r1to6, blind=FALSE)
+plotPCA(rld_DHCB, intgroup=c('batch', 'timepoint'))
+```
+
+
+### Heatmap
+
+#### Euclidian Distance
+
+
+
+```{r}
+sampleDists_DHCB <- dist(t(assay(vsd_DHCB)))
+
+sampleDistMatrix_DHCB <- as.matrix( sampleDists_DHCB )
+rownames(sampleDistMatrix_DHCB) <- paste( vsd_DHCB$timepoint, vsd_DHCB$batch, sep = "_" )
+colnames(sampleDistMatrix_DHCB) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix_DHCB,
+         clustering_distance_rows = sampleDists_DHCB,
+         clustering_distance_cols = sampleDists_DHCB,
+         col = colors)
+```
+
+
+#### Poission Distance
+
+```{r}
+poisd_DHCB <- PoissonDistance(t(counts(dds_DHCB_r1to6)))
+
+samplePoisDistMatrix_DHCB <- as.matrix( poisd_DHCB$dd )
+rownames(samplePoisDistMatrix_DHCB) <- paste( vsd_DHCB$timepoint, vsd_DHCB$batch, sep = "_" )
+colnames(samplePoisDistMatrix_DHCB) <- NULL
+pheatmap(samplePoisDistMatrix_DHCB,
+         clustering_distance_rows = poisd_DHCB$dd,
+         clustering_distance_cols = poisd_DHCB$dd,
+         col = colors)
+```
+
+
+
+### Batch Correction using _Limma_.
+        
+We can use the package _limma_ to account for the batch effect:
+https://bioconductor.org/packages/release/bioc/html/limma.html
+
+```{r}
+vsd_DHCB <- vst(dds_DHCB_r1to6, blind=FALSE)
+plotPCA(vsd_DHCB, intgroup=c('batch', 'timepoint'))
+```
+
+```{r}
+plotPCA(vsd_DHCB, intgroup=c('batch'))
+title("PCA plot highlighting batch differences for VST for DHCB: r1to6")
+```
+
+
+Using limma we can normalise the counts for this.
+```{r}
+mat_DHCB <- assay(vsd_DHCB)
+mm_DHCB <- model.matrix(~timepoint, colData(vsd_DHCB))
+mat_DHCB <- limma::removeBatchEffect(mat_DHCB, batch=vsd_DHCB$batch, design=mm_DHCB)
+assay(vsd_DHCB) <- mat_DHCB
+plotPCA(vsd_DHCB, intgroup=c('batch', 'timepoint'))
+
+```
+
+It is easier to view the change in timepoints here.
+```{r}
+plotPCA(vsd_DHCB, intgroup=c('timepoint'))
+```
+    
+
+
+
+
+            
+## Time -- DHCB T0 to T16 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_DHCB_t16_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t16", "t0"))
+
+results_DHCB_t16_t0 = add_annotations_to_results(results_DHCB_t16_t0)
+
+summary(results_DHCB_t16_t0)
+
+```
+##### Restricted Values
+```{r}
+results_DHCB_t16_t0_restricted <-
+results(
+    dds_DHCB_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t16", "t0")
+)
+summary(results_DHCB_t16_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t16_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_DHCB_t16_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t16_vs_t0", type="apeglm")
+summary(results_DHCB_t16_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t16_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t16_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t16_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t16_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_DHCB_t16_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t16_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_DHCB_t16_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t16_vs_t0", type="ashr")
+summary(results_DHCB_t16_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t16_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t16_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t16_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t16_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_DHCB_t16_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t16_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_DHCB_t16_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_DHCB_16 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_DHCB_16 <- lmFit(mat_DHCB, design_DHCB_16)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t16
+contrast.matrix <- makeContrasts(timepointt16, levels=design_DHCB_16)
+fit2_DHCB_16 <- contrasts.fit(fit_DHCB_16, contrast.matrix)
+fit2_DHCB_16 <- eBayes(fit2_DHCB_16)
+
+results_DHCB_16 <- topTable(fit2_DHCB_16, adjust.method="BH", number=Inf)
+results_DHCB_16 <- add_annotations_to_results(results_DHCB_16)
+
+results_clean_DHCB_16 <- results_DHCB_16[!is.na(results_DHCB_16$logFC), ]
+
+results_ordered_DHCB_16 <- results_clean_DHCB_16[order(results_clean_DHCB_16$logFC), ]
+```
+
+```{r}
+selected_genes_DHCB_16 <- as.character(results_ordered_DHCB_16$symbol)
+
+EnhancedVolcano(
+    results_ordered_DHCB_16,
+    lab = selected_genes_DHCB_16,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled DHCB t0_t16 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_DHCB_16 <- add_annotations_to_results(results_ordered_DHCB_16)
+results_ordered_DHCB_16_df <- as.data.frame(results_ordered_DHCB_16)
+write.csv(results_ordered_DHCB_16_df, file = "../../../../results/batch_corrected_DHCB_16_data.csv")
+```
+
+
+
+
+
+            
+## Time -- DHCB T0 to T20 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_DHCB_t20_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t20", "t0"))
+
+results_DHCB_t20_t0 = add_annotations_to_results(results_DHCB_t20_t0)
+
+summary(results_DHCB_t20_t0)
+
+```
+##### Restricted Values
+```{r}
+results_DHCB_t20_t0_restricted <-
+results(
+    dds_DHCB_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t20", "t0")
+)
+summary(results_DHCB_t20_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t20_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_DHCB_t20_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t20_vs_t0", type="apeglm")
+summary(results_DHCB_t20_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t20_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t20_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t20_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t20_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_DHCB_t20_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t20_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_DHCB_t20_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t20_vs_t0", type="ashr")
+summary(results_DHCB_t20_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t20_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t20_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t20_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t20_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_DHCB_t20_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t20_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_DHCB_t20_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_DHCB_20 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_DHCB_20 <- lmFit(mat_DHCB, design_DHCB_20)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t20
+contrast.matrix <- makeContrasts(timepointt20, levels=design_DHCB_20)
+fit2_DHCB_20 <- contrasts.fit(fit_DHCB_20, contrast.matrix)
+fit2_DHCB_20 <- eBayes(fit2_DHCB_20)
+
+results_DHCB_20 <- topTable(fit2_DHCB_20, adjust.method="BH", number=Inf)
+results_DHCB_20 <- add_annotations_to_results(results_DHCB_20)
+
+results_clean_DHCB_20 <- results_DHCB_20[!is.na(results_DHCB_20$logFC), ]
+
+results_ordered_DHCB_20 <- results_clean_DHCB_20[order(results_clean_DHCB_20$logFC), ]
+```
+
+```{r}
+selected_genes_DHCB_20 <- as.character(results_ordered_DHCB_20$symbol)
+
+EnhancedVolcano(
+    results_ordered_DHCB_20,
+    lab = selected_genes_DHCB_20,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled DHCB t0_t20 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_DHCB_20 <- add_annotations_to_results(results_ordered_DHCB_20)
+results_ordered_DHCB_20_df <- as.data.frame(results_ordered_DHCB_20)
+write.csv(results_ordered_DHCB_20_df, file = "../../../../results/batch_corrected_DHCB_20_data.csv")
+```
+
+
+
+
+
+            
+## Time -- DHCB T0 to T24 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_DHCB_t24_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t24", "t0"))
+
+results_DHCB_t24_t0 = add_annotations_to_results(results_DHCB_t24_t0)
+
+summary(results_DHCB_t24_t0)
+
+```
+##### Restricted Values
+```{r}
+results_DHCB_t24_t0_restricted <-
+results(
+    dds_DHCB_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t24", "t0")
+)
+summary(results_DHCB_t24_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t24_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_DHCB_t24_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t24_vs_t0", type="apeglm")
+summary(results_DHCB_t24_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t24_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t24_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t24_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t24_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_DHCB_t24_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t24_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_DHCB_t24_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t24_vs_t0", type="ashr")
+summary(results_DHCB_t24_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t24_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t24_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t24_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t24_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_DHCB_t24_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t24_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_DHCB_t24_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_DHCB_24 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_DHCB_24 <- lmFit(mat_DHCB, design_DHCB_24)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t24
+contrast.matrix <- makeContrasts(timepointt24, levels=design_DHCB_24)
+fit2_DHCB_24 <- contrasts.fit(fit_DHCB_24, contrast.matrix)
+fit2_DHCB_24 <- eBayes(fit2_DHCB_24)
+
+results_DHCB_24 <- topTable(fit2_DHCB_24, adjust.method="BH", number=Inf)
+results_DHCB_24 <- add_annotations_to_results(results_DHCB_24)
+
+results_clean_DHCB_24 <- results_DHCB_24[!is.na(results_DHCB_24$logFC), ]
+
+results_ordered_DHCB_24 <- results_clean_DHCB_24[order(results_clean_DHCB_24$logFC), ]
+```
+
+```{r}
+selected_genes_DHCB_24 <- as.character(results_ordered_DHCB_24$symbol)
+
+EnhancedVolcano(
+    results_ordered_DHCB_24,
+    lab = selected_genes_DHCB_24,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled DHCB t0_t24 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_DHCB_24 <- add_annotations_to_results(results_ordered_DHCB_24)
+results_ordered_DHCB_24_df <- as.data.frame(results_ordered_DHCB_24)
+write.csv(results_ordered_DHCB_24_df, file = "../../../../results/batch_corrected_DHCB_24_data.csv")
+```
+
+
+
+
+
+            
+## Time -- DHCB T0 to T36 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_DHCB_t36_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t36", "t0"))
+
+results_DHCB_t36_t0 = add_annotations_to_results(results_DHCB_t36_t0)
+
+summary(results_DHCB_t36_t0)
+
+```
+##### Restricted Values
+```{r}
+results_DHCB_t36_t0_restricted <-
+results(
+    dds_DHCB_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t36", "t0")
+)
+summary(results_DHCB_t36_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t36_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_DHCB_t36_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t36_vs_t0", type="apeglm")
+summary(results_DHCB_t36_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t36_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t36_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t36_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t36_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_DHCB_t36_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t36_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_DHCB_t36_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t36_vs_t0", type="ashr")
+summary(results_DHCB_t36_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t36_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t36_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t36_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t36_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_DHCB_t36_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t36_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_DHCB_t36_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_DHCB_36 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_DHCB_36 <- lmFit(mat_DHCB, design_DHCB_36)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t36
+contrast.matrix <- makeContrasts(timepointt36, levels=design_DHCB_36)
+fit2_DHCB_36 <- contrasts.fit(fit_DHCB_36, contrast.matrix)
+fit2_DHCB_36 <- eBayes(fit2_DHCB_36)
+
+results_DHCB_36 <- topTable(fit2_DHCB_36, adjust.method="BH", number=Inf)
+results_DHCB_36 <- add_annotations_to_results(results_DHCB_36)
+
+results_clean_DHCB_36 <- results_DHCB_36[!is.na(results_DHCB_36$logFC), ]
+
+results_ordered_DHCB_36 <- results_clean_DHCB_36[order(results_clean_DHCB_36$logFC), ]
+```
+
+```{r}
+selected_genes_DHCB_36 <- as.character(results_ordered_DHCB_36$symbol)
+
+EnhancedVolcano(
+    results_ordered_DHCB_36,
+    lab = selected_genes_DHCB_36,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled DHCB t0_t36 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_DHCB_36 <- add_annotations_to_results(results_ordered_DHCB_36)
+results_ordered_DHCB_36_df <- as.data.frame(results_ordered_DHCB_36)
+write.csv(results_ordered_DHCB_36_df, file = "../../../../results/batch_corrected_DHCB_36_data.csv")
+```
+
+
+
+
+
+            
+## Time -- DHCB T0 to T48 {.tabset}
+
+### Exploratory Analysis {.tabset}
+
+#### Summary
+##### General Summary
+```{r}
+results_DHCB_t48_t0 <- results(dds_DHCB_r1to6, contrast = c("timepoint", "t48", "t0"))
+
+results_DHCB_t48_t0 = add_annotations_to_results(results_DHCB_t48_t0)
+
+summary(results_DHCB_t48_t0)
+
+```
+##### Restricted Values
+```{r}
+results_DHCB_t48_t0_restricted <-
+results(
+    dds_DHCB_r1to6,
+    alpha = 0.1,
+    ## We are looking for genes which have at least doubled, or decreased by more than half
+    lfcThreshold = 1,
+    contrast = c("timepoint", "t48", "t0")
+)
+summary(results_DHCB_t48_t0_restricted)
+
+```
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t48_t0_restricted, ylim=c(-3,3))
+```
+
+        
+
+
+
+
+### Differential Expression Analysis {.tabset}
+It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
+
+#### APEGLM
+```{r}
+
+results_DHCB_t48_t0_shrunk_apeglm <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t48_vs_t0", type="apeglm")
+summary(results_DHCB_t48_t0_shrunk_apeglm)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t48_t0_shrunk_apeglm, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t48_t0_shrunk_apeglm <- add_annotations_to_results(results_DHCB_t48_t0_shrunk_apeglm)
+selected_genes <- as.character(results_DHCB_t48_t0_shrunk_apeglm$symbol)
+
+EnhancedVolcano(results_DHCB_t48_t0_shrunk_apeglm,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t48_t0_shrunk_apeglm',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+
+#### ASHR
+```{r}
+results_DHCB_t48_t0_shrunk_ashr <- lfcShrink(dds_DHCB_r1to6, coef="timepoint_t48_vs_t0", type="ashr")
+summary(results_DHCB_t48_t0_shrunk_ashr)
+
+```
+###### MA - Plot
+
+MA Plot
+```{r}
+
+DESeq2::plotMA(results_DHCB_t48_t0_shrunk_ashr, ylim=c(-3,3))
+```
+
+        
+
+###### V-Plot
+
+V- Plot
+
+```{r}
+results_DHCB_t48_t0_shrunk_ashr <- add_annotations_to_results(results_DHCB_t48_t0_shrunk_ashr)
+selected_genes <- as.character(results_DHCB_t48_t0_shrunk_ashr$symbol)
+
+EnhancedVolcano(results_DHCB_t48_t0_shrunk_ashr,
+                lab = selected_genes,
+                x = 'log2FoldChange',
+                y = 'padj',
+                xlim = c(-8,8),
+                ylab = expression(paste('-Log'[10],' adj P')),
+                title = 'Differential expression for results_DHCB_t48_t0_shrunk_ashr',
+                pCutoff = 0.05,
+                # at least double, or less than half
+                FCcutoff = 1,
+                pointSize = 3.0,
+                labSize = 3.0)
+```
+
+
+#### P-Adjusted Analysis
+
+```{r}
+resSig <- subset(results_DHCB_t48_t0, padj < 0.1) 
+summary(resSig)
+```
+
+###### Strongest Down Regulated Genes
+```{r}
+head(resSig[ order(resSig$log2FoldChange), ])
+```
+
+###### Strongest up regulation
+```{r}
+head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
+```
+        
+
+
+
+
+
+
+### Batch Effects 
+
+##### Differential expression analysis with limma
+After we have adjusted counts for the batch effect, 
+we can see if different genes are highlighted for differential expression
+
+```{r}
+design_DHCB_48 <- model.matrix(~ timepoint, colData(vsd_DHCB))
+fit_DHCB_48 <- lmFit(mat_DHCB, design_DHCB_48)
+# Replace 'treatment' and 'control' with your specific time points.
+# Demonstrates difference between t0 and t48
+contrast.matrix <- makeContrasts(timepointt48, levels=design_DHCB_48)
+fit2_DHCB_48 <- contrasts.fit(fit_DHCB_48, contrast.matrix)
+fit2_DHCB_48 <- eBayes(fit2_DHCB_48)
+
+results_DHCB_48 <- topTable(fit2_DHCB_48, adjust.method="BH", number=Inf)
+results_DHCB_48 <- add_annotations_to_results(results_DHCB_48)
+
+results_clean_DHCB_48 <- results_DHCB_48[!is.na(results_DHCB_48$logFC), ]
+
+results_ordered_DHCB_48 <- results_clean_DHCB_48[order(results_clean_DHCB_48$logFC), ]
+```
+
+```{r}
+selected_genes_DHCB_48 <- as.character(results_ordered_DHCB_48$symbol)
+
+EnhancedVolcano(
+    results_ordered_DHCB_48,
+    lab = selected_genes_DHCB_48,
+    x = 'logFC',
+    y = 'adj.P.Val',
+    title = 'Batch controlled DHCB t0_t48 (limma)',
+    ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
+    # with adj p cutoff of 0.05
+    pCutoff = 0.05,
+    # at least double, or less than half
+    FCcutoff = 1.0,
+    pointSize = 3.0,
+    labSize = 3.0
+)
+
+```
+
+```{r include=FALSE}
+results_ordered_DHCB_48 <- add_annotations_to_results(results_ordered_DHCB_48)
+results_ordered_DHCB_48_df <- as.data.frame(results_ordered_DHCB_48)
+write.csv(results_ordered_DHCB_48_df, file = "../../../../results/batch_corrected_DHCB_48_data.csv")
+```
+
+
+

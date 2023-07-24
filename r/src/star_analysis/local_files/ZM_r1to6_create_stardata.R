@@ -1,3 +1,4 @@
+
 library("glue")
 library("Rsubread")
 library("stringr")
@@ -22,23 +23,25 @@ source("r/src/utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "ZM"
-data_directory = file.path('/Volumes/bs_external/lab_villunger/htseq_counts/output_htseq_counts')
+data_directory = file.path(data/output_htseq_counts_2)
 
-ddseq_ZM <- create_htseq_ddseq(treatment, data_directory, times, 1:6)
+ddseq_ZM <- load_all_htseq_data("data/output_htseq_counts_2/all_ZM_fc.tsv")
+# <- create_htseq_ddseq(ZM, data_directory, times, 1:6)
 
-save(ddseq_ZM, file = glue('r/data/', "ZM_r1to6_STAR.RData"))
+save(ddseq_ZM, file = ZM_r1to6_star.RData))
 
-ZM_workbook <- createWorkbook() 
-
-times = c(16, 20, 24, 36, 48)
-ddseq_ZM
+ZM_workbook <- createWorkbook()
 
 for (time in times) {
-    results_ZM <- lfcShrink(ddseq_ZM, coef="timepoint_t16_vs_t0", type="apeglm")
+    timepoint <- glue("timepoint_t{time}_vs_t0")
+    results_ZM <- lfcShrink(ddseq_ZM, coef=timepoint, type="apeglm")
 
     results_ZM <- subset(results_ZM, padj < 0.1)  # Restrict to values which are significant
-    # results_ZM <- add_annotations_to_results(results_ZM)
+    ## results_ZM <- add_annotations_to_results(results_ZM)
     results_ZM_df <- as.data.frame(results_ZM)
     addWorksheet(ZM_workbook, glue("ZM_{time}"))
     writeData(ZM_workbook, glue("ZM_{time}"), results_ZM_df)
 }
+
+saveWorkbook(ZM_workbook, "ZM_workbook", overwrite = TRUE)
+

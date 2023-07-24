@@ -161,3 +161,43 @@ EnhancedVolcano(results,
                 pointSize = 3.0,
                 labSize = 3.0)
 
+# /Users/bsilke/bs-villungerlab/data/output_htseq_counts_2/all_ZM_fc.tsv
+file = file.path("data/output_htseq_counts_2/all_ZM_fc.tsv")
+data <- read.table(file)
+data
+
+colnames(data)
+
+names <- list()
+for (name in colnames(data)) {
+  # print(name)
+  parsed_name <- parse_star_filename(name)
+  # print(parsed_name)
+  names <- append(names, parsed_name[1])
+}
+names
+
+data_frame <- data.frame(names=unlist(names), stringsAsFactors = FALSE)
+data_frame
+parsed_values <- do.call("rbind", lapply(data_frame$names, parse_star_filename))
+parsed_values
+
+data_frame$names <- parsed_values[, 1]
+data_frame$timepoint <- paste0("t", parsed_values[, 2])
+data_frame$replicate <- paste0("r", parsed_values[, 3])
+data_frame$batch <- paste0('b', parsed_values[, 4])
+colnames(data) <- data_frame$names
+
+dim(data)[1]
+
+
+matrix <- as.matrix(data)
+dds <- DESeqDataSetFromMatrix(countData = matrix,
+                              colData = data_frame,
+                              design= ~ batch + timepoint)
+
+dds <- DESeq(dds)
+
+dds = load_all_htseq_data("data/output_htseq_counts_2/all_ZM_fc.tsv")
+dds
+# pcaExplorer(dds)
