@@ -1,7 +1,8 @@
 library(rmarkdown)
 
 
-files <- c("DHCB_r1to6_analysis.Rmd",
+files <- c(
+#          "DHCB_r1to6_analysis.Rmd",
            "Etop_r1to6_analysis.Rmd",
            "Noc_r1to6_analysis.Rmd",
            "Nutl_r1to6_analysis.Rmd",
