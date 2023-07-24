@@ -184,11 +184,13 @@ cython_debug/
 *.html
 *.jpeg
 *.png
+*.xlsx
 
 # exclude logs
-cluster/logs
+/logs
 
 *.log
 *.err
 
 *.DS_Store
+
