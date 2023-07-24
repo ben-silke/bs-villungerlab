@@ -4,8 +4,8 @@ class RFileWriter():
     file_location: str
     data_location: str
 
-    short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48], "c(8, 12, 16, 24, 48)")
-    long_times = ("c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48], "c(16, 20, 24, 36, 48)")
+    short_times = ["c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48], "c(8, 12, 16, 24, 48)"]
+    long_times = ["c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48], "c(16, 20, 24, 36, 48)"]
 
     all_replicates: bool
 
@@ -547,8 +547,6 @@ source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
-
-
 times = {times}
 treatment <- "{self.treatment}"
 data_directory = file.path({self.file_location})
@@ -559,7 +557,7 @@ ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{se
 save(ddseq_{self.treatment}, file = glue('r/data/', '{self.data_location}'))
 
 {self.treatment}_workbook <- createWorkbook()
-times = {self.time_dict[self.treatment]}
+times = {self.time_dict[self.treatment][2]}
 {for_loop}
     timepoint <- glue("timepoint_t{_time}_vs_t0")
     results_{self.treatment} <- lfcShrink(ddseq_{self.treatment}, coef=timepoint, type="apeglm")
