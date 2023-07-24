@@ -355,9 +355,9 @@ EnhancedVolcano(
 ```
 
 ```{self._r_false_include}
-results_ordered_{self.treatment}_{timepoint} <- add_annotations_to_results(results_ordered_{self.treatment}_{timepoint})
-results_ordered_{self.treatment}_{timepoint}_df <- as.data.frame(results_ordered_{self.treatment}_{timepoint})
-write.csv(results_ordered_{self.treatment}_{timepoint}_df, file = "~/bs-villunger/results/batch_corrected_{self.treatment}_{timepoint}_data.csv")
+# results_ordered_{self.treatment}_{timepoint} <- add_annotations_to_results(results_ordered_{self.treatment}_{timepoint})
+# results_ordered_{self.treatment}_{timepoint}_df <- as.data.frame(results_ordered_{self.treatment}_{timepoint})
+# write.csv(results_ordered_{self.treatment}_{timepoint}_df, file = "~/bs-villunger/results/batch_corrected_{self.treatment}_{timepoint}_data.csv")
 ```
 
 """
@@ -493,7 +493,7 @@ class SalmonRFileWriter(RFileWriter):
         content = f"""
 library("vsn")
 library("genefilter")
-setwd("/Users/bsilke/bs-villungerlab")
+# ("/Users/bsilke/bs-villungerlab")
 source("r/src/utils.R")
 source("r/src/pca_utils.R")
 
@@ -537,7 +537,6 @@ class StarRFileWriter(RFileWriter):
         content = f"""
 setwd("/Users/bsilke/bs-villungerlab")
 library("glue")
-library("Rsubread")
 library("stringr")
 library("DESeq2")
 library(DESeq2)

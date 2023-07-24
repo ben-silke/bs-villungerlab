@@ -1,7 +1,6 @@
 
 setwd("/Users/bsilke/bs-villungerlab")
 library("glue")
-library("Rsubread")
 library("stringr")
 library("DESeq2")
 library(DESeq2)

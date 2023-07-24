@@ -330,9 +330,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_Nutl_8 <- add_annotations_to_results(results_ordered_Nutl_8)
-results_ordered_Nutl_8_df <- as.data.frame(results_ordered_Nutl_8)
-write.csv(results_ordered_Nutl_8_df, file = "~/bs-villunger/results/batch_corrected_Nutl_8_data.csv")
+# results_ordered_Nutl_8 <- add_annotations_to_results(results_ordered_Nutl_8)
+# results_ordered_Nutl_8_df <- as.data.frame(results_ordered_Nutl_8)
+# write.csv(results_ordered_Nutl_8_df, file = "~/bs-villunger/results/batch_corrected_Nutl_8_data.csv")
 ```
 
 
@@ -529,9 +529,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_Nutl_12 <- add_annotations_to_results(results_ordered_Nutl_12)
-results_ordered_Nutl_12_df <- as.data.frame(results_ordered_Nutl_12)
-write.csv(results_ordered_Nutl_12_df, file = "~/bs-villunger/results/batch_corrected_Nutl_12_data.csv")
+# results_ordered_Nutl_12 <- add_annotations_to_results(results_ordered_Nutl_12)
+# results_ordered_Nutl_12_df <- as.data.frame(results_ordered_Nutl_12)
+# write.csv(results_ordered_Nutl_12_df, file = "~/bs-villunger/results/batch_corrected_Nutl_12_data.csv")
 ```
 
 
@@ -728,9 +728,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_Nutl_16 <- add_annotations_to_results(results_ordered_Nutl_16)
-results_ordered_Nutl_16_df <- as.data.frame(results_ordered_Nutl_16)
-write.csv(results_ordered_Nutl_16_df, file = "~/bs-villunger/results/batch_corrected_Nutl_16_data.csv")
+# results_ordered_Nutl_16 <- add_annotations_to_results(results_ordered_Nutl_16)
+# results_ordered_Nutl_16_df <- as.data.frame(results_ordered_Nutl_16)
+# write.csv(results_ordered_Nutl_16_df, file = "~/bs-villunger/results/batch_corrected_Nutl_16_data.csv")
 ```
 
 
@@ -927,9 +927,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_Nutl_24 <- add_annotations_to_results(results_ordered_Nutl_24)
-results_ordered_Nutl_24_df <- as.data.frame(results_ordered_Nutl_24)
-write.csv(results_ordered_Nutl_24_df, file = "~/bs-villunger/results/batch_corrected_Nutl_24_data.csv")
+# results_ordered_Nutl_24 <- add_annotations_to_results(results_ordered_Nutl_24)
+# results_ordered_Nutl_24_df <- as.data.frame(results_ordered_Nutl_24)
+# write.csv(results_ordered_Nutl_24_df, file = "~/bs-villunger/results/batch_corrected_Nutl_24_data.csv")
 ```
 
 
@@ -1126,9 +1126,9 @@ EnhancedVolcano(
 ```
 
 ```{r include=FALSE}
-results_ordered_Nutl_48 <- add_annotations_to_results(results_ordered_Nutl_48)
-results_ordered_Nutl_48_df <- as.data.frame(results_ordered_Nutl_48)
-write.csv(results_ordered_Nutl_48_df, file = "~/bs-villunger/results/batch_corrected_Nutl_48_data.csv")
+# results_ordered_Nutl_48 <- add_annotations_to_results(results_ordered_Nutl_48)
+# results_ordered_Nutl_48_df <- as.data.frame(results_ordered_Nutl_48)
+# write.csv(results_ordered_Nutl_48_df, file = "~/bs-villunger/results/batch_corrected_Nutl_48_data.csv")
 ```
 
 
