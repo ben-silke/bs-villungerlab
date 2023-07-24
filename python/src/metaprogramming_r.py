@@ -22,17 +22,14 @@ class RFileWriter():
     _r_setup = "{r setup, include=FALSE}"
 
 
-    def __init__(self, treatment: str, directory: str = '', file_location: str = '', all_replicates: bool = False, data_location: str = '') -> None:
+    def __init__(self, treatment: str, directory: str = '', file_location: str = '', all_replicates: bool = False) -> None:
         self.treatment = treatment
         self.directory = directory
         self.all_replicates = all_replicates
         self.file_location = file_location
-        self.data_location = data_location
 
     def write_markdown_file(self):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-        if not self.data_location:
-            self.data_location = f'load("../../../data/{self.treatment}_{replicate_file_name}_data.RData")'
 
         outline = self.markdown_outline()
         tabset_detail = "{.tabset}"
@@ -427,7 +424,7 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
 
-{self.data_location}
+{self.file_location}
 dds_{variable}
 results <- results(dds_{variable})
 resultsNames(dds_{variable})
@@ -483,7 +480,7 @@ class SalmonRFileWriter(RFileWriter):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
         variable = f"{self.treatment}_{replicate_file_name}"
 
-        self.data_location = f'{self.treatment}_{replicate_file_name}_salmon.RData'
+        self.data_location = f"{self.treatment}_{replicate_file_name}_salmon.RData"
 
         content = f"""
 library("vsn")
@@ -494,7 +491,9 @@ source("r/src/pca_utils.R")
 
 times = {times}
 treatment <- "{self.treatment}"
-{self.file_location}
+data_directory = file.path({self.file_location})
+
+{self.data_location}
 
 dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
@@ -522,7 +521,7 @@ class StarRFileWriter(RFileWriter):
         self.replicate = replicate
         times = self.time_dict[self.treatment][0]
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-        self.data_location = f'{self.treatment}_{replicate_file_name}_STAR.RData'
+        self.data_location = f"{self.treatment}_{replicate_file_name}_star.RData"
         for_loop = 'for (time in times) {'
         end_for_loop = '}'
         _time = '{time}'
@@ -552,12 +551,13 @@ source("r/src/utils.R")
 
 times = {times}
 treatment <- "{self.treatment}"
-{self.file_location}
+data_directory = file.path({self.file_location})
+
 
 
 ddseq_{self.treatment} <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
-save(ddseq_{self.treatment}, file = glue('r/data/', "{self.data_location}"))
+save(ddseq_{self.treatment}, file = {self.data_location}))
 
 {self.treatment}_workbook <- createWorkbook()
 
@@ -710,6 +710,8 @@ times <- list(
 
 treatments <- c("ZM", "DHCB", "Etop", "Noc", "Nutl")
 path <- "{self.file_location}"
+data_directory = file.path({self.file_location})
+
 """
         return content
     
