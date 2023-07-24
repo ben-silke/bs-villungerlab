@@ -6,3 +6,9 @@ scp -r login://nobackup/lab_villunger/bsilke/organised/Etop/output_htseq_counts 
 scp -r login://nobackup/lab_villunger/bsilke/organised/DHCB/output_htseq_counts output_htseq_unique/DHCB
 scp -r login://nobackup/lab_villunger/bsilke/organised/Noc/output_htseq_counts output_htseq_unique/Noc
 scp -r login://nobackup/lab_villunger/bsilke/organised/Nutl/output_htseq_counts output_htseq_unique/Nutl
+
+scp -r login://nobackup/lab_villunger/bsilke/organised/ZM/output_htseq_counts_2 .
+scp -r login://nobackup/lab_villunger/bsilke/organised/Etop/output_htseq_counts_2 .
+scp -r login://nobackup/lab_villunger/bsilke/organised/DHCB/output_htseq_counts_2 .
+scp -r login://nobackup/lab_villunger/bsilke/organised/Noc/output_htseq_counts_2 .
+scp -r login://nobackup/lab_villunger/bsilke/organised/Nutl/output_htseq_counts_2 .
