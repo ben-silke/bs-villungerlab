@@ -13,7 +13,18 @@ times=(0 8 12 16 20 24 36 48)
 replicates=("r1" "r2" "r3" "r4" "r5" "r6")
 treatments=("ZM" "Nutl" "Noc" "Etop" "DHCB")
 
-ls
+#!/bin/bash
+
+if [[ "$treatment" == "Nutl" ]] || [[ "$treatment" == "Etop" ]]
+then
+  times=(0 8 12 16 24 48)
+else
+  times=(0 16 20 24 36 48)
+fi
+
+# Print the times array
+echo "${times[@]}"
+
 output_htseq_counts="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_htseq_counts_2"
 mkdir $output_htseq_counts
 
@@ -33,8 +44,7 @@ for time in ${times[@]}; do
 done
 
 echo "All Files: ${files[@]}"
-output_file="${output_htseq_counts}/all_${treatment}_fc"
-
+output_file="${output_htseq_counts}/all_${treatment}_fc.tsv"
 
 htseq-count \
 --nonunique all \
