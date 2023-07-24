@@ -571,10 +571,10 @@ times = {self.time_dict[self.treatment][2]}
     results_{self.treatment} <- lfcShrink(ddseq_{self.treatment}, coef=timepoint, type="apeglm")
 
     results_{self.treatment} <- subset(results_{self.treatment}, padj < 0.1)  # Restrict to values which are significant
-    ## results_{self.treatment} <- add_annotations_to_results(results_{self.treatment})
+    results_{self.treatment} <- add_annotations_to_results(results_{self.treatment})
     results_{self.treatment}_df <- as.data.frame(results_{self.treatment})
     addWorksheet({self.treatment}_workbook, glue("{self.treatment}_{_time}"))
-    writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df)
+    writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df, row.names=TRUE)
 {end_for_loop}
 
 saveWorkbook({self.treatment}_workbook, "results/{self.treatment}_workbook.xlsx", overwrite = TRUE)
@@ -666,7 +666,7 @@ results_{treatment}_{timepoint} <- add_annotations_to_results(results_{treatment
 results_{treatment}_{timepoint}_df <- as.data.frame(results_{treatment}_{timepoint})
 
 addWorksheet({workbook_name}, "results_apelgm_{treatment}_{timepoint}")
-writeData({workbook_name}, "results_subset_dataframe", results_{treatment}_{timepoint}_df)
+writeData({workbook_name}, "results_subset_dataframe", results_{treatment}_{timepoint}_df, row.names=TRUE)
 """
 
             return content
