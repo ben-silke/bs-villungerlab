@@ -553,9 +553,8 @@ times = {times}
 treatment <- "{self.treatment}"
 data_directory = file.path({self.file_location})
 
-
-
-ddseq_{self.treatment} <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
+ddseq_{self.treatment} <- load_all_htseq_data("{self.file_location}/all_{self.treatment}_fc.tsv")
+# <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
 save(ddseq_{self.treatment}, file = {self.data_location}))
 
