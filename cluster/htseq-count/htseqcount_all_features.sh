@@ -1,6 +1,5 @@
 #!/bin/bash
 # Counting Features
-
 treatment=$1
 echo "We are now operating on $treatment"
 
@@ -25,16 +24,17 @@ fi
 # Print the times array
 echo "${times[@]}"
 
-output_htseq_counts="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_htseq_counts_2"
+output_htseq_counts="/nobackup/lab_villunger/bsilke/organised/${treatment}/encode_output_htseq_counts"
 mkdir $output_htseq_counts
 
 # where do you store stars?
-night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/output_STAR"
+# /nobackup/lab_villunger/bsilke/organised/ZM/ENCODE_output_STAR_gencode
+night_sky="/nobackup/lab_villunger/bsilke/organised/${treatment}/ENCODE_output_STAR_gencode"
 files=()
 
 for time in ${times[@]}; do
     for replicate in ${replicates[@]}; do
-        file="${treatment}_${time}_${replicate}"
+        file="gc_encode_${treatment}_${time}_${replicate}"
 
         echo "Mapping STARS in $file"
 
@@ -44,7 +44,7 @@ for time in ${times[@]}; do
 done
 
 echo "All Files: ${files[@]}"
-output_file="${output_htseq_counts}/all_${treatment}_fc.tsv"
+output_file="${output_htseq_counts}/all_${treatment}_htseq_encode_counts.tsv"
 
 htseq-count \
 --nonunique all \
@@ -54,4 +54,4 @@ htseq-count \
 --with-header \
 -c $output_file \
 ${files[@]} \
-"/nobackup/lab_villunger/bsilke/references/star/Homo_sapiens.GRCh38.110.gtf" 
+"/nobackup/lab_villunger/bsilke/references/star/gencode.v44.annotation.gtf" 
