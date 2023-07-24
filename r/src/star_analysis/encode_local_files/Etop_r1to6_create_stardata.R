@@ -26,7 +26,7 @@ ddseq_Etop <- load_all_htseq_data(file.path(data_directory, 'all_Etop_fc.tsv'))
 
 # <- create_htseq_ddseq(Etop, data_directory, times, 1:6)
 
-save(ddseq_Etop, file = 'r/data/Etop_r1to6_star.RData')
+save(ddseq_Etop, file = 'results/output_encode_1to6/ZM_r1to6_star.RData')
 
 Etop_workbook <- createWorkbook()
 times = c(8, 12, 16, 24, 48)
@@ -41,5 +41,5 @@ for (time in times) {
     writeData(Etop_workbook, glue("Etop_{time}"), results_Etop_df, row.names=TRUE)
 }
 
-saveWorkbook(Etop_workbook, "results/Etop_workbook.xlsx", overwrite = TRUE)
+saveWorkbook(Etop_workbook, "results/output_encode_1to6/Etop_workbook.xlsx", overwrite = TRUE)
 

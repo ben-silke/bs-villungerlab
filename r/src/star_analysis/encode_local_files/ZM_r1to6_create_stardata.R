@@ -26,7 +26,7 @@ ddseq_ZM <- load_all_htseq_data(file.path(data_directory, 'all_ZM_fc.tsv'))
 
 # <- create_htseq_ddseq(ZM, data_directory, times, 1:6)
 
-save(ddseq_ZM, file = 'r/data/ZM_r1to6_star.RData')
+save(ddseq_ZM, file = 'results/output_encode_1to6/ZM_r1to6_star.RData')
 
 ZM_workbook <- createWorkbook()
 times = c(16, 20, 24, 36, 48)
@@ -41,5 +41,5 @@ for (time in times) {
     writeData(ZM_workbook, glue("ZM_{time}"), results_ZM_df, row.names=TRUE)
 }
 
-saveWorkbook(ZM_workbook, "results/ZM_workbook.xlsx", overwrite = TRUE)
+saveWorkbook(ZM_workbook, "results/output_encode_1to6/ZM_workbook.xlsx", overwrite = TRUE)
 

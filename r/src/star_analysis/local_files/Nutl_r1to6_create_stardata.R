@@ -35,7 +35,7 @@ for (time in times) {
     results_Nutl <- lfcShrink(ddseq_Nutl, coef=timepoint, type="apeglm")
 
     results_Nutl <- subset(results_Nutl, padj < 0.1)  # Restrict to values which are significant
-    ## results_Nutl <- add_annotations_to_results(results_Nutl)
+    results_Nutl <- add_annotations_to_results(results_Nutl)
     results_Nutl_df <- as.data.frame(results_Nutl)
     addWorksheet(Nutl_workbook, glue("Nutl_{time}"))
     writeData(Nutl_workbook, glue("Nutl_{time}"), results_Nutl_df)
