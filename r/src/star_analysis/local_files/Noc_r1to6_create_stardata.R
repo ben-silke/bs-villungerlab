@@ -27,7 +27,7 @@ ddseq_Noc <- load_all_htseq_data(file.path(data_directory, 'all_Noc_fc.tsv'))
 
 # <- create_htseq_ddseq(Noc, data_directory, times, 1:6)
 
-save(ddseq_Noc, file = glue('r/data/', 'Noc_r1to6_star.RData'))
+save(ddseq_Noc, file = 'r/data/Noc_r1to6_star.RData')
 
 Noc_workbook <- createWorkbook()
 times = c(16, 20, 24, 36, 48)

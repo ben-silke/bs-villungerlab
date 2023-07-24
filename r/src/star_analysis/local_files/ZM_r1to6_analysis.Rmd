@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/Users/bsilke/bs-villungerlab")
 library(DESeq2)
 library("apeglm")
 library("ashr")
@@ -16,10 +17,16 @@ library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
-setwd("/Users/bsilke/bs-villungerlab")
-load(glue('r/data/', 'ZM_r1to6_star.RData'))
+library("glue")
+library("Rsubread")
+library("stringr")
+library("DESeq2")
+library(dplyr)
+library(openxlsx)
+load('~/bs-villungerlab/r/data/ZM_r1to6_star.RData')
 
-dds_ZM_r1to6
+
+dds_ZM_r1to6 <- ddseq_ZM
 results <- results(dds_ZM_r1to6)
 resultsNames(dds_ZM_r1to6)
 
@@ -49,8 +56,8 @@ return (res)
 #### VST - Variance Stablised Transformation
 ```{r}
 vsd_ZM <- vst(dds_ZM_r1to6, blind=FALSE)
-plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
-title("PCA plot highlighting batch differences for VST for ZM: r1to6")
+plot <- plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
+plot + ggtitle("PCA plot highlighting batch differences for VST for ZM: r1to6")
 ```
 
 
@@ -109,8 +116,8 @@ plotPCA(vsd_ZM, intgroup=c('batch', 'timepoint'))
 ```
 
 ```{r}
-plotPCA(vsd_ZM, intgroup=c('batch'))
-title("PCA plot highlighting batch differences for VST for ZM: r1to6")
+plot <- plotPCA(vsd_ZM, intgroup=c('batch'))
+plot + ggtitle("PCA plot highlighting batch differences for VST for ZM: r1to6")
 ```
 
 
@@ -325,7 +332,7 @@ EnhancedVolcano(
 ```{r include=FALSE}
 results_ordered_ZM_16 <- add_annotations_to_results(results_ordered_ZM_16)
 results_ordered_ZM_16_df <- as.data.frame(results_ordered_ZM_16)
-write.csv(results_ordered_ZM_16_df, file = "../../../../results/batch_corrected_ZM_16_data.csv")
+write.csv(results_ordered_ZM_16_df, file = "~/bs-villunger/results/batch_corrected_ZM_16_data.csv")
 ```
 
 
@@ -524,7 +531,7 @@ EnhancedVolcano(
 ```{r include=FALSE}
 results_ordered_ZM_20 <- add_annotations_to_results(results_ordered_ZM_20)
 results_ordered_ZM_20_df <- as.data.frame(results_ordered_ZM_20)
-write.csv(results_ordered_ZM_20_df, file = "../../../../results/batch_corrected_ZM_20_data.csv")
+write.csv(results_ordered_ZM_20_df, file = "~/bs-villunger/results/batch_corrected_ZM_20_data.csv")
 ```
 
 
@@ -723,7 +730,7 @@ EnhancedVolcano(
 ```{r include=FALSE}
 results_ordered_ZM_24 <- add_annotations_to_results(results_ordered_ZM_24)
 results_ordered_ZM_24_df <- as.data.frame(results_ordered_ZM_24)
-write.csv(results_ordered_ZM_24_df, file = "../../../../results/batch_corrected_ZM_24_data.csv")
+write.csv(results_ordered_ZM_24_df, file = "~/bs-villunger/results/batch_corrected_ZM_24_data.csv")
 ```
 
 
@@ -922,7 +929,7 @@ EnhancedVolcano(
 ```{r include=FALSE}
 results_ordered_ZM_36 <- add_annotations_to_results(results_ordered_ZM_36)
 results_ordered_ZM_36_df <- as.data.frame(results_ordered_ZM_36)
-write.csv(results_ordered_ZM_36_df, file = "../../../../results/batch_corrected_ZM_36_data.csv")
+write.csv(results_ordered_ZM_36_df, file = "~/bs-villunger/results/batch_corrected_ZM_36_data.csv")
 ```
 
 
@@ -1121,7 +1128,7 @@ EnhancedVolcano(
 ```{r include=FALSE}
 results_ordered_ZM_48 <- add_annotations_to_results(results_ordered_ZM_48)
 results_ordered_ZM_48_df <- as.data.frame(results_ordered_ZM_48)
-write.csv(results_ordered_ZM_48_df, file = "../../../../results/batch_corrected_ZM_48_data.csv")
+write.csv(results_ordered_ZM_48_df, file = "~/bs-villunger/results/batch_corrected_ZM_48_data.csv")
 ```
 
 

@@ -27,7 +27,7 @@ ddseq_DHCB <- load_all_htseq_data(file.path(data_directory, 'all_DHCB_fc.tsv'))
 
 # <- create_htseq_ddseq(DHCB, data_directory, times, 1:6)
 
-save(ddseq_DHCB, file = glue('r/data/', 'DHCB_r1to6_star.RData'))
+save(ddseq_DHCB, file = 'r/data/DHCB_r1to6_star.RData')
 
 DHCB_workbook <- createWorkbook()
 times = c(16, 20, 24, 36, 48)

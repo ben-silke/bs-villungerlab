@@ -207,6 +207,12 @@ load_all_htseq_data <- function(file_path) {
                                 colData = data_frame,
                                 design= ~ batch + timepoint)
   
+
+  print(nrow(dds))
+  keep <- rowSums(counts(dds)) >= 1
+  dds <- dds[keep,]
+  print(nrow(dds))
+
   dds <- DESeq(dds)
   return (dds)
 }

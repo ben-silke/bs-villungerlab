@@ -73,8 +73,8 @@ class RFileWriter():
 #### VST - Variance Stablised Transformation
 ```{self._r}
 vsd_{self.treatment} <- vst(dds_{self.treatment}_{self.replicate}, blind=FALSE)
-plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
-title("PCA plot highlighting batch differences for VST for {self.treatment}: {self.replicate}")
+plot <- plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
+plot + ggtitle("PCA plot highlighting batch differences for VST for {self.treatment}: {self.replicate}")
 ```
 
 
@@ -107,8 +107,8 @@ plotPCA(vsd_{self.treatment}, intgroup=c('batch', 'timepoint'))
 ```
 
 ```{self._r}
-plotPCA(vsd_{self.treatment}, intgroup=c('batch'))
-title("PCA plot highlighting batch differences for VST for {self.treatment}: {self.replicate}")
+plot <- plotPCA(vsd_{self.treatment}, intgroup=c('batch'))
+plot + ggtitle("PCA plot highlighting batch differences for VST for {self.treatment}: {self.replicate}")
 ```
 
 
@@ -357,7 +357,7 @@ EnhancedVolcano(
 ```{self._r_false_include}
 results_ordered_{self.treatment}_{timepoint} <- add_annotations_to_results(results_ordered_{self.treatment}_{timepoint})
 results_ordered_{self.treatment}_{timepoint}_df <- as.data.frame(results_ordered_{self.treatment}_{timepoint})
-write.csv(results_ordered_{self.treatment}_{timepoint}_df, file = "../../../../results/batch_corrected_{self.treatment}_{timepoint}_data.csv")
+write.csv(results_ordered_{self.treatment}_{timepoint}_df, file = "~/bs-villunger/results/batch_corrected_{self.treatment}_{timepoint}_data.csv")
 ```
 
 """
@@ -414,6 +414,7 @@ output: html_document
 
 ```{_r_setup}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/Users/bsilke/bs-villungerlab")
 library(DESeq2)
 library("apeglm")
 library("ashr")
@@ -423,10 +424,16 @@ library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
-setwd("/Users/bsilke/bs-villungerlab")
-load(glue('r/data/', '{self.data_location}'))
+library("glue")
+library("Rsubread")
+library("stringr")
+library("DESeq2")
+library(dplyr)
+library(openxlsx)
+load('~/bs-villungerlab/r/data/{self.data_location}')
 
-dds_{variable}
+
+dds_{variable} <- ddseq_{self.treatment}
 results <- results(dds_{variable})
 resultsNames(dds_{variable})
 
@@ -498,7 +505,7 @@ data_directory = file.path({self.file_location})
 
 dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds_{variable}, file = glue('r/data/', '{self.data_location}'))
+save(dds_{variable}, file = 'r/data/{self.data_location}'))
 
 res_{variable} <- results(dds_{variable})
 resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
@@ -556,7 +563,7 @@ ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{se
 
 # <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
-save(ddseq_{self.treatment}, file = glue('r/data/', '{self.data_location}'))
+save(ddseq_{self.treatment}, file = 'r/data/{self.data_location}')
 
 {self.treatment}_workbook <- createWorkbook()
 times = {self.time_dict[self.treatment][2]}

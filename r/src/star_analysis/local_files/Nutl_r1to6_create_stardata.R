@@ -27,7 +27,7 @@ ddseq_Nutl <- load_all_htseq_data(file.path(data_directory, 'all_Nutl_fc.tsv'))
 
 # <- create_htseq_ddseq(Nutl, data_directory, times, 1:6)
 
-save(ddseq_Nutl, file = glue('r/data/', 'Nutl_r1to6_star.RData'))
+save(ddseq_Nutl, file = 'r/data/Nutl_r1to6_star.RData')
 
 Nutl_workbook <- createWorkbook()
 times = c(8, 12, 16, 24, 48)
