@@ -16,8 +16,9 @@ library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
+setwd("/Users/bsilke/bs-villungerlab")
+load(glue('r/data/', 'DHCB_r1to6_star.RData')
 
-'data/output_htseq_counts_2'
 dds_DHCB_r1to6
 results <- results(dds_DHCB_r1to6)
 resultsNames(dds_DHCB_r1to6)

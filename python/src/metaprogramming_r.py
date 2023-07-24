@@ -423,8 +423,9 @@ library("pheatmap")
 library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
+setwd("/Users/bsilke/bs-villungerlab")
+load(glue('r/data/', '{self.data_location}')
 
-{self.file_location}
 dds_{variable}
 results <- results(dds_{variable})
 resultsNames(dds_{variable})
@@ -527,6 +528,7 @@ class StarRFileWriter(RFileWriter):
         _time = '{time}'
         
         content = f"""
+setwd("/Users/bsilke/bs-villungerlab")
 library("glue")
 library("Rsubread")
 library("stringr")

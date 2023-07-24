@@ -1,4 +1,5 @@
 
+setwd("/Users/bsilke/bs-villungerlab")
 library("glue")
 library("Rsubread")
 library("stringr")
