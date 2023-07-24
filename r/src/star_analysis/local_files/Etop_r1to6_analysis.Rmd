@@ -17,7 +17,7 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
 
-data/output_htseq_counts_2
+'data/output_htseq_counts_2'
 dds_Etop_r1to6
 results <- results(dds_Etop_r1to6)
 resultsNames(dds_Etop_r1to6)

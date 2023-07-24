@@ -23,15 +23,15 @@ source("r/src/utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "DHCB"
-data_directory = file.path(data/output_htseq_counts_2)
+data_directory = file.path('data/output_htseq_counts_2')
+ddseq_DHCB <- load_all_htseq_data(file.path(data_directory, 'all_DHCB_fc.tsv'))
 
-ddseq_DHCB <- load_all_htseq_data("data/output_htseq_counts_2/all_DHCB_fc.tsv")
 # <- create_htseq_ddseq(DHCB, data_directory, times, 1:6)
 
-save(ddseq_DHCB, file = DHCB_r1to6_star.RData))
+save(ddseq_DHCB, file = glue('r/data/', 'DHCB_r1to6_star.RData'))
 
 DHCB_workbook <- createWorkbook()
-
+times = c(16, 20, 24, 36, 48)
 for (time in times) {
     timepoint <- glue("timepoint_t{time}_vs_t0")
     results_DHCB <- lfcShrink(ddseq_DHCB, coef=timepoint, type="apeglm")
@@ -43,5 +43,5 @@ for (time in times) {
     writeData(DHCB_workbook, glue("DHCB_{time}"), results_DHCB_df)
 }
 
-saveWorkbook(DHCB_workbook, "DHCB_workbook", overwrite = TRUE)
+saveWorkbook(DHCB_workbook, "DHCB_workboo.xlsx", overwrite = TRUE)
 

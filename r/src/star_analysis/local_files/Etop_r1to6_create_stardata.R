@@ -23,15 +23,15 @@ source("r/src/utils.R")
 
 times = c(0, 8, 12, 16, 24, 48)
 treatment <- "Etop"
-data_directory = file.path(data/output_htseq_counts_2)
+data_directory = file.path('data/output_htseq_counts_2')
+ddseq_Etop <- load_all_htseq_data(file.path(data_directory, 'all_Etop_fc.tsv'))
 
-ddseq_Etop <- load_all_htseq_data("data/output_htseq_counts_2/all_Etop_fc.tsv")
 # <- create_htseq_ddseq(Etop, data_directory, times, 1:6)
 
-save(ddseq_Etop, file = Etop_r1to6_star.RData))
+save(ddseq_Etop, file = glue('r/data/', 'Etop_r1to6_star.RData'))
 
 Etop_workbook <- createWorkbook()
-
+times = c(8, 12, 16, 24, 48)
 for (time in times) {
     timepoint <- glue("timepoint_t{time}_vs_t0")
     results_Etop <- lfcShrink(ddseq_Etop, coef=timepoint, type="apeglm")
@@ -43,5 +43,5 @@ for (time in times) {
     writeData(Etop_workbook, glue("Etop_{time}"), results_Etop_df)
 }
 
-saveWorkbook(Etop_workbook, "Etop_workbook", overwrite = TRUE)
+saveWorkbook(Etop_workbook, "Etop_workboo.xlsx", overwrite = TRUE)
 

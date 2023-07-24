@@ -23,15 +23,15 @@ source("r/src/utils.R")
 
 times = c(0, 8, 12, 16, 24, 48)
 treatment <- "Nutl"
-data_directory = file.path(data/output_htseq_counts_2)
+data_directory = file.path('data/output_htseq_counts_2')
+ddseq_Nutl <- load_all_htseq_data(file.path(data_directory, 'all_Nutl_fc.tsv'))
 
-ddseq_Nutl <- load_all_htseq_data("data/output_htseq_counts_2/all_Nutl_fc.tsv")
 # <- create_htseq_ddseq(Nutl, data_directory, times, 1:6)
 
-save(ddseq_Nutl, file = Nutl_r1to6_star.RData))
+save(ddseq_Nutl, file = glue('r/data/', 'Nutl_r1to6_star.RData'))
 
 Nutl_workbook <- createWorkbook()
-
+times = c(8, 12, 16, 24, 48)
 for (time in times) {
     timepoint <- glue("timepoint_t{time}_vs_t0")
     results_Nutl <- lfcShrink(ddseq_Nutl, coef=timepoint, type="apeglm")
@@ -43,5 +43,5 @@ for (time in times) {
     writeData(Nutl_workbook, glue("Nutl_{time}"), results_Nutl_df)
 }
 
-saveWorkbook(Nutl_workbook, "Nutl_workbook", overwrite = TRUE)
+saveWorkbook(Nutl_workbook, "Nutl_workboo.xlsx", overwrite = TRUE)
 

@@ -23,15 +23,15 @@ source("r/src/utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "Noc"
-data_directory = file.path(data/output_htseq_counts_2)
+data_directory = file.path('data/output_htseq_counts_2')
+ddseq_Noc <- load_all_htseq_data(file.path(data_directory, 'all_Noc_fc.tsv'))
 
-ddseq_Noc <- load_all_htseq_data("data/output_htseq_counts_2/all_Noc_fc.tsv")
 # <- create_htseq_ddseq(Noc, data_directory, times, 1:6)
 
-save(ddseq_Noc, file = Noc_r1to6_star.RData))
+save(ddseq_Noc, file = glue('r/data/', 'Noc_r1to6_star.RData'))
 
 Noc_workbook <- createWorkbook()
-
+times = c(16, 20, 24, 36, 48)
 for (time in times) {
     timepoint <- glue("timepoint_t{time}_vs_t0")
     results_Noc <- lfcShrink(ddseq_Noc, coef=timepoint, type="apeglm")
@@ -43,5 +43,5 @@ for (time in times) {
     writeData(Noc_workbook, glue("Noc_{time}"), results_Noc_df)
 }
 
-saveWorkbook(Noc_workbook, "Noc_workbook", overwrite = TRUE)
+saveWorkbook(Noc_workbook, "Noc_workboo.xlsx", overwrite = TRUE)
 

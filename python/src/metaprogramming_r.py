@@ -4,8 +4,8 @@ class RFileWriter():
     file_location: str
     data_location: str
 
-    short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48])
-    long_times = ("c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48])
+    short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48], "c(8, 12, 16, 24, 48)")
+    long_times = ("c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48], "c(16, 20, 24, 36, 48)")
 
     all_replicates: bool
 
@@ -26,7 +26,7 @@ class RFileWriter():
         self.treatment = treatment
         self.directory = directory
         self.all_replicates = all_replicates
-        self.file_location = file_location
+        self.file_location = f"'{file_location}'"
 
     def write_markdown_file(self):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
@@ -497,7 +497,7 @@ data_directory = file.path({self.file_location})
 
 dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds_{variable}, file = glue('r/data/', "{self.data_location}"))
+save(dds_{variable}, file = glue('r/data/', '{self.data_location}'))
 
 res_{variable} <- results(dds_{variable})
 resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
@@ -552,14 +552,14 @@ source("r/src/utils.R")
 times = {times}
 treatment <- "{self.treatment}"
 data_directory = file.path({self.file_location})
+ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{self.treatment}_fc.tsv'))
 
-ddseq_{self.treatment} <- load_all_htseq_data("{self.file_location}/all_{self.treatment}_fc.tsv")
 # <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
-save(ddseq_{self.treatment}, file = {self.data_location}))
+save(ddseq_{self.treatment}, file = glue('r/data/', '{self.data_location}'))
 
 {self.treatment}_workbook <- createWorkbook()
-
+times = {self.time_dict[self.treatment][2]}
 {for_loop}
     timepoint <- glue("timepoint_t{_time}_vs_t0")
     results_{self.treatment} <- lfcShrink(ddseq_{self.treatment}, coef=timepoint, type="apeglm")
@@ -571,10 +571,9 @@ save(ddseq_{self.treatment}, file = {self.data_location}))
     writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df)
 {end_for_loop}
 
-saveWorkbook({self.treatment}_workbook, "{self.treatment}_workbook", overwrite = TRUE)
+saveWorkbook({self.treatment}_workbook, "{self.treatment}_workboo.xlsx", overwrite = TRUE)
 
 """
-
 
         file = f"{self.treatment}_{replicate_file_name}_create_stardata.R"
         with open(file, 'w') as f:

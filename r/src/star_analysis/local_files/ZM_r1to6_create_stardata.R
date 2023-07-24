@@ -23,15 +23,15 @@ source("r/src/utils.R")
 
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "ZM"
-data_directory = file.path(data/output_htseq_counts_2)
+data_directory = file.path('data/output_htseq_counts_2')
+ddseq_ZM <- load_all_htseq_data(file.path(data_directory, 'all_ZM_fc.tsv'))
 
-ddseq_ZM <- load_all_htseq_data("data/output_htseq_counts_2/all_ZM_fc.tsv")
 # <- create_htseq_ddseq(ZM, data_directory, times, 1:6)
 
-save(ddseq_ZM, file = ZM_r1to6_star.RData))
+save(ddseq_ZM, file = glue('r/data/', 'ZM_r1to6_star.RData'))
 
 ZM_workbook <- createWorkbook()
-
+times = c(16, 20, 24, 36, 48)
 for (time in times) {
     timepoint <- glue("timepoint_t{time}_vs_t0")
     results_ZM <- lfcShrink(ddseq_ZM, coef=timepoint, type="apeglm")
@@ -43,5 +43,5 @@ for (time in times) {
     writeData(ZM_workbook, glue("ZM_{time}"), results_ZM_df)
 }
 
-saveWorkbook(ZM_workbook, "ZM_workbook", overwrite = TRUE)
+saveWorkbook(ZM_workbook, "ZM_workboo.xlsx", overwrite = TRUE)
 
