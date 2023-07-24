@@ -17,7 +17,7 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
 setwd("/Users/bsilke/bs-villungerlab")
-load(glue('r/data/', 'Nutl_r1to6_star.RData')
+load(glue('r/data/', 'Nutl_r1to6_star.RData'))
 
 dds_Nutl_r1to6
 results <- results(dds_Nutl_r1to6)

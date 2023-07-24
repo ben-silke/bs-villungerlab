@@ -424,7 +424,7 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
 setwd("/Users/bsilke/bs-villungerlab")
-load(glue('r/data/', '{self.data_location}')
+load(glue('r/data/', '{self.data_location}'))
 
 dds_{variable}
 results <- results(dds_{variable})
