@@ -2,6 +2,7 @@ class RFileWriter():
     treatment: str
     directory: str
     file_location: str
+    data_location: str
 
     short_times = ("c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48])
     long_times = ("c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48])
@@ -21,16 +22,20 @@ class RFileWriter():
     _r_setup = "{r setup, include=FALSE}"
 
 
-    def __init__(self, treatment: str, directory: str, file_location: str, all_replicates: bool) -> None:
+    def __init__(self, treatment: str, directory: str = '', file_location: str = '', all_replicates: bool = False, data_location: str = '') -> None:
         self.treatment = treatment
         self.directory = directory
         self.all_replicates = all_replicates
         self.file_location = file_location
+        self.data_location = data_location
 
-    def write_markdown_file(self, include_data_create):
-        outline = self.markdown_outline(include_data_create)
-        tabset_detail = "{.tabset}"
+    def write_markdown_file(self):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
+        if not self.data_location:
+            self.data_location = f'load("../../../data/{self.treatment}_{replicate_file_name}_data.RData")'
+
+        outline = self.markdown_outline()
+        tabset_detail = "{.tabset}"
         self.replicate = replicate_file_name
 
         content = f"""
@@ -340,7 +345,7 @@ EnhancedVolcano(
     lab = selected_genes_{self.treatment}_{timepoint},
     x = 'logFC',
     y = 'adj.P.Val',
-    title = 'Batch controlled ZM t0_t{timepoint} (limma)',
+    title = 'Batch controlled {self.treatment} t0_t{timepoint} (limma)',
     ylab = expression(paste('-Log'[10],' adj P')),       # Y-axis label
     # with adj p cutoff of 0.05
     pCutoff = 0.05,
@@ -384,7 +389,7 @@ head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 
 
 
-    def markdown_outline(self, include_data_create=False):
+    def markdown_outline(self):
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
         variable = f"{self.treatment}_{replicate_file_name}"
         _r_setup = "{r setup, include=FALSE}"
@@ -422,7 +427,7 @@ library("RColorBrewer")
 library("PoiClaClu")
 library("limma")
 
-load("../../../data/{variable}_data.RData")
+{self.data_location}
 dds_{variable}
 results <- results(dds_{variable})
 resultsNames(dds_{variable})
@@ -477,6 +482,9 @@ class SalmonRFileWriter(RFileWriter):
         times = self.time_dict[self.treatment][0]
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
         variable = f"{self.treatment}_{replicate_file_name}"
+
+        self.data_location = f'{self.treatment}_{replicate_file_name}_salmon.RData'
+
         content = f"""
 library("vsn")
 library("genefilter")
@@ -490,7 +498,7 @@ treatment <- "{self.treatment}"
 
 dds_{variable} <- create_dds('{self.treatment}', data_directory, times, "salmon_quant", {replicate})
 # Create the data and then save it
-save(dds_{variable}, file = glue('r/data/', "{self.treatment}_{replicate_file_name}_data.RData"))
+save(dds_{variable}, file = glue('r/data/', "{self.data_location}"))
 
 res_{variable} <- results(dds_{variable})
 resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
@@ -506,48 +514,68 @@ write.csv(resOrderedDF_{variable}, file = "results/{self.treatment}_{replicate_f
         with open(file, 'w') as f:
             f.write(content) 
 
-    
-    
 
 class StarRFileWriter(RFileWriter):
+
     def write_r_file(self):
         replicate = "1:6" if self.all_replicates else "1:3"
         self.replicate = replicate
         times = self.time_dict[self.treatment][0]
         replicate_file_name = "r1to6" if self.all_replicates else "r1to3"
-        variable = f"{self.treatment}_{replicate_file_name}"
+        self.data_location = f'{self.treatment}_{replicate_file_name}_STAR.RData'
+        for_loop = 'for (time in times) {'
+        end_for_loop = '}'
+        _time = '{time}'
+        
         content = f"""
-
 library("glue")
 library("Rsubread")
 library("stringr")
 library("DESeq2")
+library(DESeq2)
+library("apeglm")
+library("ashr")
+library(EnhancedVolcano)
+library(org.Hs.eg.db)
+library("pheatmap")
+library("RColorBrewer")
+library("PoiClaClu")
+library("limma")
+library(dplyr)
+library(openxlsx)
 
 source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
-library("vsn")
-library("genefilter")
-setwd("/Users/bsilke/bs-villungerlab")
+
+
 
 times = {times}
 treatment <- "{self.treatment}"
 {self.file_location}
-annotation_file <- "INSERT_ANNOTATION_FILE"
 
-dds_{variable} <- create_star_dds('{self.treatment}', data_directory, times, {replicate}, annotation_file)
-# Create the data and then save it
-save(dds_{variable}, file = glue('r/data/STAR', "{self.treatment}_{replicate_file_name}_stardata.RData"))
 
-res_{variable} <- results(dds_{variable})
-resOrdered_{variable} <- res_{variable}[order(res_{variable}$padj),]
-resOrdered_{variable} <- add_annotations_to_results(resOrdered_{variable})
+ddseq_{self.treatment} <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
-head(resOrdered_{variable})
+save(ddseq_{self.treatment}, file = glue('r/data/', "{self.data_location}"))
 
-resOrderedDF_{variable} <- as.data.frame(resOrdered_{variable})
-write.csv(resOrderedDF_{variable}, file = "results/STAR/{self.treatment}_{replicate_file_name}_stardata.csv")
+{self.treatment}_workbook <- createWorkbook()
+
+{for_loop}
+    timepoint <- glue("timepoint_t{_time}_vs_t0")
+    results_{self.treatment} <- lfcShrink(ddseq_{self.treatment}, coef=timepoint, type="apeglm")
+
+    results_{self.treatment} <- subset(results_{self.treatment}, padj < 0.1)  # Restrict to values which are significant
+    ## results_{self.treatment} <- add_annotations_to_results(results_{self.treatment})
+    results_{self.treatment}_df <- as.data.frame(results_{self.treatment})
+    addWorksheet({self.treatment}_workbook, glue("{self.treatment}_{_time}"))
+    writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df)
+{end_for_loop}
+
+saveWorkbook({self.treatment}_workbook, "{self.treatment}_workbook", overwrite = TRUE)
+
 """
+
 
         file = f"{self.treatment}_{replicate_file_name}_create_stardata.R"
         with open(file, 'w') as f:
