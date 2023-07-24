@@ -19,8 +19,6 @@ source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
-
-
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "ZM"
 data_directory = file.path('data/output_htseq_counts_2')
@@ -43,5 +41,5 @@ for (time in times) {
     writeData(ZM_workbook, glue("ZM_{time}"), results_ZM_df)
 }
 
-saveWorkbook(ZM_workbook, "ZM_workboo.xlsx", overwrite = TRUE)
+saveWorkbook(ZM_workbook, "results/ZM_workbook.xlsx", overwrite = TRUE)
 

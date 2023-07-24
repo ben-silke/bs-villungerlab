@@ -19,8 +19,6 @@ source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
-
-
 times = c(0, 8, 12, 16, 24, 48)
 treatment <- "Etop"
 data_directory = file.path('data/output_htseq_counts_2')
@@ -43,5 +41,5 @@ for (time in times) {
     writeData(Etop_workbook, glue("Etop_{time}"), results_Etop_df)
 }
 
-saveWorkbook(Etop_workbook, "Etop_workboo.xlsx", overwrite = TRUE)
+saveWorkbook(Etop_workbook, "results/Etop_workbook.xlsx", overwrite = TRUE)
 

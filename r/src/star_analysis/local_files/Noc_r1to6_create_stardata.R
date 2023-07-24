@@ -19,8 +19,6 @@ source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
-
-
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "Noc"
 data_directory = file.path('data/output_htseq_counts_2')
@@ -43,5 +41,5 @@ for (time in times) {
     writeData(Noc_workbook, glue("Noc_{time}"), results_Noc_df)
 }
 
-saveWorkbook(Noc_workbook, "Noc_workboo.xlsx", overwrite = TRUE)
+saveWorkbook(Noc_workbook, "results/Noc_workbook.xlsx", overwrite = TRUE)
 

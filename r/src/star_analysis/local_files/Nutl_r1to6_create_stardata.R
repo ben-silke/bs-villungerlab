@@ -19,8 +19,6 @@ source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
-
-
 times = c(0, 8, 12, 16, 24, 48)
 treatment <- "Nutl"
 data_directory = file.path('data/output_htseq_counts_2')
@@ -43,5 +41,5 @@ for (time in times) {
     writeData(Nutl_workbook, glue("Nutl_{time}"), results_Nutl_df)
 }
 
-saveWorkbook(Nutl_workbook, "Nutl_workboo.xlsx", overwrite = TRUE)
+saveWorkbook(Nutl_workbook, "results/Nutl_workbook.xlsx", overwrite = TRUE)
 

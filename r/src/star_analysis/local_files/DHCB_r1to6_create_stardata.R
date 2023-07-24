@@ -19,8 +19,6 @@ source("r/src/star_analysis/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 
-
-
 times = c(0, 16, 20, 24, 36, 48)
 treatment <- "DHCB"
 data_directory = file.path('data/output_htseq_counts_2')
@@ -43,5 +41,5 @@ for (time in times) {
     writeData(DHCB_workbook, glue("DHCB_{time}"), results_DHCB_df)
 }
 
-saveWorkbook(DHCB_workbook, "DHCB_workboo.xlsx", overwrite = TRUE)
+saveWorkbook(DHCB_workbook, "results/DHCB_workbook.xlsx", overwrite = TRUE)
 
