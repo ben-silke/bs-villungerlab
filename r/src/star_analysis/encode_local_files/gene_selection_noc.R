@@ -39,7 +39,8 @@ downr_top <- head(downr_df_sorted, 20)
 upr_df_sorted <- df[order(-df$log2FoldChange), ]
 upr_top <- head(upr_df_sorted, 20)
 
-
+######
+# down down
 df <- as.data.frame(downr_top)
 df
 
@@ -186,23 +187,61 @@ merged_df <- merge_dataframe(merged_df,res_36_df)
 merged_df <- merge_dataframe(merged_df,res_48_df)
 
 colnames(merged_df)
+head(merged_df)
+merged_df$label <- merged_df$symbol
+merged_df$label[is.na(merged_df$label)] <- merged_df$gene_id[is.na(merged_df$label)]
+head(merged_df)
+
+# ndf$label[is.na(ndf$label)] <- ndf$gene_id[is.na(ndf$gene_id)]
+
+
 
 write.csv(merged_df, file = "/Users/bsilke/bs-villungerlab/results/merged_up_regulated_Noc.csv")
-write.csv(merged_df, file = "/Users/bsilke/bs-villungerlab/results/merged_down_regulated_Noc.csv")
+# write.csv(merged_df, file = "/Users/bsilke/bs-villungerlab/results/merged_down_regulated_Noc.csv")
 
-ndf <- data.frame(names<-merged_df$gene_id)
+ndf <- data.frame(names <- merged_df$gene_id)
 ndf$n_16 <- merged_df$log2FoldChange_16
 ndf$n_20 <- merged_df$log2FoldChange_20
 ndf$n_24 <- merged_df$log2FoldChange
 ndf$n_36 <- merged_df$log2FoldChange_36
 ndf$n_48 <- merged_df$log2FoldChange_48
-ndf$symbol <- merged_df$symbol
+ndf$symbol <- merged_df$label
 head(ndf)
+colnames(ndf)
+cols <- colnames(ndf)
+cols[1] = 'gene_id'
+cols
+colnames(ndf) <- cols
 
 
+# Replace df with your actual dataframe and "column_name" with your actual column name.
+# ndf$label <- ndf$symbol
+# ndf[13,]$label <- "SNORD68"
+# ndf[20,]$label <- "ENSG00000200084.1"
+# ndf[18,]$label <- "ENSG00000200084.1"
+
+# ndf
+# 
+# sum(is.na(ndf$label))
+# sum(is.na(ndf$label))
+# any(is.na(ndf$label))
+# any(!is.na(ndf$gene_id[is.na(ndf$label)]))
+# 
+# Replace df with your actual dataframe and "label" with your actual column name.
+# df_na_label <- ndf[is.na(ndf$label), ]
+# df_na_label
+# colnames(df_na_label)
+# df_na_label$label[is.na(df_na_label$label)] <- df_na_label$n_48[is.na(df_na_label$n_48)]
+
+
+# ndf$label[is.na(ndf$label)] <- ndf$gene_id[is.na(ndf$gene_id)]
+
+
+# ndf <- drop_na(ndf)
+# ndf
 # down_ndf <- ndf
 
-library(tidyverse)
+# library(tidyverse)
 
 df_long <- ndf %>%
   pivot_longer(
@@ -211,10 +250,14 @@ df_long <- ndf %>%
     values_to = "Value" # The values will go into a new column "Value"
   ) %>%
   mutate(Timepoint = str_extract(Timepoint, "\\d+"), # Extract numeric part from Timepoint values
-         Timepoint = as.numeric(Timepoint)) # Convert Timepoint values to numeric
+         Timepoint = as.numeric(Timepoint)) %>%   # Convert Timepoint values to numeric
+  filter(!is.na(Value))  # Convert Timepoint values to numeric
+
 
 up_df_long <- df_long
 
+up_df_long
+print(up_df_long, n=100)
 # Plotting
 up_reg <- ggplot(up_df_long, aes(x = Timepoint, y = Value, group = symbol, color = symbol)) +
   geom_point() +
@@ -226,6 +269,6 @@ up_reg <- ggplot(up_df_long, aes(x = Timepoint, y = Value, group = symbol, color
         plot.title.position = "plot")
 # geom_text(aes(label=symbol), hjust=0, vjust=0)
 # theme(legend.position = "none") # Remove legend to avoid overcrowding if you have many genes
-
-ggsave(filename = "downregulated_genes.pdf", plot = up_reg)
+up_reg
+ggsave(filename = "noc_upregulated_genes.pdf", plot = up_reg)
 

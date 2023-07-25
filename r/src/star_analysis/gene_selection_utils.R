@@ -15,34 +15,21 @@ library(dplyr)
 library(openxlsx)
 library(ggplot2)
 library(tidyverse)
+library(tidyverse)
 
+# load('~/bs-villungerlab/results/output_encode_1to6/ZM_star_data.RData')
 
-load('~/bs-villungerlab/results/output_encode_1to6/ZM_star_data.RData')
+# dds_zm <- ddseq_ZM
 
-dds_zm <- ddseq_ZM
+# results_zm_t24 <- lfcShrink(dds_zm, coef="timepoint_t24_vs_t0", type="apeglm")
+# results_zm_t24Sig <- subset(results_zm_t24, padj < 0.1)
+# results_zm_t24Sig <- add_annotations_to_results(results_zm_t24Sig)
+# 
+# results_zm_t16 <- lfcShrink(dds_zm, coef="timepoint_t16_vs_t0", type="apeglm")
+# results_zm_t20 <- lfcShrink(dds_zm, coef="timepoint_t20_vs_t0", type="apeglm")
+# results_zm_t36 <- lfcShrink(dds_zm, coef="timepoint_t36_vs_t0", type="apeglm")
+# results_zm_t48 <- lfcShrink(dds_zm, coef="timepoint_t48_vs_t0", type="apeglm")
 
-results_zm_t24 <- lfcShrink(dds_zm, coef="timepoint_t24_vs_t0", type="apeglm")
-results_zm_t24Sig <- subset(results_zm_t24, padj < 0.1)
-results_zm_t24Sig <- add_annotations_to_results(results_zm_t24Sig)
-
-results_zm_t16 <- lfcShrink(dds_zm, coef="timepoint_t16_vs_t0", type="apeglm")
-results_zm_t20 <- lfcShrink(dds_zm, coef="timepoint_t20_vs_t0", type="apeglm")
-results_zm_t36 <- lfcShrink(dds_zm, coef="timepoint_t36_vs_t0", type="apeglm")
-results_zm_t48 <- lfcShrink(dds_zm, coef="timepoint_t48_vs_t0", type="apeglm")
-
-df <- as.data.frame(results_zm_t24Sig)
-
-# Assuming 'df' is your data frame and 'column_name' is the name of the column
-downr_df_sorted <- df[order(df$log2FoldChange), ]
-head(downr_df_sorted)
-downr_top <- head(downr_df_sorted, 20)
-
-upr_df_sorted <- df[order(-df$log2FoldChange), ]
-upr_top <- head(upr_df_sorted, 20)
-
-
-df <- as.data.frame(downr_top)
-df
 
 return_results <- function(results, timepoint) {
   results <- subset(results, padj < 0.1)
@@ -71,9 +58,6 @@ merge_all_data <- function(main_df, other_dataframes,) {
 }
 
 
-# down_ndf <- ndf
-
-library(tidyverse)
 
 make_longdf_for_plot <- function(merged_df) {
   ndf <- data.frame(names<-merged_df$gene_id)
