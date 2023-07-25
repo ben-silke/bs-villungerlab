@@ -1,9 +1,13 @@
 
 
 ---
-title: "Salmon Analysis - Etop_r1to6"
+title: "STAR Analysis - Etop_r1to6"
 output: html_document
 ---
+
+Run with STAR with encode suggestions
+and gencode GTF annotations and genome
+HTSeq 2.0
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
