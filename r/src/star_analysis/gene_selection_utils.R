@@ -31,9 +31,14 @@ library(tidyverse)
 # results_zm_t48 <- lfcShrink(dds_zm, coef="timepoint_t48_vs_t0", type="apeglm")
 
 
-return_results <- function(results, timepoint) {
+return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
+  # Coef = "timepoint_t16_vs_t0", 
+  # model = 'apeglm'
+  results <- lfcShrink(dds, coef=coef, type=model)
+
   results <- subset(results, padj < 0.1)
   results_df <- as.data.frame(results)
+
   colnames_results <- lapply(colnames(results_df), function(x) paste0(x, timepoint))
   colnames(results_df) <- colnames_results
   return (results_df)
@@ -49,11 +54,16 @@ merge_dataframe <- function(first, second) {
 }
 
 
-merge_all_data <- function(main_df, other_dataframes,) {
+merge_all_data <- function(main_df, other_dataframes) {
   main_df$gene_id <- rownames(main_df)
   for (df in other_dataframes) {
     main_df <- merge_dataframe(main_df, df)
   }
+
+  # Ensure that all rows have a label
+  main_df$label <- merged_df$symbol
+  main_df$label[is.na(merged_df$label)] <- merged_df$gene_id[is.na(merged_df$label)]
+
   write.csv(main_df, file = glue("/Users/bsilke/bs-villungerlab/results/{filename}"))
 }
 
@@ -66,7 +76,7 @@ make_longdf_for_plot <- function(merged_df) {
   ndf$n_24 <- merged_df$log2FoldChange
   ndf$n_36 <- merged_df$log2FoldChange_36
   ndf$n_48 <- merged_df$log2FoldChange_48
-  ndf$symbol <- merged_df$symbol
+  ndf$symbol <- merged_df$label
   head(ndf)
   
   df_long <- ndf %>%
@@ -83,15 +93,17 @@ make_longdf_for_plot <- function(merged_df) {
 
 # Plotting
 
-plot_longdf <- function(long_df, treatment) {
-  ggplot(down_df_long, aes(x = Timepoint, y = log2foldchange, group = symbol, color = symbol)) +
+plot_longdf <- function(long_df, plot_title) {
+  p <- ggplot(long_df, aes(x = Timepoint, y = log2foldchange, group = symbol, color = symbol)) +
     geom_point() +
     geom_line() +
-    labs(title = glue("{treatment} Treatment: downregulated genes"),
+    labs(title = plot_title,
          x = "time(hrs)",
          y = expression(paste(log[2](x), 'fold change'))) +
     theme(plot.title = element_text(hjust = 0.5), # Center the title
           plot.title.position = "plot")
+
+  return (p)
 }
 
 # geom_text(aes(label=symbol), hjust=0, vjust=0)
