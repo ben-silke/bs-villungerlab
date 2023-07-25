@@ -431,7 +431,7 @@ library("stringr")
 library("DESeq2")
 library(dplyr)
 library(openxlsx)
-load('~/bs-villungerlab/{self.output}/{self.data_location}')
+load('~/bs-villungerlab/{self.output}/{self.treatment}_star_data.RData')
 
 dds_{variable} <- ddseq_{self.treatment}
 results <- results(dds_{variable})
@@ -563,7 +563,7 @@ ddseq_{self.treatment} <- load_all_htseq_data(file.path(data_directory, 'all_{se
 
 # <- create_htseq_ddseq({self.treatment}, data_directory, times, {replicate})
 
-save(ddseq_{self.treatment}, file = '{self.output}/{self.data_location}')
+save(ddseq_{self.treatment}, file = '{self.output}/{self.treatment}_star_data.Rdata')
 
 {self.treatment}_workbook <- createWorkbook()
 times = {self.time_dict[self.treatment][2]}
@@ -575,7 +575,7 @@ times = {self.time_dict[self.treatment][2]}
     results_{self.treatment} <- add_annotations_to_results(results_{self.treatment})
     results_{self.treatment}_df <- as.data.frame(results_{self.treatment})
     addWorksheet({self.treatment}_workbook, glue("{self.treatment}_{_time}"))
-    writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df, row.names=TRUE)
+    writeData({self.treatment}_workbook, glue("{self.treatment}_{_time}"), results_{self.treatment}_df, rowNames=TRUE)
 {end_for_loop}
 
 saveWorkbook({self.treatment}_workbook, "{self.output}/{self.treatment}_workbook.xlsx", overwrite = TRUE)
@@ -667,7 +667,7 @@ results_{treatment}_{timepoint} <- add_annotations_to_results(results_{treatment
 results_{treatment}_{timepoint}_df <- as.data.frame(results_{treatment}_{timepoint})
 
 addWorksheet({workbook_name}, "results_apelgm_{treatment}_{timepoint}")
-writeData({workbook_name}, "results_subset_dataframe", results_{treatment}_{timepoint}_df, row.names=TRUE)
+writeData({workbook_name}, "results_subset_dataframe", results_{treatment}_{timepoint}_df, rowNames=TRUE)
 """
 
             return content

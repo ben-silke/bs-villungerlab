@@ -26,7 +26,7 @@ ddseq_Nutl <- load_all_htseq_data(file.path(data_directory, 'all_Nutl_htseq_enco
 
 # <- create_htseq_ddseq(Nutl, data_directory, times, 1:6)
 
-save(ddseq_Nutl, file = 'results/output_encode_1to6/ZM_r1to6_star.RData')
+save(ddseq_Nutl, file = 'results/output_encode_1to6/Nutl_star_data.Rdata')
 
 Nutl_workbook <- createWorkbook()
 times = c(8, 12, 16, 24, 48)
@@ -38,7 +38,7 @@ for (time in times) {
     results_Nutl <- add_annotations_to_results(results_Nutl)
     results_Nutl_df <- as.data.frame(results_Nutl)
     addWorksheet(Nutl_workbook, glue("Nutl_{time}"))
-    writeData(Nutl_workbook, glue("Nutl_{time}"), results_Nutl_df, row.names=TRUE)
+    writeData(Nutl_workbook, glue("Nutl_{time}"), results_Nutl_df, rowNames=TRUE)
 }
 
 saveWorkbook(Nutl_workbook, "results/output_encode_1to6/Nutl_workbook.xlsx", overwrite = TRUE)

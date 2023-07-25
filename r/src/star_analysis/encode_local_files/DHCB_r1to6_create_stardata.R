@@ -26,7 +26,7 @@ ddseq_DHCB <- load_all_htseq_data(file.path(data_directory, 'all_DHCB_htseq_enco
 
 # <- create_htseq_ddseq(DHCB, data_directory, times, 1:6)
 
-save(ddseq_DHCB, file = 'results/output_encode_1to6/ZM_r1to6_star.RData')
+save(ddseq_DHCB, file = 'results/output_encode_1to6/DHCB_star_data.Rdata')
 
 DHCB_workbook <- createWorkbook()
 times = c(16, 20, 24, 36, 48)
@@ -38,7 +38,7 @@ for (time in times) {
     results_DHCB <- add_annotations_to_results(results_DHCB)
     results_DHCB_df <- as.data.frame(results_DHCB)
     addWorksheet(DHCB_workbook, glue("DHCB_{time}"))
-    writeData(DHCB_workbook, glue("DHCB_{time}"), results_DHCB_df, row.names=TRUE)
+    writeData(DHCB_workbook, glue("DHCB_{time}"), results_DHCB_df, rowNames=TRUE)
 }
 
 saveWorkbook(DHCB_workbook, "results/output_encode_1to6/DHCB_workbook.xlsx", overwrite = TRUE)

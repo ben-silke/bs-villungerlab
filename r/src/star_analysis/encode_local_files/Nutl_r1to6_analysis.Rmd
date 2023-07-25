@@ -23,7 +23,7 @@ library("stringr")
 library("DESeq2")
 library(dplyr)
 library(openxlsx)
-load('~/bs-villungerlab/results/output_encode_1to6/ZM_r1to6_star.RData')
+load('~/bs-villungerlab/results/output_encode_1to6/Nutl_star_data.RData')
 
 dds_Nutl_r1to6 <- ddseq_Nutl
 results <- results(dds_Nutl_r1to6)

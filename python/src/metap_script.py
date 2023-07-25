@@ -12,6 +12,7 @@ import click
 @click.option('--star', '-s', is_flag=True, help="run for star?")
 # @click.option('--data_location', '-o', help="where should we save data??")
 
+# python3 ../../../metap_script.py -s -o "results/output_encode_1to6" -md -a -r -f "data/encode_output_htseq_counts"
 
 def create_files(treatment, output, file_location, all_replicates, all_treatments, markdown=False, star=False):
 

@@ -26,7 +26,7 @@ ddseq_Noc <- load_all_htseq_data(file.path(data_directory, 'all_Noc_htseq_encode
 
 # <- create_htseq_ddseq(Noc, data_directory, times, 1:6)
 
-save(ddseq_Noc, file = 'results/output_encode_1to6/ZM_r1to6_star.RData')
+save(ddseq_Noc, file = 'results/output_encode_1to6/Noc_star_data.Rdata')
 
 Noc_workbook <- createWorkbook()
 times = c(16, 20, 24, 36, 48)
@@ -38,7 +38,7 @@ for (time in times) {
     results_Noc <- add_annotations_to_results(results_Noc)
     results_Noc_df <- as.data.frame(results_Noc)
     addWorksheet(Noc_workbook, glue("Noc_{time}"))
-    writeData(Noc_workbook, glue("Noc_{time}"), results_Noc_df, row.names=TRUE)
+    writeData(Noc_workbook, glue("Noc_{time}"), results_Noc_df, rowNames=TRUE)
 }
 
 saveWorkbook(Noc_workbook, "results/output_encode_1to6/Noc_workbook.xlsx", overwrite = TRUE)
