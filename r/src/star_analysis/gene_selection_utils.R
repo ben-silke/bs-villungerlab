@@ -17,67 +17,72 @@ library(ggplot2)
 library(tidyverse)
 library(tidyverse)
 
-# load('~/bs-villungerlab/results/output_encode_1to6/ZM_star_data.RData')
 
-# dds_zm <- ddseq_ZM
-
-# results_zm_t24 <- lfcShrink(dds_zm, coef="timepoint_t24_vs_t0", type="apeglm")
-# results_zm_t24Sig <- subset(results_zm_t24, padj < 0.1)
-# results_zm_t24Sig <- add_annotations_to_results(results_zm_t24Sig)
-# 
-# results_zm_t16 <- lfcShrink(dds_zm, coef="timepoint_t16_vs_t0", type="apeglm")
-# results_zm_t20 <- lfcShrink(dds_zm, coef="timepoint_t20_vs_t0", type="apeglm")
-# results_zm_t36 <- lfcShrink(dds_zm, coef="timepoint_t36_vs_t0", type="apeglm")
-# results_zm_t48 <- lfcShrink(dds_zm, coef="timepoint_t48_vs_t0", type="apeglm")
+source("~/bs-villungerlab/r/src/pca_utils.R")
+source("~/bs-villungerlab/r/src/utils.R")
+source("~/bs-villungerlab/r/src/star_analysis/star_utils.R")
 
 
 return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
   # Coef = "timepoint_t16_vs_t0", 
   # model = 'apeglm'
   results <- lfcShrink(dds, coef=coef, type=model)
-
+  results <- add_annotations_to_results(results)
+  
   results <- subset(results, padj < 0.1)
+  
   results_df <- as.data.frame(results)
 
-  colnames_results <- lapply(colnames(results_df), function(x) paste0(x, timepoint))
+  colnames_results <- lapply(colnames(results_df), function(x) paste0(x, timepoint_extn))
   colnames(results_df) <- colnames_results
   return (results_df)
 }
 
 merge_dataframe <- function(first, second) {
-  colnames(first)
   # first$gene_id <- rownames(first)
   second$gene_id <- rownames(second)
-  head(second)
+  print(head(second))
+  print(head(first))
   merged_df <- merge(first, second, by.y = "gene_id", all.x = TRUE)
   return (merged_df)
 }
 
 
-merge_all_data <- function(main_df, other_dataframes) {
+merge_all_data <- function(main_df, one, two, three, four, filename) {
   main_df$gene_id <- rownames(main_df)
-  for (df in other_dataframes) {
-    main_df <- merge_dataframe(main_df, df)
-  }
-
-  # Ensure that all rows have a label
-  main_df$label <- merged_df$symbol
-  main_df$label[is.na(merged_df$label)] <- merged_df$gene_id[is.na(merged_df$label)]
-
-  write.csv(main_df, file = glue("/Users/bsilke/bs-villungerlab/results/{filename}"))
+  
+  merged_df <- merge_dataframe(main_df,one)
+  merged_df <- merge_dataframe(merged_df,two)
+  merged_df <- merge_dataframe(merged_df,three)
+  merged_df <- merge_dataframe(merged_df,four)
+  
+  write.csv(merged_df, file = glue("/Users/bsilke/bs-villungerlab/results/{filename}"))
+  return (merged_df)
 }
 
 
 
 make_longdf_for_plot <- function(merged_df) {
+  
+  # Ensure that all rows have a label
+  merged_df$symbol <- merged_df$symbol_24
+  merged_df$label <- merged_df$symbol
+  print(merged_df$symbol)
+  
+  print(head(merged_df))
+  merged_df$label[is.na(merged_df$label)] <- merged_df$gene_id[is.na(merged_df$label)]
+  merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$gene_id[is.na(merged_df$symbol)]
+  
+  
   ndf <- data.frame(names<-merged_df$gene_id)
   ndf$n_16 <- merged_df$log2FoldChange_16
   ndf$n_20 <- merged_df$log2FoldChange_20
-  ndf$n_24 <- merged_df$log2FoldChange
+  ndf$n_24 <- merged_df$log2FoldChange_24
   ndf$n_36 <- merged_df$log2FoldChange_36
   ndf$n_48 <- merged_df$log2FoldChange_48
   ndf$symbol <- merged_df$label
   head(ndf)
+  print(ndf)
   
   df_long <- ndf %>%
     pivot_longer(

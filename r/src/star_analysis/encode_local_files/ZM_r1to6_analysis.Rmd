@@ -282,11 +282,6 @@ head(resSig[ order(resSig$log2FoldChange), ])
 ```{r}
 head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 ```
-        
-
-
-
-
 
 
 ### Batch Effects 
