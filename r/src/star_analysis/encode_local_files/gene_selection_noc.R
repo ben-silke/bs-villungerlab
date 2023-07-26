@@ -169,15 +169,12 @@ colnames(df)
 df$gene_id <- rownames(df)
 res_16_df$gene_id <- rownames(res_16_df)
 head(df)
-merged_df <- df_merged <- merge(df, res_16_df, by.y = "gene_id", all.x = TRUE)
+merged_df <- merge(df, res_16_df, by.y = "gene_id", all.x = TRUE)
 merged_df
 head(merged_df)
 
 merge_dataframe <- function(first, second) {
-  colnames(first)
-  # first$gene_id <- rownames(first)
   second$gene_id <- rownames(second)
-  head(second)
   merged_df <- merge(first, second, by.y = "gene_id", all.x = TRUE)
   return (merged_df)
 }
