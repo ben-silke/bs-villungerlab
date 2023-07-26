@@ -49,7 +49,7 @@ ggsave(filename = "results/output_encode/ZM/n25generegulation/ZM_upregulated_gen
 
 downr_df_sorted <- df[order(df$log2FoldChange), ]
 # set the number of results which you want
-downr_top <- head(upr_df_sorted, 25)
+downr_top <- head(downr_df_sorted, 25)
 downr_top_merged_df <- merge_all_data(downr_top, results_ZM_t16_df, results_ZM_t20_df, results_ZM_t36_df, results_ZM_t48_df, 'results/output_encode/ZM/n25generegulation/ZM_gene_regulation_data.csv')
 downr_top_long_df <- make_longdf_for_plot(downr_top_merged_df, 24)
 downr_plot <- plot_longdf(downr_top_long_df, "ZM downregulated genes: n25 | t24")
@@ -139,9 +139,18 @@ two_consecutivesubset_df_increase <- subset(two_consecutivesubset_df, (log2FoldC
 dim(two_consecutivesubset_df_increase)
 write.csv(two_consecutivesubset_df_increase, file = "results/output_encode/ZM/ZM_gene_signature_two_points_increase.csv")
 
+noquote_two_consecutivesubset_df_increase <- noquote(two_consecutivesubset_df_increase$symbol_48)
+write(noquote_two_consecutivesubset_df_increase, file = "results/output_encode/ZM/ZM_gene_signature_two_points_increase.txt")
+
+
+
 two_consecutivesubset_df_decrease <- subset(two_consecutivesubset_df, (log2FoldChange_24 < 0 | log2FoldChange_16 < 0 | log2FoldChange_20 < 0 | log2FoldChange_36 < 0 | log2FoldChange_48 < 0))
 dim(two_consecutivesubset_df_decrease)
 write.csv(two_consecutivesubset_df_decrease, file = "results/output_encode/ZM/ZM_gene_signature_two_points_decrease.csv")
+noquote_two_consecutivesubset_df_decrease <- noquote(two_consecutivesubset_df_decrease$symbol_48)
+write(noquote_two_consecutivesubset_df_decrease, file = "results/output_encode/ZM/ZM_gene_signature_two_points_decrease.txt")
+
+# write.table(df$column_name, file = "output.txt", row.names = FALSE, col.names = FALSE)
 
 dim(two_consecutivesubset_df)
 
@@ -156,12 +165,17 @@ write.csv(three_consecutivesubset_df, file = "results/output_encode/ZM/ZM_gene_s
 three_consecutivesubset_df_increase <- subset(three_consecutivesubset_df, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
 dim(three_consecutivesubset_df_increase)
 write.csv(three_consecutivesubset_df_increase, file = "results/output_encode/ZM/ZM_gene_signature_three_points_increase.csv")
+noquote_three_consecutivesubset_df_increase <- noquote(three_consecutivesubset_df_increase$symbol_48)
+write(noquote_three_consecutivesubset_df_increase, file = "results/output_encode/ZM/ZM_gene_signature_three_points_increase.txt")
 
-three_consecutivesubset_df_increase <- subset(three_consecutivesubset_df, (log2FoldChange_24 < 0 | log2FoldChange_16 < 0 | log2FoldChange_20 < 0 | log2FoldChange_36 < 0 | log2FoldChange_48 < 0))
+three_consecutivesubset_df_decrease <- subset(three_consecutivesubset_df, (log2FoldChange_24 < 0 | log2FoldChange_16 < 0 | log2FoldChange_20 < 0 | log2FoldChange_36 < 0 | log2FoldChange_48 < 0))
 dim(three_consecutivesubset_df_decrease)
 write.csv(three_consecutivesubset_df_decrease, file = "results/output_encode/ZM/ZM_gene_signature_three_points_decrease.csv")
+noquote_three_consecutivesubset_df_decrease <- noquote(three_consecutivesubset_df_decrease$symbol_48)
+write(noquote_three_consecutivesubset_df_decrease, file = "results/output_encode/ZM/ZM_gene_signature_three_points_decrease.txt")
 
 dim(three_consecutivesubset_df)
+
 three_consecutivesubset_df
 
 two_consecutive_values_long_df <- make_longdf_for_plot(two_consecutivesubset_df, 24)
