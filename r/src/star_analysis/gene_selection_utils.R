@@ -38,22 +38,26 @@ return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
   return (results_df)
 }
 
-merge_dataframe <- function(first, second) {
+merge_dataframe <- function(first, second, join_type) {
   second$gene_id <- rownames(second)
   print(head(second))
   print(head(first))
-  merged_df <- merge(first, second, by.y = "gene_id", all.x = TRUE)
+  if (join_type == 'full_join') {
+    merged_df <- merge(first, second, by.y = "gene_id", all = TRUE)
+  } else {
+    merged_df <- merge(first, second, by.y = "gene_id", all.x = TRUE)
+  }
   return (merged_df)
 }
 
 
-merge_all_data <- function(main_df, one, two, three, four, filename) {
+merge_all_data <- function(main_df, one, two, three, four, filename, join_type='') {
   main_df$gene_id <- rownames(main_df)
   
-  merged_df <- merge_dataframe(main_df,one)
-  merged_df <- merge_dataframe(merged_df,two)
-  merged_df <- merge_dataframe(merged_df,three)
-  merged_df <- merge_dataframe(merged_df,four)
+  merged_df <- merge_dataframe(main_df,one, join_type)
+  merged_df <- merge_dataframe(merged_df,two, join_type)
+  merged_df <- merge_dataframe(merged_df,three, join_type)
+  merged_df <- merge_dataframe(merged_df,four, join_type)
   
   write.csv(merged_df, file = filename)
   return (merged_df)
