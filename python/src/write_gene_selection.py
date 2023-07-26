@@ -100,7 +100,7 @@ upr_df_sorted <- df[order(-df$log2FoldChange), ]
 upr_top <- head(upr_df_sorted, {nresults})
 upr_top_merged_df <- merge_all_data(upr_top, {times_list}'{output}generegulation/{treatment}_gene_regulation_data.csv')
 upr_top_long_df <- make_longdf_for_plot(upr_top_merged_df, {main_time})
-upr_plot <- plot_longdf(upr_top_long_df, "{treatment} upregulated genes")
+upr_plot <- plot_longdf(upr_top_long_df, "{treatment} upregulated genes: n{nresults} | t{main_time}")
 upr_plot
 ggsave(filename = "{output}generegulation/{treatment}_upregulated_genes.pdf", plot = upr_plot)
 
@@ -109,7 +109,7 @@ downr_df_sorted <- df[order(df$log2FoldChange), ]
 downr_top <- head(upr_df_sorted, {nresults})
 downr_top_merged_df <- merge_all_data(downr_top, dfs)
 downr_top_long_df <- make_longdf_for_plot(downr_top_merged_df, {main_time})
-downr_plot <- plot_longdf(upr_top_long_df, "{treatment} downregulated genes")
+downr_plot <- plot_longdf(upr_top_long_df, "{treatment} downregulated genes: n{nresults} | t{main_time}")
 downr_plot
 ggsave(filename = "{output}generegulation/{treatment}_downregulated_genes.pdf", plot = downr_plot)
 """
