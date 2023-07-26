@@ -39,7 +39,6 @@ return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
 }
 
 merge_dataframe <- function(first, second) {
-  # first$gene_id <- rownames(first)
   second$gene_id <- rownames(second)
   print(head(second))
   print(head(first))
@@ -56,16 +55,25 @@ merge_all_data <- function(main_df, one, two, three, four, filename) {
   merged_df <- merge_dataframe(merged_df,three)
   merged_df <- merge_dataframe(merged_df,four)
   
-  write.csv(merged_df, file = glue("/Users/bsilke/bs-villungerlab/results/{filename}"))
+  write.csv(merged_df, file = filename)
   return (merged_df)
 }
 
 
 
-make_longdf_for_plot <- function(merged_df) {
+make_longdf_for_plot <- function(merged_df, main_time) {
   
   # Ensure that all rows have a label
-  merged_df$symbol <- merged_df$symbol_24
+  if (main_time == 24) {
+    merged_df$symbol <- merged_df$symbol_24
+  } else if (main_time == 16) {
+    merged_df$symbol <- merged_df$symbol_16
+  } else {
+    merged_df$symbol <- merged_df$symbol_48
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_16[is.na(merged_df$symbol)]
+  }
+  
   merged_df$label <- merged_df$symbol
   print(merged_df$symbol)
   
