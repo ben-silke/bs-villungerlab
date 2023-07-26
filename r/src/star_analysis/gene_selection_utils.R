@@ -107,12 +107,12 @@ make_longdf_for_plot <- function(merged_df, main_time) {
 # Plotting
 
 plot_longdf <- function(long_df, plot_title) {
-  p <- ggplot(long_df, aes(x = Timepoint, y = log2foldchange, group = symbol, color = symbol)) +
+  p <- ggplot(long_df, aes(x = Timepoint, y = log2foldchange, shape = symbol, group = symbol, color = symbol)) +
     geom_point() +
     geom_line() +
     labs(title = plot_title,
          x = "time(hrs)",
-         y = expression(paste(log[2](x), 'fold change'))) +
+         y = expression(paste(log[2](x), ' fold change'))) +
     theme(plot.title = element_text(hjust = 0.5), # Center the title
           plot.title.position = "plot")
 
