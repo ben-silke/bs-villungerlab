@@ -38,7 +38,7 @@ return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
   return (results_df)
 }
 
-merge_dataframe <- function(first, second, join_type) {
+merge_dataframe <- function(first, second, join_type='none') {
   second$gene_id <- rownames(second)
   print(head(second))
   print(head(first))
@@ -118,7 +118,8 @@ plot_longdf <- function(long_df, plot_title) {
          x = "time(hrs)",
          y = expression(paste(log[2](x), ' fold change'))) +
     theme(plot.title = element_text(hjust = 0.5), # Center the title
-          plot.title.position = "plot")
+          plot.title.position = "plot",
+          legend.position = "bottom")
 
   return (p)
 }
