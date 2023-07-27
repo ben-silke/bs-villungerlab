@@ -120,10 +120,11 @@ plot_longdf <- function(long_df, plot_title) {
     theme(plot.title = element_text(hjust = 0.5), # Center the title
           plot.title.position = "plot",
           legend.position = "bottom")
-
   return (p)
 }
 
-# geom_text(aes(label=symbol), hjust=0, vjust=0)
-# theme(legend.position = "none") # Remove legend to avoid overcrowding if you have many genes
-
+get_unfiltered_results <- function(dds, coef, timepoint_extn, model='apeglm') {
+  results <- lfcShrink(dds, coef=coef, type=model)
+  results <- add_annotations_to_results(results)
+  return (results)
+}
