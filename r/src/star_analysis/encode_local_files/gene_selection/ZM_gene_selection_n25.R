@@ -105,8 +105,19 @@ full_signature_threshold <- full_signature[
         abs(full_signature$log2FoldChange_36)>1 |
         abs(full_signature$log2FoldChange_48)>1), ]
 
-write.csv(full_signature, file = "results/output_encode/ZM/ZM_5n_threshold_1lfc_signature.csv")
+write.csv(full_signature_threshold, file = "results/output_encode/ZM/ZM_5n_threshold_1lfc_signature.csv")
 
+full_signature_threshold_decrease <- subset(full_signature_threshold, (log2FoldChange_24 < 0 | log2FoldChange_16 < 0 | log2FoldChange_20 < 0 | log2FoldChange_36 < 0 | log2FoldChange_48 < 0))
+dim(full_signature_threshold_decrease)
+write.csv(full_signature_threshold_decrease, file = "results/output_encode/ZM/ZM_full_signature_5n_decrease.csv")
+noquote_full_signature_threshold_decrease_df <- noquote(full_signature_threshold_decrease$symbol_48)
+write(noquote_full_signature_threshold_decrease_df, file = "results/output_encode/ZM/ZM_full_signature_5n_decrease.txt")
+
+full_signature_threshold_increase <- subset(full_signature_threshold, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
+dim(full_signature_threshold_increase)
+write.csv(full_signature_threshold_increase, file = "results/output_encode/ZM/ZM_full_signature_5n_increase.csv")
+noquote_full_signature_threshold_increase_df <- noquote(full_signature_threshold_increase$symbol_48)
+write(noquote_full_signature_threshold_increase_df, file = "results/output_encode/ZM/ZM_full_signature_5n_increase.txt")
 
 full_signature_threshold_long_df <- make_longdf_for_plot(full_signature_threshold, 24)
 plot_title <- "Full Signature ZM treatment Signature: l4c>1"
