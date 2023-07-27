@@ -2,13 +2,7 @@
 library(DESeq2)
 library(DESeq2)
 library("apeglm")
-library("ashr")
-library(EnhancedVolcano)
 library(org.Hs.eg.db)
-library("pheatmap")
-library("RColorBrewer")
-library("PoiClaClu")
-library("limma")
 library("glue")
 library("Rsubread")
 library("stringr")
@@ -16,7 +10,6 @@ library("DESeq2")
 library(dplyr)
 library(openxlsx)
 library(ggplot2)
-library(tidyverse)
 library(tidyverse)
 
 setwd("~/bs-villungerlab/")
@@ -28,24 +21,22 @@ source("~/bs-villungerlab/r/src/star_analysis/gene_selection_utils.R")
 load('~/bs-villungerlab/results/output_encode_1to6/Nutl_star_data.RData')
 
 dpi = 500
-width_in <- 20
-height_in <- 20
+width_in <- 12
+height_in <- 12
 
 dds_Nutl <- ddseq_Nutl
-
 data_file = "~/bs-villungerlab/results/output_encode_1to6/Nutl_results_files.Rdata"
 if (file.exists(data_file)){
   load(data_file)
+  print("file_exists")
 } else {
   results_Nutl_t8_df <- return_results(dds_Nutl, "timepoint_t8_vs_t0", "_8")
   results_Nutl_t12_df <- return_results(dds_Nutl, "timepoint_t12_vs_t0", "_12")
   results_Nutl_t16_df <- return_results(dds_Nutl, "timepoint_t16_vs_t0", "_16")
   results_Nutl_t24_df <- return_results(dds_Nutl, "timepoint_t24_vs_t0", "_24")
   results_Nutl_t48_df <- return_results(dds_Nutl, "timepoint_t48_vs_t0", "_48")
-  save(results_Nutl_t8_df, results_Nutl_t12_df, results_Nutl_t16_df, results_Nutl_t24_df, results_Nutl_t48_df, file=data_file)
+  save(results_Nutl_t48_df, results_Nutl_t8_df, results_Nutl_t12_df, results_Nutl_t16_df, results_Nutl_t24_df, file=data_file)
 }
-
-
 
 df <- results_Nutl_t16_df
 
@@ -100,7 +91,7 @@ full_signature <- subset(full_signature, !is.na(log2FoldChange_16))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_24))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_48))
                        
-write.csv(full_signature, file = "results/output_encode/Nutl/Nutl_5n_signature.csv")
+# write.csv(full_signature, file = "results/output_encode/Nutl/Nutl_5n_signature.csv")
 full_signature_threshold <- full_signature[
   any(abs(full_signature$log2FoldChange_8)>1 | 
         abs(full_signature$log2FoldChange_12)>1 | 
@@ -254,7 +245,7 @@ upr_plot <- plot_longdf(upr_top_long_df, "Nutl upregulated genes: (3n) n25 | t16
 upr_plot
 ggsave(filename = "results/output_encode/Nutl/n25generegulation/Nutl_three_consecutive_upregulated_genes.pdf", plot = upr_plot, dpi=dpi, width=width_in, height=height_in)
 
-downr_df_sorted <- df[order(df$df$log2FoldChange_16), ]
+downr_df_sorted <- df[order(df$log2FoldChange_16), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
 downr_top_long_df <- make_longdf_for_plot(downr_top, 16)
@@ -281,7 +272,7 @@ upr_plot <- plot_longdf(upr_top_long_df, "Nutl upregulated genes: (5n) n25 | t16
 upr_plot
 ggsave(filename = "results/output_encode/Nutl/n25generegulation/Nutl_full_upregulated_genes.pdf", plot = upr_plot, dpi=dpi, width=width_in, height=height_in)
 
-downr_df_sorted <- df[order(df$df$log2FoldChange_16), ]
+downr_df_sorted <- df[order(df$log2FoldChange_16), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
 df <- downr_top

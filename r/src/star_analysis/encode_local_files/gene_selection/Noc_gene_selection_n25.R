@@ -2,13 +2,13 @@
 library(DESeq2)
 library(DESeq2)
 library("apeglm")
-library("ashr")
-library(EnhancedVolcano)
+# library("ashr")
+# library(EnhancedVolcano)
 library(org.Hs.eg.db)
-library("pheatmap")
-library("RColorBrewer")
-library("PoiClaClu")
-library("limma")
+# library("pheatmap")
+# library("RColorBrewer")
+# library("PoiClaClu")
+# library("limma")
 library("glue")
 library("Rsubread")
 library("stringr")
@@ -17,13 +17,13 @@ library(dplyr)
 library(openxlsx)
 library(ggplot2)
 library(tidyverse)
-library(tidyverse)
 
 setwd("~/bs-villungerlab/")
 source("~/bs-villungerlab/r/src/pca_utils.R")
 source("~/bs-villungerlab/r/src/utils.R")
 source("~/bs-villungerlab/r/src/star_analysis/star_utils.R")
 source("~/bs-villungerlab/r/src/star_analysis/gene_selection_utils.R")
+######
 load('~/bs-villungerlab/results/output_encode_1to6/Noc_star_data.RData')
 
 dpi = 500
@@ -31,10 +31,10 @@ width_in <- 20
 height_in <- 20
 
 dds_Noc <- ddseq_Noc
-
 data_file = "~/bs-villungerlab/results/output_encode_1to6/Noc_results_files.Rdata"
 if (file.exists(data_file)){
   load(data_file)
+  print("file_exists")
 } else {
   results_Noc_t16_df <- return_results(dds_Noc, "timepoint_t16_vs_t0", "_16")
   results_Noc_t20_df <- return_results(dds_Noc, "timepoint_t20_vs_t0", "_20")
@@ -43,6 +43,7 @@ if (file.exists(data_file)){
   results_Noc_t48_df <- return_results(dds_Noc, "timepoint_t48_vs_t0", "_48")
   save(results_Noc_t48_df, results_Noc_t16_df, results_Noc_t20_df, results_Noc_t24_df, results_Noc_t36_df, file=data_file)
 }
+
 df <- results_Noc_t24_df
 
 all_df_merged_df <- merge_all_data(results_Noc_t48_df, results_Noc_t16_df, results_Noc_t20_df, results_Noc_t24_df, results_Noc_t36_df, 'results/output_encode/Noc/all_Noc_gene_regulation_data.csv', 'full_join')
@@ -64,6 +65,7 @@ downr_top_long_df <- make_longdf_for_plot(downr_top, 24)
 downr_plot <- plot_longdf(downr_top_long_df, "Noc downregulated genes: (3n) n25 | t24")
 downr_plot
 ggsave(filename = "results/output_encode/Noc/n25generegulation/Noc_downregulated_genes.pdf", plot = downr_plot, dpi=dpi, width=width_in, height=height_in)
+
 
 #####
 df 
@@ -95,7 +97,7 @@ full_signature <- subset(full_signature, !is.na(log2FoldChange_24))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_36))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_48))
                        
-write.csv(full_signature, file = "results/output_encode/Noc/Noc_5n_signature.csv")
+# write.csv(full_signature, file = "results/output_encode/Noc/Noc_5n_signature.csv")
 full_signature_threshold <- full_signature[
   any(abs(full_signature$log2FoldChange_16)>1 | 
         abs(full_signature$log2FoldChange_20)>1 | 
@@ -133,6 +135,8 @@ subset_increase <- df[
   abs(df$log2FoldChange_24)>1 | 
   abs(df$log2FoldChange_36)>1 |
   abs(df$log2FoldChange_48)>1), ]
+
+
 
 # dim(df)
 # dim(subset_increase)
@@ -247,7 +251,7 @@ upr_plot <- plot_longdf(upr_top_long_df, "Noc upregulated genes: (3n) n25 | t24"
 upr_plot
 ggsave(filename = "results/output_encode/Noc/n25generegulation/Noc_three_consecutive_upregulated_genes.pdf", plot = upr_plot, dpi=dpi, width=width_in, height=height_in)
 
-downr_df_sorted <- df[order(df$df$log2FoldChange_24), ]
+downr_df_sorted <- df[order(df$log2FoldChange_24), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
 downr_top_long_df <- make_longdf_for_plot(downr_top, 24)
@@ -274,7 +278,7 @@ upr_plot <- plot_longdf(upr_top_long_df, "Noc upregulated genes: (5n) n25 | t24"
 upr_plot
 ggsave(filename = "results/output_encode/Noc/n25generegulation/Noc_full_upregulated_genes.pdf", plot = upr_plot, dpi=dpi, width=width_in, height=height_in)
 
-downr_df_sorted <- df[order(df$df$log2FoldChange_24), ]
+downr_df_sorted <- df[order(df$log2FoldChange_24), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
 df <- downr_top
