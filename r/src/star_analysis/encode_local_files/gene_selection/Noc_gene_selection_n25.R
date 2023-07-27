@@ -55,7 +55,7 @@ ggsave(filename = "results/output_encode/Noc/n25generegulation/Noc_upregulated_g
 downr_df_sorted <- df[order(df$log2FoldChange_24), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
-downr_top_long_df <- make_longdf_for_plot(downr_top_merged_df, 24)
+downr_top_long_df <- make_longdf_for_plot(downr_top, 24)
 downr_plot <- plot_longdf(downr_top_long_df, "Noc downregulated genes: (3n) n25 | t24")
 downr_plot
 ggsave(filename = "results/output_encode/Noc/n25generegulation/Noc_downregulated_genes.pdf", plot = downr_plot, dpi=dpi, width=width_in, height=height_in)
@@ -129,8 +129,6 @@ subset_increase <- df[
   abs(df$log2FoldChange_24)>1 | 
   abs(df$log2FoldChange_36)>1 |
   abs(df$log2FoldChange_48)>1), ]
-
-
 
 # dim(df)
 # dim(subset_increase)

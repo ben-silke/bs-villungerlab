@@ -55,7 +55,7 @@ ggsave(filename = "results/output_encode/Etop/n25generegulation/Etop_upregulated
 downr_df_sorted <- df[order(df$log2FoldChange_16), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
-downr_top_long_df <- make_longdf_for_plot(downr_top_merged_df, 16)
+downr_top_long_df <- make_longdf_for_plot(downr_top, 16)
 downr_plot <- plot_longdf(downr_top_long_df, "Etop downregulated genes: (3n) n25 | t16")
 downr_plot
 ggsave(filename = "results/output_encode/Etop/n25generegulation/Etop_downregulated_genes.pdf", plot = downr_plot, dpi=dpi, width=width_in, height=height_in)
