@@ -2,13 +2,13 @@
 library(DESeq2)
 library(DESeq2)
 library("apeglm")
-library("ashr")
-library(EnhancedVolcano)
+# library("ashr")
+# library(EnhancedVolcano)
 library(org.Hs.eg.db)
-library("pheatmap")
-library("RColorBrewer")
-library("PoiClaClu")
-library("limma")
+# library("pheatmap")
+# library("RColorBrewer")
+# library("PoiClaClu")
+# library("limma")
 library("glue")
 library("Rsubread")
 library("stringr")
@@ -16,7 +16,6 @@ library("DESeq2")
 library(dplyr)
 library(openxlsx)
 library(ggplot2)
-library(tidyverse)
 library(tidyverse)
 
 setwd("~/bs-villungerlab/")
@@ -35,6 +34,7 @@ dds_ZM <- ddseq_ZM
 data_file = "~/bs-villungerlab/results/output_encode_1to6/ZM_results_files.Rdata"
 if (file.exists(data_file)){
   load(data_file)
+  print("file_exists")
 } else {
   results_ZM_t16_df <- return_results(dds_ZM, "timepoint_t16_vs_t0", "_16")
   results_ZM_t20_df <- return_results(dds_ZM, "timepoint_t20_vs_t0", "_20")
@@ -97,7 +97,7 @@ full_signature <- subset(full_signature, !is.na(log2FoldChange_24))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_36))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_48))
                        
-write.csv(full_signature, file = "results/output_encode/ZM/ZM_5n_signature.csv")
+# write.csv(full_signature, file = "results/output_encode/ZM/ZM_5n_signature.csv")
 full_signature_threshold <- full_signature[
   any(abs(full_signature$log2FoldChange_16)>1 | 
         abs(full_signature$log2FoldChange_20)>1 | 
@@ -251,7 +251,7 @@ upr_plot <- plot_longdf(upr_top_long_df, "ZM upregulated genes: (3n) n25 | t24")
 upr_plot
 ggsave(filename = "results/output_encode/ZM/n25generegulation/ZM_three_consecutive_upregulated_genes.pdf", plot = upr_plot, dpi=dpi, width=width_in, height=height_in)
 
-downr_df_sorted <- df[order(df$df$log2FoldChange_24), ]
+downr_df_sorted <- df[order(df$log2FoldChange_24), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
 downr_top_long_df <- make_longdf_for_plot(downr_top, 24)
@@ -278,7 +278,7 @@ upr_plot <- plot_longdf(upr_top_long_df, "ZM upregulated genes: (5n) n25 | t24")
 upr_plot
 ggsave(filename = "results/output_encode/ZM/n25generegulation/ZM_full_upregulated_genes.pdf", plot = upr_plot, dpi=dpi, width=width_in, height=height_in)
 
-downr_df_sorted <- df[order(df$df$log2FoldChange_24), ]
+downr_df_sorted <- df[order(df$log2FoldChange_24), ]
 # set the number of results which you want
 downr_top <- head(downr_df_sorted, 25)
 df <- downr_top
