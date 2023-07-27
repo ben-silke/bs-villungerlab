@@ -33,11 +33,20 @@ height_in <- 20
 
 dds_Nutl <- ddseq_Nutl
 
-results_Nutl_t8_df <- return_results(dds_Nutl, "timepoint_t8_vs_t0", "_8")
-results_Nutl_t12_df <- return_results(dds_Nutl, "timepoint_t12_vs_t0", "_12")
-results_Nutl_t16_df <- return_results(dds_Nutl, "timepoint_t16_vs_t0", "_16")
-results_Nutl_t24_df <- return_results(dds_Nutl, "timepoint_t24_vs_t0", "_24")
-results_Nutl_t48_df <- return_results(dds_Nutl, "timepoint_t48_vs_t0", "_48")
+data_file = "~/bs-villungerlab/results/output_encode_1to6/Nutl_results_files.Rdata"
+if (file.exists(data_file)){
+  load(data_file)
+} else {
+  results_Nutl_t8_df <- return_results(dds_Nutl, "timepoint_t8_vs_t0", "_8")
+  results_Nutl_t12_df <- return_results(dds_Nutl, "timepoint_t12_vs_t0", "_12")
+  results_Nutl_t16_df <- return_results(dds_Nutl, "timepoint_t16_vs_t0", "_16")
+  results_Nutl_t24_df <- return_results(dds_Nutl, "timepoint_t24_vs_t0", "_24")
+  results_Nutl_t48_df <- return_results(dds_Nutl, "timepoint_t48_vs_t0", "_48")
+  save(results_Nutl_t8_df, results_Nutl_t12_df, results_Nutl_t16_df, results_Nutl_t24_df, results_Nutl_t48_df, file=data_file)
+}
+
+
+
 df <- results_Nutl_t16_df
 
 all_df_merged_df <- merge_all_data(results_Nutl_t48_df, results_Nutl_t8_df, results_Nutl_t12_df, results_Nutl_t16_df, results_Nutl_t24_df, 'results/output_encode/Nutl/all_Nutl_gene_regulation_data.csv', 'full_join')

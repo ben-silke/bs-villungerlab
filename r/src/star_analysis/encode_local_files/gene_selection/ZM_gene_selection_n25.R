@@ -32,12 +32,18 @@ width_in <- 20
 height_in <- 20
 
 dds_ZM <- ddseq_ZM
+data_file = "~/bs-villungerlab/results/output_encode_1to6/ZM_results_files.Rdata"
+if (file.exists(data_file)){
+  load(data_file)
+} else {
+  results_ZM_t16_df <- return_results(dds_ZM, "timepoint_t16_vs_t0", "_16")
+  results_ZM_t20_df <- return_results(dds_ZM, "timepoint_t20_vs_t0", "_20")
+  results_ZM_t24_df <- return_results(dds_ZM, "timepoint_t24_vs_t0", "_24")
+  results_ZM_t36_df <- return_results(dds_ZM, "timepoint_t36_vs_t0", "_36")
+  results_ZM_t48_df <- return_results(dds_ZM, "timepoint_t48_vs_t0", "_48")
+  save(results_ZM_t48_df, results_ZM_t16_df, results_ZM_t20_df, results_ZM_t24_df, results_ZM_t36_df, file=data_file)
+}
 
-results_ZM_t16_df <- return_results(dds_ZM, "timepoint_t16_vs_t0", "_16")
-results_ZM_t20_df <- return_results(dds_ZM, "timepoint_t20_vs_t0", "_20")
-results_ZM_t24_df <- return_results(dds_ZM, "timepoint_t24_vs_t0", "_24")
-results_ZM_t36_df <- return_results(dds_ZM, "timepoint_t36_vs_t0", "_36")
-results_ZM_t48_df <- return_results(dds_ZM, "timepoint_t48_vs_t0", "_48")
 df <- results_ZM_t24_df
 
 all_df_merged_df <- merge_all_data(results_ZM_t48_df, results_ZM_t16_df, results_ZM_t20_df, results_ZM_t24_df, results_ZM_t36_df, 'results/output_encode/ZM/all_ZM_gene_regulation_data.csv', 'full_join')

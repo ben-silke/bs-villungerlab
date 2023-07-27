@@ -24,7 +24,6 @@ source("~/bs-villungerlab/r/src/pca_utils.R")
 source("~/bs-villungerlab/r/src/utils.R")
 source("~/bs-villungerlab/r/src/star_analysis/star_utils.R")
 source("~/bs-villungerlab/r/src/star_analysis/gene_selection_utils.R")
-######
 load('~/bs-villungerlab/results/output_encode_1to6/Noc_star_data.RData')
 
 dpi = 500
@@ -33,11 +32,17 @@ height_in <- 20
 
 dds_Noc <- ddseq_Noc
 
-results_Noc_t16_df <- return_results(dds_Noc, "timepoint_t16_vs_t0", "_16")
-results_Noc_t20_df <- return_results(dds_Noc, "timepoint_t20_vs_t0", "_20")
-results_Noc_t24_df <- return_results(dds_Noc, "timepoint_t24_vs_t0", "_24")
-results_Noc_t36_df <- return_results(dds_Noc, "timepoint_t36_vs_t0", "_36")
-results_Noc_t48_df <- return_results(dds_Noc, "timepoint_t48_vs_t0", "_48")
+data_file = "~/bs-villungerlab/results/output_encode_1to6/Noc_results_files.Rdata"
+if (file.exists(data_file)){
+  load(data_file)
+} else {
+  results_Noc_t16_df <- return_results(dds_Noc, "timepoint_t16_vs_t0", "_16")
+  results_Noc_t20_df <- return_results(dds_Noc, "timepoint_t20_vs_t0", "_20")
+  results_Noc_t24_df <- return_results(dds_Noc, "timepoint_t24_vs_t0", "_24")
+  results_Noc_t36_df <- return_results(dds_Noc, "timepoint_t36_vs_t0", "_36")
+  results_Noc_t48_df <- return_results(dds_Noc, "timepoint_t48_vs_t0", "_48")
+  save(results_Noc_t48_df, results_Noc_t16_df, results_Noc_t20_df, results_Noc_t24_df, results_Noc_t36_df, file=data_file)
+}
 df <- results_Noc_t24_df
 
 all_df_merged_df <- merge_all_data(results_Noc_t48_df, results_Noc_t16_df, results_Noc_t20_df, results_Noc_t24_df, results_Noc_t36_df, 'results/output_encode/Noc/all_Noc_gene_regulation_data.csv', 'full_join')
@@ -59,7 +64,6 @@ downr_top_long_df <- make_longdf_for_plot(downr_top, 24)
 downr_plot <- plot_longdf(downr_top_long_df, "Noc downregulated genes: (3n) n25 | t24")
 downr_plot
 ggsave(filename = "results/output_encode/Noc/n25generegulation/Noc_downregulated_genes.pdf", plot = downr_plot, dpi=dpi, width=width_in, height=height_in)
-
 
 #####
 df 

@@ -33,11 +33,18 @@ height_in <- 20
 
 dds_Etop <- ddseq_Etop
 
-results_Etop_t8_df <- return_results(dds_Etop, "timepoint_t8_vs_t0", "_8")
-results_Etop_t12_df <- return_results(dds_Etop, "timepoint_t12_vs_t0", "_12")
-results_Etop_t16_df <- return_results(dds_Etop, "timepoint_t16_vs_t0", "_16")
-results_Etop_t24_df <- return_results(dds_Etop, "timepoint_t24_vs_t0", "_24")
-results_Etop_t48_df <- return_results(dds_Etop, "timepoint_t48_vs_t0", "_48")
+data_file = "~/bs-villungerlab/results/output_encode_1to6/Etop_results_files.Rdata"
+if (file.exists(data_file)){
+  load(data_file)
+} else {
+  results_Etop_t8_df <- return_results(dds_Etop, "timepoint_t8_vs_t0", "_8")
+  results_Etop_t12_df <- return_results(dds_Etop, "timepoint_t12_vs_t0", "_12")
+  results_Etop_t16_df <- return_results(dds_Etop, "timepoint_t16_vs_t0", "_16")
+  results_Etop_t24_df <- return_results(dds_Etop, "timepoint_t24_vs_t0", "_24")
+  results_Etop_t48_df <- return_results(dds_Etop, "timepoint_t48_vs_t0", "_48")
+  save(results_Etop_t8_df, results_Etop_t12_df, results_Etop_t16_df, results_Etop_t24_df, results_Etop_t48_df, file=data_file)
+}
+
 df <- results_Etop_t16_df
 
 all_df_merged_df <- merge_all_data(results_Etop_t48_df, results_Etop_t8_df, results_Etop_t12_df, results_Etop_t16_df, results_Etop_t24_df, 'results/output_encode/Etop/all_Etop_gene_regulation_data.csv', 'full_join')
