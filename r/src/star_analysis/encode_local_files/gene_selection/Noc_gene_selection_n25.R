@@ -91,7 +91,7 @@ full_signature <- subset(full_signature, !is.na(log2FoldChange_24))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_36))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_48))
                        
-write.csv(full_signature, file = "results/output_encode/Noc/Noc_full_signature_signature.csv")
+write.csv(full_signature, file = "results/output_encode/Noc/Noc_5n_signature.csv")
 full_signature_threshold <- full_signature[
   any(abs(full_signature$log2FoldChange_16)>1 | 
         abs(full_signature$log2FoldChange_20)>1 | 
@@ -99,7 +99,7 @@ full_signature_threshold <- full_signature[
         abs(full_signature$log2FoldChange_36)>1 |
         abs(full_signature$log2FoldChange_48)>1), ]
 
-write.csv(full_signature, file = "results/output_encode/Noc/Noc_full_signature_threshold_1lfc_signature.csv")
+write.csv(full_signature, file = "results/output_encode/Noc/Noc_5n_threshold_1lfc_signature.csv")
 
 
 full_signature_threshold_long_df <- make_longdf_for_plot(full_signature_threshold, 24)
@@ -114,7 +114,7 @@ full_signature_plot <- ggplot(full_signature_threshold_long_df, aes(x = Timepoin
         plot.title.position = "plot")
 full_signature_plot
 
-ggsave(filename = "results/output_encode/Noc/Noc_full_signature_plot.pdf", plot = two_p, dpi=dpi, width=width_in, height=height_in)
+ggsave(filename = "results/output_encode/Noc/Noc_5n_plot.pdf", plot = full_signature_plot, dpi=dpi, width=width_in, height=height_in)
 
 
 df <- all_df_merged_df
@@ -151,19 +151,19 @@ two_consecutivesubset_df <- subset_increase[
 dim(df)
 dim(two_consecutivesubset_df)
 
-write.csv(two_consecutivesubset_df, file = "results/output_encode/Noc/Noc_gene_signature_two_points.csv")
+write.csv(two_consecutivesubset_df, file = "results/output_encode/Noc/Noc_gene_signature_2n.csv")
 two_consecutivesubset_df_increase <- subset(two_consecutivesubset_df, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
 dim(two_consecutivesubset_df_increase)
-write.csv(two_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_two_points_increase.csv")
+write.csv(two_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_2n_increase.csv")
 
 noquote_two_consecutivesubset_df_increase <- noquote(two_consecutivesubset_df_increase$symbol_48)
-write(noquote_two_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_two_points_increase.txt")
+write(noquote_two_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_2n_increase.txt")
 
 two_consecutivesubset_df_decrease <- subset(two_consecutivesubset_df, (log2FoldChange_24 < 0 | log2FoldChange_16 < 0 | log2FoldChange_20 < 0 | log2FoldChange_36 < 0 | log2FoldChange_48 < 0))
 dim(two_consecutivesubset_df_decrease)
-write.csv(two_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_two_points_decrease.csv")
+write.csv(two_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_2n_decrease.csv")
 noquote_two_consecutivesubset_df_decrease <- noquote(two_consecutivesubset_df_decrease$symbol_48)
-write(noquote_two_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_two_points_decrease.txt")
+write(noquote_two_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_2n_decrease.txt")
 
 # write.table(df$column_name, file = "output.txt", row.names = FALSE, col.names = FALSE)
 
@@ -177,19 +177,19 @@ three_consecutivesubset_df <- subset_increase[(!is.na(subset_increase$log2FoldCh
 # dim(three_consecutivesubset_df)
 
 
-write.csv(three_consecutivesubset_df, file = "results/output_encode/Noc/Noc_gene_signature_three_points.csv")
+write.csv(three_consecutivesubset_df, file = "results/output_encode/Noc/Noc_gene_signature_3n.csv")
 
 three_consecutivesubset_df_increase <- subset(three_consecutivesubset_df, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
 dim(three_consecutivesubset_df_increase)
-write.csv(three_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_three_points_increase.csv")
+write.csv(three_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_3n_increase.csv")
 noquote_three_consecutivesubset_df_increase <- noquote(three_consecutivesubset_df_increase$symbol_48)
-write(noquote_three_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_three_points_increase.txt")
+write(noquote_three_consecutivesubset_df_increase, file = "results/output_encode/Noc/Noc_gene_signature_3n_increase.txt")
 
 three_consecutivesubset_df_decrease <- subset(three_consecutivesubset_df, (log2FoldChange_24 < 0 | log2FoldChange_16 < 0 | log2FoldChange_20 < 0 | log2FoldChange_36 < 0 | log2FoldChange_48 < 0))
 dim(three_consecutivesubset_df_decrease)
-write.csv(three_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_three_points_decrease.csv")
+write.csv(three_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_3n_decrease.csv")
 noquote_three_consecutivesubset_df_decrease <- noquote(three_consecutivesubset_df_decrease$symbol_48)
-write(noquote_three_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_three_points_decrease.txt")
+write(noquote_three_consecutivesubset_df_decrease, file = "results/output_encode/Noc/Noc_gene_signature_3n_decrease.txt")
 
 dim(three_consecutivesubset_df)
 
