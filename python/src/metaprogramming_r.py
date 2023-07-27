@@ -3,12 +3,9 @@ class RFileWriter():
     output: str
     file_location: str
     data_location: str
-
     short_times = ["c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48], "c(8, 12, 16, 24, 48)"]
     long_times = ["c(0, 16, 20, 24, 36, 48)", [16,20,24,36,48], "c(16, 20, 24, 36, 48)"]
-
     all_replicates: bool
-
     time_dict = {
         'ZM': long_times,
         'Noc': long_times,
@@ -20,7 +17,6 @@ class RFileWriter():
     _r = "{r}"
     _r_false_include = "{r include=FALSE}"
     _r_setup = "{r setup, include=FALSE}"
-
 
     def __init__(self, treatment: str, output: str = '', file_location: str = '', all_replicates: bool = False) -> None:
         self.treatment = treatment
@@ -95,7 +91,6 @@ plotPCA(rld_{self.treatment}, intgroup=c('batch', 'timepoint'))
 
 #### Poission Distance
 {self.write_poi_heatmap(self.treatment)}
-
 
 ### Batch Correction using _Limma_.
         
@@ -552,7 +547,7 @@ library("limma")
 library(dplyr)
 library(openxlsx)
 
-source("r/src/star_analysis/star_utils.R")
+source("r/src/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 

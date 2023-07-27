@@ -15,7 +15,7 @@ library("limma")
 library(dplyr)
 library(openxlsx)
 
-source("r/src/star_analysis/star_utils.R")
+source("r/src/star_utils.R")
 source("r/src/pca_utils.R")
 source("r/src/utils.R")
 

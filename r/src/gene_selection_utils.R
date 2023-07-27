@@ -20,7 +20,7 @@ library(tidyverse)
 
 source("~/bs-villungerlab/r/src/pca_utils.R")
 source("~/bs-villungerlab/r/src/utils.R")
-source("~/bs-villungerlab/r/src/star_analysis/star_utils.R")
+source("~/bs-villungerlab/r/src/star_utils.R")
 
 
 return_results <- function(dds, coef, timepoint_extn, model='apeglm') {

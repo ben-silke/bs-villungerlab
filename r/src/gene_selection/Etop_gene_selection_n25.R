@@ -21,8 +21,8 @@ library(tidyverse)
 setwd("~/bs-villungerlab/")
 source("~/bs-villungerlab/r/src/pca_utils.R")
 source("~/bs-villungerlab/r/src/utils.R")
-source("~/bs-villungerlab/r/src/star_analysis/star_utils.R")
-source("~/bs-villungerlab/r/src/star_analysis/gene_selection_utils.R")
+source("~/bs-villungerlab/r/src/star_utils.R")
+source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 ######
 load('~/bs-villungerlab/results/output_encode_1to6/Etop_star_data.RData')
 

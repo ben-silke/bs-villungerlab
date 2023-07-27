@@ -1,0 +1,10 @@
+
+These files will determine time series for the treatments for genes which have an adj_p value > 0.1 and an abs(log2 fold change) > 1.
+i.e. statistically significant, and upregulation greater than double, or downregulation by more than half.
+ 
+these files were written and will run on the data from the STAR gencode index, 
+using the ENCODE recomended specificantions and then subsequent counts using htseq.
+this method can be found in cluster/gencode_star and cluster/htseq-count.
+
+the outputs which this produces are then used in cytoscape and iregulon for enrichement analysis to determine
+motifs and transcription factors which are representative of this treatment.
