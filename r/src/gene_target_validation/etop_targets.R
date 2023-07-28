@@ -136,7 +136,7 @@ df_long_decrease <- generate_complete_long_df(subset_df_decrease_sorted_reduced,
 
 plot_title <- "Etop Core Genes: n5"
 p_decrease<- "he;"
-p_decrease<- ggplot(df_long, aes(x = Timepoint, y = log2foldchange, shape = symbol, group = symbol, color = symbol)) +
+p_decrease<- ggplot(df_long_decrease, aes(x = Timepoint, y = log2foldchange, shape = symbol, group = symbol, color = symbol)) +
   geom_point() +
   geom_line() +
   labs(title = plot_title,
@@ -187,3 +187,35 @@ p_increase_all<- ggplot(df_long_increase, aes(x = Timepoint, y = log2foldchange,
 
 p_increase_all
 ggsave(filename = "results/output_encode/Etop/target_genes/Etop_p_increase_all.pdf", plot = p_increase_all, dpi=dpi, width=width_in, height=height_in)
+
+
+##### INTERACTIVE PLOTS
+##########
+library(plotly)
+library(htmlwidgets)
+
+interactive_increase_plot <- plot_ly(
+  df_long_increase,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+interactive_increase_plot
+saveWidget(interactive_increase_plot, "results/output_encode/Etop/target_genes/Etop_interactive_increase_plot.html")
+
+interactive_decrease_plot <- plot_ly(
+  df_long_decrease,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+interactive_decrease_plot
+saveWidget(interactive_decrease_plot, "results/output_encode/Etop/target_genes/Etop_interactive_decrease_plot.html")

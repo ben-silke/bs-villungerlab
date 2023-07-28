@@ -10,7 +10,8 @@ library(dplyr)
 library(openxlsx)
 library(ggplot2)
 library(tidyverse)
-library(EnhancedVolcano)
+library(plotly)
+library(htmlwidgets)
 
 setwd("~/bs-villungerlab/")
 source("~/bs-villungerlab/r/src/pca_utils.R")
@@ -164,7 +165,7 @@ p_decrease_all <- ggplot(df_long_decrease_all, aes(x = Timepoint, y = log2foldch
   geom_line() +
   labs(title = plot_title,
        x = "time(hrs)",
-       y=expression(paste(log[2](x), ' fold change'))) +
+       y='log 2 fold change') +
   theme(plot.title = element_text(hjust = 0.5), # Center the title
         plot.title.position = "plot",
         legend.position = "bottom")
@@ -182,15 +183,46 @@ p_increase_all<- ggplot(df_long_increase, aes(x = Timepoint, y = log2foldchange,
   geom_line() +
   labs(title = plot_title,
        x = "time(hrs)",
-       y=expression(paste(log[2](x), ' fold change'))) +
+       y='log 2 fold change') +
   theme(plot.title = element_text(hjust = 0.5), # Center the title
         plot.title.position = "plot",
-        legend.position = "bottom")
+        legend.position = "none")
 
 p_increase_all
 ggsave(filename = "results/output_encode/ZM/target_genes/ZM_p_increase_all.pdf", plot = p_increase_all, dpi=dpi, width=width_in, height=height_in)
+ 
 
 
+##### INTERACTIVE PLOTS
+##########
+library(plotly)
+library(htmlwidgets)
+
+interactive_increase_plot <- plot_ly(
+  df_long_increase,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+interactive_increase_plot
+saveWidget(interactive_increase_plot, "results/output_encode/ZM/target_genes/ZM_interactive_increase_plot.html")
+
+interactive_decrease_plot <- plot_ly(
+  df_long_decrease,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+interactive_decrease_plot
+saveWidget(interactive_decrease_plot, "results/output_encode/ZM/target_genes/ZM_interactive_decrease_plot.html")
 
 
 
