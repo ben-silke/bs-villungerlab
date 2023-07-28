@@ -40,8 +40,8 @@ return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
 
 merge_dataframe <- function(first, second, join_type='none') {
   second$gene_id <- rownames(second)
-  print(head(second))
-  print(head(first))
+  print(dim(second))
+  print(dim(first))
   if (join_type == 'full_join') {
     merged_df <- merge(first, second, by.y = "gene_id", all = TRUE)
   } else {
@@ -53,7 +53,7 @@ merge_dataframe <- function(first, second, join_type='none') {
 
 merge_all_data <- function(main_df, one, two, three, four, filename, join_type='') {
   main_df$gene_id <- rownames(main_df)
-  
+  print(rownames(main_df))
   merged_df <- merge_dataframe(main_df,one, join_type)
   merged_df <- merge_dataframe(merged_df,two, join_type)
   merged_df <- merge_dataframe(merged_df,three, join_type)
@@ -126,5 +126,82 @@ plot_longdf <- function(long_df, plot_title) {
 get_unfiltered_results <- function(dds, coef, timepoint_extn, model='apeglm') {
   results <- lfcShrink(dds, coef=coef, type=model)
   results <- add_annotations_to_results(results)
-  return (results)
+  results_df <- as.data.frame(results)
+  colnames_results <- lapply(colnames(results_df), function(x) paste0(x, timepoint_extn))
+  colnames(results_df) <- colnames_results
+  return (results_df)
+}
+
+append_timepoint <- function(results_df, timepoint_extn) {
+  colnames_results <- lapply(colnames(results_df), function(x) paste0(x, timepoint_extn))
+  colnames(results_df) <- colnames_results
+  return (results_df)
+}
+
+
+generate_complete_long_df <- function(merged_df, main_time) {
+  # main_time = 24
+  # Ensure that all rows have a label
+  if (main_time == 24) {
+    merged_df$symbol <- merged_df$symbol_24
+  } else if (main_time == 16) {
+    merged_df$symbol <- merged_df$symbol_16
+  } else {
+    merged_df$symbol <- merged_df$symbol_48
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_16[is.na(merged_df$symbol)]
+  }
+  
+  merged_df$label <- merged_df$symbol
+  print(merged_df$symbol)
+  
+  print(head(merged_df))
+  merged_df$label[is.na(merged_df$label)] <- merged_df$gene_id[is.na(merged_df$label)]
+  merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$gene_id[is.na(merged_df$symbol)]
+  
+  ## correct for log2foldchange
+  ndf <- data.frame(names<-merged_df$gene_id)
+  ndf$n_16 <- merged_df$log2FoldChange_16
+  ndf$n_20 <- merged_df$log2FoldChange_20
+  ndf$n_24 <- merged_df$log2FoldChange_24
+  ndf$n_36 <- merged_df$log2FoldChange_36
+  ndf$n_48 <- merged_df$log2FoldChange_48
+  ndf$symbol <- merged_df$label
+  head(ndf)
+  print(ndf)
+  
+  df_long_time <- ndf %>%
+    pivot_longer(
+      cols = starts_with("n_"), # Select columns that start with "n_"
+      names_to = "Timepoint", # The names of these columns will go into a new column "Timepoint"
+      values_to = "log2foldchange" # The values will go into a new column "log2change"
+    ) %>%
+    mutate(Timepoint = str_extract(Timepoint, "\\d+"), # Extract numeric part from Timepoint values
+           Timepoint = as.numeric(Timepoint)) # Convert Timepoint values to numeric
+  
+  
+  ## correct for padj
+  padj_df <- data.frame(names<-merged_df$gene_id)
+  padj_df$padj_16 <- merged_df$padj_16
+  padj_df$padj_20 <- merged_df$padj_20
+  padj_df$padj_24 <- merged_df$padj_24
+  padj_df$padj_36 <- merged_df$padj_36
+  padj_df$padj_48 <- merged_df$padj_48
+  padj_df$symbol <- merged_df$label
+  head(padj_df)
+  print(padj_df)
+  
+  df_long_padj <- padj_df %>%
+    pivot_longer(
+      cols = starts_with("padj_"), # Select columns that start with "n_"
+      names_to = "Timepoint", # The names of these columns will go into a new column "Timepoint"
+      values_to = "padj" # The values will go into a new column "padj"
+    ) %>%
+    mutate(Timepoint = str_extract(Timepoint, "\\d+"), # Extract numeric part from Timepoint values
+           Timepoint = as.numeric(Timepoint)) # Convert Timepoint values to numeric
+  
+  print(df_long_padj)
+  df_long <- merge(df_long_time, df_long_padj)
+  df_long  
+  return (df_long)
 }
