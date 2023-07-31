@@ -2,13 +2,7 @@
 library(DESeq2)
 library(DESeq2)
 library("apeglm")
-# library("ashr")
-# library(EnhancedVolcano)
 library(org.Hs.eg.db)
-# library("pheatmap")
-# library("RColorBrewer")
-# library("PoiClaClu")
-# library("limma")
 library("glue")
 library("Rsubread")
 library("stringr")
@@ -48,6 +42,11 @@ df <- results_Etop_t16_df
 
 all_df_merged_df <- merge_all_data(results_Etop_t48_df, results_Etop_t8_df, results_Etop_t12_df, results_Etop_t16_df, results_Etop_t24_df, 'results/output_encode/Etop/all_Etop_gene_regulation_data.csv', 'full_join')
 df <- all_df_merged_df
+
+df$symbol_48
+df <- fix_labels(df)
+df$symbol
+
 #####
 upr_df_sorted <- df[order(-df$log2FoldChange_16), ]
 head(upr_df_sorted)
@@ -96,6 +95,12 @@ full_signature <- subset(full_signature, !is.na(log2FoldChange_12))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_16))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_24))
 full_signature <- subset(full_signature, !is.na(log2FoldChange_48))
+
+
+full_signature$symbol_48
+full_signature <- fix_labels(full_signature)
+full_signature$symbol
+
                        
 # write.csv(full_signature, file = "results/output_encode/Etop/Etop_5n_signature.csv")
 full_signature_threshold <- full_signature[
@@ -110,13 +115,13 @@ write.csv(full_signature_threshold, file = "results/output_encode/Etop/Etop_5n_t
 full_signature_threshold_decrease <- subset(full_signature_threshold, (log2FoldChange_16 < 0 | log2FoldChange_8 < 0 | log2FoldChange_12 < 0 | log2FoldChange_24 < 0 | log2FoldChange_48 < 0))
 dim(full_signature_threshold_decrease)
 write.csv(full_signature_threshold_decrease, file = "results/output_encode/Etop/Etop_full_signature_5n_decrease.csv")
-noquote_full_signature_threshold_decrease_df <- noquote(full_signature_threshold_decrease$symbol_48)
+noquote_full_signature_threshold_decrease_df <- noquote(full_signature_threshold_decrease$symbol)
 write(noquote_full_signature_threshold_decrease_df, file = "results/output_encode/Etop/Etop_full_signature_5n_decrease.txt")
 
 full_signature_threshold_increase <- subset(full_signature_threshold, (log2FoldChange_16 > 0 | log2FoldChange_8 > 0 | log2FoldChange_12 > 0 | log2FoldChange_24 > 0 | log2FoldChange_48 > 0))
 dim(full_signature_threshold_increase)
 write.csv(full_signature_threshold_increase, file = "results/output_encode/Etop/Etop_full_signature_5n_increase.csv")
-noquote_full_signature_threshold_increase_df <- noquote(full_signature_threshold_increase$symbol_48)
+noquote_full_signature_threshold_increase_df <- noquote(full_signature_threshold_increase$symbol)
 write(noquote_full_signature_threshold_increase_df, file = "results/output_encode/Etop/Etop_full_signature_5n_increase.txt")
 
 full_signature_threshold_long_df <- make_longdf_for_plot(full_signature_threshold, 16)
@@ -135,9 +140,12 @@ ggsave(filename = "results/output_encode/Etop/Etop_5n_plot.pdf", plot = full_sig
 
 
 df <- all_df_merged_df
-df
-dim(df)
-colnames(df)
+df$symbol_48
+
+df$symbol_48
+df <- fix_labels(df)
+df$symbol
+
 # subset the data to only include data which is greater than 1 l2foldchange
 
 subset_increase <- df[
@@ -146,16 +154,6 @@ subset_increase <- df[
   abs(df$log2FoldChange_16)>1 | 
   abs(df$log2FoldChange_24)>1 |
   abs(df$log2FoldChange_48)>1), ]
-
-
-
-# dim(df)
-# dim(subset_increase)
-# subset_increase <- df[abs(df$log2FoldChange_8)>1, ]
-# subset_increase <- subset_increase[abs(subset_increase$log2FoldChange_12)>1, ]
-# subset_increase <- subset_increase[abs(subset_increase$log2FoldChange_16)>1, ]
-# subset_increase <- subset_increase[abs(subset_increase$log2FoldChange_24)>1, ]
-# subset_increase <- subset_increase[abs(subset_increase$log2FoldChange_48)>1, ]
 
 dim(df)
 dim(subset_increase)
@@ -175,13 +173,13 @@ two_consecutivesubset_df_increase <- subset(two_consecutivesubset_df, (log2FoldC
 dim(two_consecutivesubset_df_increase)
 write.csv(two_consecutivesubset_df_increase, file = "results/output_encode/Etop/Etop_gene_signature_2n_increase.csv")
 
-noquote_two_consecutivesubset_df_increase <- noquote(two_consecutivesubset_df_increase$symbol_48)
+noquote_two_consecutivesubset_df_increase <- noquote(two_consecutivesubset_df_increase$symbol)
 write(noquote_two_consecutivesubset_df_increase, file = "results/output_encode/Etop/Etop_gene_signature_2n_increase.txt")
 
 two_consecutivesubset_df_decrease <- subset(two_consecutivesubset_df, (log2FoldChange_16 < 0 | log2FoldChange_8 < 0 | log2FoldChange_12 < 0 | log2FoldChange_24 < 0 | log2FoldChange_48 < 0))
 dim(two_consecutivesubset_df_decrease)
 write.csv(two_consecutivesubset_df_decrease, file = "results/output_encode/Etop/Etop_gene_signature_2n_decrease.csv")
-noquote_two_consecutivesubset_df_decrease <- noquote(two_consecutivesubset_df_decrease$symbol_48)
+noquote_two_consecutivesubset_df_decrease <- noquote(two_consecutivesubset_df_decrease$symbol)
 write(noquote_two_consecutivesubset_df_decrease, file = "results/output_encode/Etop/Etop_gene_signature_2n_decrease.txt")
 
 # write.table(df$column_name, file = "output.txt", row.names = FALSE, col.names = FALSE)
@@ -201,13 +199,13 @@ write.csv(three_consecutivesubset_df, file = "results/output_encode/Etop/Etop_ge
 three_consecutivesubset_df_increase <- subset(three_consecutivesubset_df, (log2FoldChange_16 > 0 | log2FoldChange_8 > 0 | log2FoldChange_12 > 0 | log2FoldChange_24 > 0 | log2FoldChange_48 > 0))
 dim(three_consecutivesubset_df_increase)
 write.csv(three_consecutivesubset_df_increase, file = "results/output_encode/Etop/Etop_gene_signature_3n_increase.csv")
-noquote_three_consecutivesubset_df_increase <- noquote(three_consecutivesubset_df_increase$symbol_48)
+noquote_three_consecutivesubset_df_increase <- noquote(three_consecutivesubset_df_increase$symbol)
 write(noquote_three_consecutivesubset_df_increase, file = "results/output_encode/Etop/Etop_gene_signature_3n_increase.txt")
 
 three_consecutivesubset_df_decrease <- subset(three_consecutivesubset_df, (log2FoldChange_16 < 0 | log2FoldChange_8 < 0 | log2FoldChange_12 < 0 | log2FoldChange_24 < 0 | log2FoldChange_48 < 0))
 dim(three_consecutivesubset_df_decrease)
 write.csv(three_consecutivesubset_df_decrease, file = "results/output_encode/Etop/Etop_gene_signature_3n_decrease.csv")
-noquote_three_consecutivesubset_df_decrease <- noquote(three_consecutivesubset_df_decrease$symbol_48)
+noquote_three_consecutivesubset_df_decrease <- noquote(three_consecutivesubset_df_decrease$symbol)
 write(noquote_three_consecutivesubset_df_decrease, file = "results/output_encode/Etop/Etop_gene_signature_3n_decrease.txt")
 
 dim(three_consecutivesubset_df)
