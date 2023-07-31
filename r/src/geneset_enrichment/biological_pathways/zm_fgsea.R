@@ -65,8 +65,8 @@ subset_df_3n <- abs_foldchange_increase[(!is.na(abs_foldchange_increase$log2Fold
 
 # Create Upper
 ######
-subset_foldchange_increase_3n <- subset(subset_df_3n, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
-sorted_subset_foldchange_increase_3n <- subset_foldchange_increase_3n[order(-subset_foldchange_increase_3n$log2FoldChange_24), ]
+# subset_foldchange_increase_3n <- subset(subset_df_3n, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
+sorted_subset_foldchange_increase_3n <- subset_df_3n[order(-subset_foldchange_increase_3n$log2FoldChange_24), ]
 
 sorted_foldchange_increase_3n_tovec <- data.frame(gene_symbol = sorted_subset_foldchange_increase_3n$symbol, log2foldchange <- sorted_subset_foldchange_increase_3n$log2FoldChange_24)
 sorted_foldchange_increase_3n_tovec <- subset(sorted_foldchange_increase_3n_tovec, !is.na(log2foldchange))
@@ -83,18 +83,3 @@ write.csv(fgseaRes_increase_3n, file = "results/output_encode/ZM/fgsea_enrichmen
 
 # Create Lower
 ######
-subset_foldchange_decrease_3n <- subset(subset_df_3n, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
-sorted_subset_foldchange_decrease_3n <- subset_foldchange_decrease_3n[order(subset_foldchange_decrease_3n$log2FoldChange_24), ]
-
-sorted_foldchange_decrease_3n_tovec <- data.frame(gene_symbol = sorted_subset_foldchange_decrease_3n$symbol, log2foldchange <- sorted_subset_foldchange_decrease_3n$log2FoldChange_24)
-sorted_foldchange_decrease_3n_tovec <- subset(sorted_foldchange_decrease_3n_tovec, !is.na(log2foldchange))
-nvec_decrease_3n <- setNames(sorted_foldchange_decrease_3n_tovec$log2foldchange, sorted_foldchange_decrease_3n_tovec$gene_symbol)
-
-fgseaRes_decrease_3n <- fgsea(pathways = msigdbr_list, 
-                  stats    = nvec_decrease_3n,
-                  minSize  = 15,
-                  maxSize  = 500,
-                  scoreType='neg')
-
-fgseaRes_decrease_3n$leadingEdge <- sapply(fgseaRes_decrease_3n$leadingEdge, toString)
-write.csv(fgseaRes_decrease_3n, file = "results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_decrease_3n.csv")
