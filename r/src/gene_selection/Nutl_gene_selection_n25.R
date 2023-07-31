@@ -191,9 +191,6 @@ three_consecutivesubset_df <- subset_increase[(!is.na(subset_increase$log2FoldCh
   !is.na(subset_increase$log2FoldChange_12) & !is.na(subset_increase$log2FoldChange_16) & !is.na(subset_increase$log2FoldChange_24) |
   !is.na(subset_increase$log2FoldChange_16) & !is.na(subset_increase$log2FoldChange_24) & !is.na(subset_increase$log2FoldChange_48)), ]
 
-# dim(three_consecutivesubset_df)
-
-
 write.csv(three_consecutivesubset_df, file = "results/output_encode/Nutl/Nutl_gene_signature_3n.csv")
 
 three_consecutivesubset_df_increase <- subset(three_consecutivesubset_df, (log2FoldChange_16 > 0 | log2FoldChange_8 > 0 | log2FoldChange_12 > 0 | log2FoldChange_24 > 0 | log2FoldChange_48 > 0))
