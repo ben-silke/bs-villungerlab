@@ -139,18 +139,33 @@ append_timepoint <- function(results_df, timepoint_extn) {
 }
 
 
+fix_labels <- function(df) {
+  df$symbol <- df$symbol_48
+  df$symbol[is.na(df$symbol)] <- df$symbol_16[is.na(df$symbol)]
+  df$symbol[is.na(df$symbol)] <- df$symbol_24[is.na(df$symbol)]
+  df$symbol[is.na(df$symbol)] <- df$gene_id[is.na(df$symbol)]
+  return (df)
+}
+
+
 generate_complete_long_df <- function(merged_df, main_time) {
   # main_time = 24
   # Ensure that all rows have a label
   if (main_time == 24) {
     merged_df$symbol <- merged_df$symbol_24
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_48[is.na(merged_df$symbol)]
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_16[is.na(merged_df$symbol)]
   } else if (main_time == 16) {
     merged_df$symbol <- merged_df$symbol_16
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_48[is.na(merged_df$symbol)]
+    merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
   } else {
     merged_df$symbol <- merged_df$symbol_48
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_16[is.na(merged_df$symbol)]
   }
+  df$symbol[is.na(df$symbol)] <- df$gene_id[is.na(df$symbol)]
+  
   
   merged_df$label <- merged_df$symbol
   print(merged_df$symbol)
