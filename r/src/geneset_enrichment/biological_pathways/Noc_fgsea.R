@@ -21,24 +21,24 @@ source("~/bs-villungerlab/r/src/utils.R")
 source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 ######
-load('~/bs-villungerlab/results/output_encode_1to6/ZM_star_data.RData')
-dir.create("results/output_encode/ZM/fgsea_enrichment")
+load('~/bs-villungerlab/results/output_encode_1to6/Noc_star_data.RData')
+dir.create("results/output_encode/Noc/fgsea_enrichment")
 
 
-data_file = "~/bs-villungerlab/results/output_encode_1to6/ZM_unfiltered_results_files.Rdata"
+data_file = "~/bs-villungerlab/results/output_encode_1to6/Noc_unfiltered_results_files.Rdata"
 if (file.exists(data_file)){
   load(data_file)
   print("file_exists")
 } else {
-  results_ZM_t16 <- get_unfiltered_results(dds_ZM, "timepoint_t16_vs_t0", "_16")
-  results_ZM_t20 <- get_unfiltered_results(dds_ZM, "timepoint_t20_vs_t0", "_20")
-  results_ZM_t24 <- get_unfiltered_results(dds_ZM, "timepoint_t24_vs_t0", "_24")
-  results_ZM_t36 <- get_unfiltered_results(dds_ZM, "timepoint_t36_vs_t0", "_36")
-  results_ZM_t48 <- get_unfiltered_results(dds_ZM, "timepoint_t48_vs_t0", "_48")
-  save(results_ZM_t48, results_ZM_t16, results_ZM_t20, results_ZM_t24, results_ZM_t36, file=data_file)
+  results_Noc_t16 <- get_unfiltered_results(dds_Noc, "timepoint_t16_vs_t0", "_16")
+  results_Noc_t20 <- get_unfiltered_results(dds_Noc, "timepoint_t20_vs_t0", "_20")
+  results_Noc_t24 <- get_unfiltered_results(dds_Noc, "timepoint_t24_vs_t0", "_24")
+  results_Noc_t36 <- get_unfiltered_results(dds_Noc, "timepoint_t36_vs_t0", "_36")
+  results_Noc_t48 <- get_unfiltered_results(dds_Noc, "timepoint_t48_vs_t0", "_48")
+  save(results_Noc_t48, results_Noc_t16, results_Noc_t20, results_Noc_t24, results_Noc_t36, file=data_file)
 }
 
-all_df_merged_df <- merge_all_data(results_ZM_t48, results_ZM_t16, results_ZM_t20, results_ZM_t24, results_ZM_t36, 'results/output_encode/ZM/all_ZM_gene_regulation_data.csv', 'full_join')
+all_df_merged_df <- merge_all_data(results_Noc_t48, results_Noc_t16, results_Noc_t20, results_Noc_t24, results_Noc_t36, 'results/output_encode/Noc/all_Noc_gene_regulation_data.csv', 'full_join')
 df <- fix_labels(all_df_merged_df)
 
 data_file = "~/bs-villungerlab/results/output_encode_1to6/misgdrbr_df.Rdata"
@@ -81,4 +81,4 @@ fgseaRes_increase_3n <- fgsea(pathways = msigdbr_list,
 
 
 fgseaRes_increase_3n$leadingEdge <- sapply(fgseaRes_increase_3n$leadingEdge, toString)
-write.csv(fgseaRes_increase_3n, file = "results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_increase_3n.csv")
+write.csv(fgseaRes_increase_3n, file = "results/output_encode/Noc/fgsea_enrichment/fgsea_enrichment_Noc_increase_3n.csv")
