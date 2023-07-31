@@ -58,14 +58,15 @@ abs_foldchange_increase <- df[
   abs(df$log2FoldChange_36)>1 |
   abs(df$log2FoldChange_48)>1), ]
 
+
+# include only 3 consecutive timepoints.
 subset_df_3n <- abs_foldchange_increase[(!is.na(abs_foldchange_increase$log2FoldChange_16) & !is.na(abs_foldchange_increase$log2FoldChange_20) & !is.na(abs_foldchange_increase$log2FoldChange_24) |
   !is.na(abs_foldchange_increase$log2FoldChange_20) & !is.na(abs_foldchange_increase$log2FoldChange_24) & !is.na(abs_foldchange_increase$log2FoldChange_36) |
   !is.na(abs_foldchange_increase$log2FoldChange_24) & !is.na(abs_foldchange_increase$log2FoldChange_36) & !is.na(abs_foldchange_increase$log2FoldChange_48)), ]
 
-
 # Create Upper
 ######
-# subset_foldchange_increase_3n <- subset(subset_df_3n, (log2FoldChange_24 > 0 | log2FoldChange_16 > 0 | log2FoldChange_20 > 0 | log2FoldChange_36 > 0 | log2FoldChange_48 > 0))
+# Need to sort the dataset before we provide to fgsea otherwise it will break.
 sorted_subset_foldchange_increase_3n <- subset_df_3n[order(-subset_foldchange_increase_3n$log2FoldChange_24), ]
 
 sorted_foldchange_increase_3n_tovec <- data.frame(gene_symbol = sorted_subset_foldchange_increase_3n$symbol, log2foldchange <- sorted_subset_foldchange_increase_3n$log2FoldChange_24)
@@ -80,6 +81,3 @@ fgseaRes_increase_3n <- fgsea(pathways = msigdbr_list,
 
 fgseaRes_increase_3n$leadingEdge <- sapply(fgseaRes_increase_3n$leadingEdge, toString)
 write.csv(fgseaRes_increase_3n, file = "results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_increase_3n.csv")
-
-# Create Lower
-######
