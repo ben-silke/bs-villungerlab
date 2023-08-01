@@ -13,7 +13,7 @@ library(tidyverse)
 library(htmlwidgets)
 library("fgsea")
 library(msigdbr)
-
+library(plotly)
 
 setwd("~/bs-villungerlab/")
 source("~/bs-villungerlab/r/src/pca_utils.R")

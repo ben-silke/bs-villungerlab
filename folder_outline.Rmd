@@ -1,0 +1,82 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# File Structure
+
+
+```
+├── treatment
+│   ├── ... 
+│   ├── ... 
+└── ZM
+    ├── expression_timeseries
+    │   ├── fgsea
+    │   │   ├── ZM_interactive_decrease_plot.html
+    │   │   └── ZM_interactive_increase_plot.html
+    │   ├── iregulon
+    │   │   ├── ZM_interactive_decrease_plot.html
+    │   │   └── ZM_interactive_increase_plot.html
+    │   └── merged_restricted
+    │       ├── ZM_interactive_decrease_plot.html
+    │       └── ZM_interactive_increase_plot.html
+    ├── fgsea_significant_pathways_3n.csv
+    ├── Transcription_factors_ZM_3n_decrease.tsv
+    ├── Transcription_factors_ZM_3n_increase.tsv
+    ├── regulation_enrichment_ZM_gene_signature_3n_decrease.txt.pdf
+    └── regulation_enrichment_ZM_gene_signature_3n_increase.txt.pdf
+```
+
+## Documentation for structure
+
+#### *_treatment_/expression_timeseries*
+This folder contains the time series for differential gene expression for the 3 relevant subset groups.
+FGSEA includes the subset of genes which are included in the enriched pathways, separated by increase or decrease in regulation.
+iRegulon includes the subset of genes from the top 3 motifs and top 3 transcription factors ranked by NES score. 
+This ranking can be observed in **Transcription_factors_ZM_3n_increase.tsv.**
+The graphical deception is in **regulation_enrichment_ZM_gene_signature_3n_increase.txt.pdf**
+
+In other words, this means the genes which are linked to these enriched transcription factors, motifs, or pathways.
+
+The **merged_restricted/** directory represents the intersection ($\land$) between the two gene sets.
+
+
+
+### Interpretative aids
+3n, (Nn) refers to the restriction based upon 3, or N consecutive time points.
+
+
+## Subset Restrictions
+The genes in the subset which are used in the regulation or functional enrichment are subset according to the following three conditions,
+1. magnitude of LFC > 1. Genes are either twice as up-regulated, or half as down regulated.
+2. The genes must satisfy the function $E(g)$, in that, there must be 3 (or N) consecutive time points.
+3. The adjusted p-value must be less than 0.05.
+
+LFC = $\log_{2}$ fold change
+
+$$
+G = \{ g \in ZM_{deg} : (|LFC (g_{t24})| > 1) \land E(g) \land (g_{p_{adj}} < 0.05) \}
+$$
+
+
+$$
+E(g) \rightarrow \forall g : \exists (t_{16}, t_{20}, t_{24}, t_{36}, t_{48})  :
+(LFC(t_{16}) \land LFC(t_{20}) \land LFC(t_{24})) \lor 
+(LFC(t_{20}) \land LFC(t_{24}) \land LFC(t_{36})) \lor 
+(LFC(t_{24}) \land LFC(t_{36}) \land LFC(t_{48}))\
+$$
+
+#### Up and down regulation
+The upregulated and down regulated genes are subsequently split by LFC($t_{24}$) greater or less than 0.
+
+$$
+G_{upr}= \{g \in G : LFC (g_{t24}) > 0  \}
+$$
+
+
+$$
+G_{downr}= \{g \in G : LFC (g_{t24}) < 0  \}
+$$
+

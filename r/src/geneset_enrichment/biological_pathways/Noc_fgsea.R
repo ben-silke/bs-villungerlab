@@ -13,6 +13,7 @@ library(tidyverse)
 library(htmlwidgets)
 library("fgsea")
 library(msigdbr)
+library(plotly)
 
 
 setwd("~/bs-villungerlab/")

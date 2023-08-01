@@ -1,0 +1,163 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\hypertarget{file-structure}{%
+\section{File Structure}\label{file-structure}}
+
+\begin{verbatim}
+├── treatment
+│   ├── ... 
+│   ├── ... 
+└── ZM
+    ├── expression_timeseries
+    │   ├── fgsea
+    │   │   ├── ZM_interactive_decrease_plot.html
+    │   │   └── ZM_interactive_increase_plot.html
+    │   ├── iregulon
+    │   │   ├── ZM_interactive_decrease_plot.html
+    │   │   └── ZM_interactive_increase_plot.html
+    │   └── merged_restricted
+    │       ├── ZM_interactive_decrease_plot.html
+    │       └── ZM_interactive_increase_plot.html
+    ├── fgsea_significant_pathways_3n.csv
+    ├── Transcription_factors_ZM_3n_decrease.tsv
+    ├── Transcription_factors_ZM_3n_increase.tsv
+    ├── regulation_enrichment_ZM_gene_signature_3n_decrease.txt.pdf
+    └── regulation_enrichment_ZM_gene_signature_3n_increase.txt.pdf
+\end{verbatim}
+
+\hypertarget{documentation-for-structure}{%
+\subsection{Documentation for
+structure}\label{documentation-for-structure}}
+
+\hypertarget{treatmentexpression_timeseries}{%
+\paragraph{\texorpdfstring{\emph{\emph{treatment}/expression\_timeseries}}{treatment/expression\_timeseries}}\label{treatmentexpression_timeseries}}
+
+This folder contains the time series for differential gene expression
+for the 3 relevant subset groups. FGSEA includes the subset of genes
+which are included in the enriched pathways, separated by increase or
+decrease in regulation. iRegulon includes the subset of genes from the
+top 3 motifs and top 3 transcription factors ranked by NES score. This
+ranking can be observed in
+\textbf{Transcription\_factors\_ZM\_3n\_increase.tsv.} The graphical
+deception is in
+\textbf{regulation\_enrichment\_ZM\_gene\_signature\_3n\_increase.txt.pdf}
+
+In other words, this means the genes which are linked to these enriched
+transcription factors, motifs, or pathways.
+
+The \textbf{merged\_restricted/} directory represents the intersection
+(\(\land\)) between the two gene sets.
+
+\hypertarget{interpretative-aids}{%
+\subsubsection{Interpretative aids}\label{interpretative-aids}}
+
+3n, (Nn) refers to the restriction based upon 3, or N consecutive time
+points.
+
+\hypertarget{subset-restrictions}{%
+\subsection{Subset Restrictions}\label{subset-restrictions}}
+
+The genes in the subset which are used in the regulation or functional
+enrichment are subset according to the following three conditions, 1.
+magnitude of LFC \textgreater{} 1. Genes are either twice as
+up-regulated, or half as down regulated. 2. The genes must satisfy the
+function \(E(g)\), in that, there must be 3 (or N) consecutive time
+points. 3. The adjusted p-value must be less than 0.05.
+
+LFC = \(\log_{2}\) fold change
+
+\[
+G = \{ g \in ZM_{deg} : (|LFC (g_{t24})| > 1) \land E(g) \land (g_{p_{adj}} < 0.05) \}
+\]
+
+\[
+E(g) \rightarrow \forall g : \exists (t_{16}, t_{20}, t_{24}, t_{36}, t_{48})  :
+(LFC(t_{16}) \land LFC(t_{20}) \land LFC(t_{24})) \lor 
+(LFC(t_{20}) \land LFC(t_{24}) \land LFC(t_{36})) \lor 
+(LFC(t_{24}) \land LFC(t_{36}) \land LFC(t_{48}))\
+\]
+
+\hypertarget{up-and-down-regulation}{%
+\paragraph{Up and down regulation}\label{up-and-down-regulation}}
+
+The upregulated and down regulated genes are subsequently split by
+LFC(\(t_{24}\)) greater or less than 0.
+
+\[
+G_{upr}= \{g \in G : LFC (g_{t24}) > 0  \}
+\]
+
+\[
+G_{downr}= \{g \in G : LFC (g_{t24}) < 0  \}
+\]
+
+\end{document}

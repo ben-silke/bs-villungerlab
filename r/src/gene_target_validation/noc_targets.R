@@ -232,7 +232,7 @@ load(gene_data_file)
 subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
 subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
 
-View(subset_df_increase)
+# View(subset_df_increase)
 
 subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
 
