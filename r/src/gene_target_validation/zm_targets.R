@@ -1,4 +1,4 @@
-library(DESeq2)
+
 library(DESeq2)
 library("apeglm")
 library(org.Hs.eg.db)
@@ -49,6 +49,7 @@ colnames(all_df_merged_df)
 file_increase <- "results/output_encode/ZM/iregulon_analysis/ZM_gene_signature_3n_increase.csv"
 file_decrease <- "results/output_encode/ZM/iregulon_analysis/ZM_gene_signature_3n_decrease.csv"
 
+
 table_increase <- read.table(file_increase, sep=',', header=TRUE)
 table_increase$Target.Gene
 dim(table_increase)
@@ -60,8 +61,6 @@ merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df
 merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_16[is.na(merged_df$symbol)]
 
 ls <- intersect(table_increase$Target.Gene, merged_df$symbol)
-
-length(ls)
 
 subset_df <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
 subset_df$symbol_48
@@ -226,3 +225,55 @@ saveWidget(interactive_decrease_plot, "results/output_encode/ZM/target_genes/ZM_
 
 
 
+gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/ZM_fgsea_genes.RData"
+load(gene_data_file)
+
+
+subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
+subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
+
+View(subset_df_increase)
+
+subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
+
+
+upregulated_genes_vec <- unlist(upregulated_genes)
+downregulated_genes_vec <- unlist(downregulated_genes)
+increase_shared <- intersect(table_increase$Target.Gene, upregulated_genes_vec)
+increase_shared
+decrease_shared <- intersect(table_decrease$Target.Gene, downregulated_genes_vec)
+decrease_shared
+
+subset_df_increase <- all_df_merged_df[merged_df$symbol %in% increase_shared, ]
+subset_df_decrease <- all_df_merged_df[merged_df$symbol %in% decrease_shared, ]
+
+df_long_increase <- generate_complete_long_df(subset_df_increase, 24)
+df_long_decrease <- generate_complete_long_df(subset_df_decrease, 24)
+
+interactive_increase_plot <- plot_ly(
+  df_long_increase,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+
+interactive_increase_plot
+saveWidget(interactive_increase_plot, "results/output_encode/ZM/merged/ZM_interactive_increase_plot.html")
+
+
+interactive_decrease_plot <- plot_ly(
+  df_long_decrease,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+interactive_decrease_plot
+saveWidget(interactive_decrease_plot, "results/output_encode/ZM/merged/ZM_interactive_decrease_plot.html")
