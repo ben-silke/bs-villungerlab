@@ -1,0 +1,51 @@
+
+
+$$
+G = \{ g \in ZM_{deg} : (|LFC (g_{t24})| > 1) \land E(g) \}
+$$
+
+$$
+
+LFC(t_{16}) \land LFC(t_{20}) \land LFC(t_{24})
+
+$$
+
+$$
+LFC(t_{20}) \land LFC(t_{24}) \land LFC(t_{36})
+$$
+
+$$
+LFC(t_{24}) \land LFC(t_{36}) \land LFC(t_{48})
+$$
+
+
+
+$$
+E(g) \rightarrow \forall g : \exists (t_{16}, t_{20}, t_{24}, t_{36}, t_{48})  :
+$$
+
+$$
+(LFC(t_{16}) \land LFC(t_{20}) \land LFC(t_{24})) \lor 
+$$
+
+$$
+(LFC(t_{20}) \land LFC(t_{24}) \land LFC(t_{36})) \lor 
+$$
+
+
+$$
+(LFC(t_{24}) \land LFC(t_{36}) \land LFC(t_{48}))\
+$$
+
+
+$$
+G = G_{iRegulon} \land G_{fsgea}
+$$
+$$
+G_{upr}= \{g \in G : LFC (g_{t24}) > 0  \}
+$$
+
+
+$$
+G_{downr}= \{g \in G : LFC (g_{t24}) < 0  \}
+$$
