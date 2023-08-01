@@ -38,7 +38,7 @@ if (file.exists(data_file)){
   save(results_Etop_t48, results_Etop_t8, results_Etop_t12, results_Etop_t16, results_Etop_t24, file=data_file)
 }
 
-all_df_merged_df <- merge_all_data(results_Etop_t48, results_Etop_t16, results_Etop_t20, results_Etop_t24, results_Etop_t36, 'results/output_encode/Etop/all_Etop_gene_regulation_data.csv', 'full_join')
+all_df_merged_df <- merge_all_data(results_Etop_t48, results_Etop_t8, results_Etop_t12, results_Etop_t16, results_Etop_t24, 'results/output_encode/Etop/all_Etop_gene_regulation_data.csv', 'full_join')
 df <- fix_labels(all_df_merged_df)
 
 data_file = "~/bs-villungerlab/results/output_encode_1to6/misgdrbr_df.Rdata"
@@ -68,7 +68,7 @@ subset_df_3n <- abs_foldchange_increase[(!is.na(abs_foldchange_increase$log2Fold
 # Create Upper
 ######
 # Need to sort the dataset before we provide to fgsea otherwise it will break.
-sorted_subset_foldchange_increase_3n <- subset_df_3n[order(-subset_foldchange_increase_3n$log2FoldChange_16), ]
+sorted_subset_foldchange_increase_3n <- subset_df_3n[order(-subset_df_3n$log2FoldChange_24), ]
 
 sorted_foldchange_increase_3n_tovec <- data.frame(gene_symbol = sorted_subset_foldchange_increase_3n$symbol, log2foldchange <- sorted_subset_foldchange_increase_3n$log2FoldChange_16)
 sorted_foldchange_increase_3n_tovec <- subset(sorted_foldchange_increase_3n_tovec, !is.na(log2foldchange))

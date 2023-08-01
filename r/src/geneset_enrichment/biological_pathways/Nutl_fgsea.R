@@ -68,17 +68,16 @@ subset_df_3n <- abs_foldchange_increase[(!is.na(abs_foldchange_increase$log2Fold
 # Create Upper
 ######
 # Need to sort the dataset before we provide to fgsea otherwise it will break.
-sorted_subset_foldchange_increase_3n <- subset_df_3n[order(-subset_foldchange_increase_3n$log2FoldChange_16), ]
+sorted_subset_foldchange_increase_3n <- subset_df_3n[order(-subset_df_3n$log2FoldChange_16), ]
 
 sorted_foldchange_increase_3n_tovec <- data.frame(gene_symbol = sorted_subset_foldchange_increase_3n$symbol, log2foldchange <- sorted_subset_foldchange_increase_3n$log2FoldChange_16)
 sorted_foldchange_increase_3n_tovec <- subset(sorted_foldchange_increase_3n_tovec, !is.na(log2foldchange))
 nvec_increase_3n <- setNames(sorted_foldchange_increase_3n_tovec$log2foldchange, sorted_foldchange_increase_3n_tovec$gene_symbol)
 
-fgseaRes_increase_3n <- fgsea(pathways = msigdbr_list, 
+fgseaRes_increase_3n <- fgsea(pathways = msigdbr_list,
                   stats    = nvec_increase_3n,
                   minSize  = 15,
                   maxSize  = 500)
-
 
 fgseaRes_increase_3n$leadingEdge <- sapply(fgseaRes_increase_3n$leadingEdge, toString)
 write.csv(fgseaRes_increase_3n, file = "results/output_encode/Nutl/fgsea_enrichment/fgsea_enrichment_Nutl_increase_3n.csv")
