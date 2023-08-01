@@ -1,4 +1,4 @@
-library(DESeq2)
+
 library(DESeq2)
 library("apeglm")
 library(org.Hs.eg.db)
@@ -10,7 +10,8 @@ library(dplyr)
 library(openxlsx)
 library(ggplot2)
 library(tidyverse)
-library(EnhancedVolcano)
+library(plotly)
+library(htmlwidgets)
 
 setwd("~/bs-villungerlab/")
 source("~/bs-villungerlab/r/src/pca_utils.R")
@@ -38,13 +39,15 @@ if (file.exists(data_file)){
   results_Etop_t48 <- get_unfiltered_results(dds_Etop, "timepoint_t48_vs_t0", "_48")
   save(results_Etop_t48, results_Etop_t8, results_Etop_t12, results_Etop_t16, results_Etop_t24, file=data_file)
 }
+
 colnames(results_Etop_t8)
 rownames(results_Etop_t8)
 
 all_df_merged_df <- merge_all_data(results_Etop_t48, results_Etop_t8, results_Etop_t12, results_Etop_t16, results_Etop_t24, 'results/output_encode/Etop/unfiltered_apeglm_Etop_data.csv', 'full_join')
 colnames(all_df_merged_df)
-file_increase <- "results/output_encode/Etop_full_signature_5n_increase_default_edge.csv"
-file_decrease <- "results/output_encode/Etop_full_signature_5n_decrease_default_edge.csv"
+file_increase <- "results/output_encode/Etop/iregulon_analysis/Etop_gene_signature_3n_increase.csv"
+file_decrease <- "results/output_encode/Etop/iregulon_analysis/Etop_gene_signature_3n_decrease.csv"
+
 
 table_increase <- read.table(file_increase, sep=',', header=TRUE)
 table_increase$Target.Gene
@@ -58,8 +61,6 @@ merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_8[is.na(merged_df$
 
 ls <- intersect(table_increase$Target.Gene, merged_df$symbol)
 
-length(ls)
-
 subset_df <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
 subset_df$symbol_48
 dim(subset_df)
@@ -67,7 +68,7 @@ dim(subset_df)
 
 subset_df_sorted_increase <- subset_df[order(-subset_df$log2FoldChange_16), ]
 # set the number of results which you want
-subset_df_sorted_increase_reduced <- head(subset_df_sorted_increase, 5)
+subset_df_sorted_increase_reduced <- head(subset_df_sorted_increase, 10)
 subset_df_sorted_increase_reduced
 
 
@@ -86,7 +87,7 @@ df_long_increase_reduced <- generate_complete_long_df(subset_df_sorted_increase_
 
 
 # long_subset_df_sorted_plot <- long_subset_df_sorted_plot + geom_text(aes(label = sprintf("p=%.3f", padj)), vjust = -1)
-plot_title <- "Etop Core Genes: Increase | n5"
+plot_title <- "Etop Core Genes: Increase | n10"
 p_increase_reduced <- ggplot(df_long_increase_reduced, aes(x = Timepoint, y = log2foldchange, shape = symbol, group = symbol, color = symbol)) +
   geom_point() +
   geom_line() +
@@ -127,14 +128,14 @@ dim(subset_df_decrease)
 
 subset_df_decrease_sorted <- subset_df_decrease[order(subset_df_decrease$log2FoldChange_16), ]
 # set the number of results which you want
-subset_df_decrease_sorted_reduced <- head(subset_df_decrease_sorted, 5)
+subset_df_decrease_sorted_reduced <- head(subset_df_decrease_sorted, 10)
 subset_df_decrease_sorted_reduced
 
 
 #######
 df_long_decrease <- generate_complete_long_df(subset_df_decrease_sorted_reduced, 16)
 
-plot_title <- "Etop Core Genes: n5"
+plot_title <- "Etop Core Genes: n10"
 p_decrease<- "he;"
 p_decrease<- ggplot(df_long_decrease, aes(x = Timepoint, y = log2foldchange, shape = symbol, group = symbol, color = symbol)) +
   geom_point() +
@@ -162,7 +163,7 @@ p_decrease_all <- ggplot(df_long_decrease_all, aes(x = Timepoint, y = log2foldch
   geom_line() +
   labs(title = plot_title,
        x = "time(hrs)",
-       y=expression(paste(log[2](x), ' fold change'))) +
+       y='log 2 fold change') +
   theme(plot.title = element_text(hjust = 0.5), # Center the title
         plot.title.position = "plot",
         legend.position = "bottom")
@@ -180,13 +181,14 @@ p_increase_all<- ggplot(df_long_increase, aes(x = Timepoint, y = log2foldchange,
   geom_line() +
   labs(title = plot_title,
        x = "time(hrs)",
-       y=expression(paste(log[2](x), ' fold change'))) +
+       y='log 2 fold change') +
   theme(plot.title = element_text(hjust = 0.5), # Center the title
         plot.title.position = "plot",
-        legend.position = "bottom")
+        legend.position = "none")
 
 p_increase_all
 ggsave(filename = "results/output_encode/Etop/target_genes/Etop_p_increase_all.pdf", plot = p_increase_all, dpi=dpi, width=width_in, height=height_in)
+ 
 
 
 ##### INTERACTIVE PLOTS
@@ -219,3 +221,58 @@ interactive_decrease_plot <- plot_ly(
 
 interactive_decrease_plot
 saveWidget(interactive_decrease_plot, "results/output_encode/Etop/target_genes/Etop_interactive_decrease_plot.html")
+
+
+
+gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/Etop_fgsea_genes.RData"
+load(gene_data_file)
+
+
+subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
+subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
+
+View(subset_df_increase)
+
+subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
+
+
+upregulated_genes_vec <- unlist(upregulated_genes)
+downregulated_genes_vec <- unlist(downregulated_genes)
+increase_shared <- intersect(table_increase$Target.Gene, upregulated_genes_vec)
+increase_shared
+decrease_shared <- intersect(table_decrease$Target.Gene, downregulated_genes_vec)
+decrease_shared
+
+subset_df_increase <- all_df_merged_df[merged_df$symbol %in% increase_shared, ]
+subset_df_decrease <- all_df_merged_df[merged_df$symbol %in% decrease_shared, ]
+
+df_long_increase <- generate_complete_long_df(subset_df_increase, 16)
+df_long_decrease <- generate_complete_long_df(subset_df_decrease, 16)
+
+interactive_increase_plot <- plot_ly(
+  df_long_increase,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+
+interactive_increase_plot
+saveWidget(interactive_increase_plot, "results/output_encode/Etop/merged/Etop_interactive_increase_plot.html")
+
+
+interactive_decrease_plot <- plot_ly(
+  df_long_decrease,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+)
+
+interactive_decrease_plot
+saveWidget(interactive_decrease_plot, "results/output_encode/Etop/merged/Etop_interactive_decrease_plot.html")
