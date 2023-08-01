@@ -164,7 +164,7 @@ generate_complete_long_df <- function(merged_df, main_time) {
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_16[is.na(merged_df$symbol)]
   }
-  df$symbol[is.na(df$symbol)] <- df$gene_id[is.na(df$symbol)]
+  merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$gene_id[is.na(merged_df$symbol)]
   
   
   merged_df$label <- merged_df$symbol
