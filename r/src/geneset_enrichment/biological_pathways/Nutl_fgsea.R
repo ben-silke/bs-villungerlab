@@ -135,7 +135,6 @@ write.csv(significant_pathways_3n_print, file = "results/output_encode/Nutl/fgse
 
 upregulated_significant_pathways = subset(significant_pathways_3n, 0<NES)
 downregulated_significant_pathways = subset(significant_pathways_3n, 0>NES)
-View(top_significant_pathways)
 
 
 upregulated_genes_list = upregulated_significant_pathways$leadingEdge

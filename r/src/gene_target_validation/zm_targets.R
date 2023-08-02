@@ -245,6 +245,10 @@ decrease_shared <- intersect(table_decrease$Target.Gene, downregulated_genes_vec
 decrease_shared
 
 subset_df_increase <- all_df_merged_df[merged_df$symbol %in% increase_shared, ]
+
+View(subset_df_increase)
+subset_df_increase$symbol_48
+
 subset_df_decrease <- all_df_merged_df[merged_df$symbol %in% decrease_shared, ]
 
 df_long_increase <- generate_complete_long_df(subset_df_increase, 24)
@@ -277,3 +281,4 @@ interactive_decrease_plot <- plot_ly(
 
 interactive_decrease_plot
 saveWidget(interactive_decrease_plot, "results/output_encode/ZM/merged/ZM_interactive_decrease_plot.html")
+

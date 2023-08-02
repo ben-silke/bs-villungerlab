@@ -101,11 +101,7 @@ p_increase_reduced <- ggplot(df_long_increase_reduced, aes(x = Timepoint, y = lo
 p_increase_reduced
 ggsave(filename = "results/output_encode/Nutl/target_genes/Nutl_p_increase_reduced.pdf", plot = p_increase_reduced, dpi=dpi, width=width_in, height=height_in)
 
-
-
 ### DECREASE
-
-
 table_decrease <- read.table(file_decrease, sep=',', header=TRUE)
 table_decrease$Target.Gene
 dim(table_decrease)
