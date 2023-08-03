@@ -1,4 +1,3 @@
-
 library(DESeq2)
 library("apeglm")
 library(org.Hs.eg.db)
@@ -18,7 +17,6 @@ source("~/bs-villungerlab/r/src/pca_utils.R")
 source("~/bs-villungerlab/r/src/utils.R")
 source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
-
 
 dir.create("results/output_encode/ZM/target_genes")
 dpi = 500
@@ -49,7 +47,6 @@ colnames(all_df_merged_df)
 file_increase <- "results/output_encode/ZM/iregulon_analysis/ZM_gene_signature_3n_increase.csv"
 file_decrease <- "results/output_encode/ZM/iregulon_analysis/ZM_gene_signature_3n_decrease.csv"
 
-
 table_increase <- read.table(file_increase, sep=',', header=TRUE)
 table_increase$Target.Gene
 dim(table_increase)
@@ -66,26 +63,20 @@ subset_df <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, 
 subset_df$symbol_48
 dim(subset_df)
 
-
 subset_df_sorted_increase <- subset_df[order(-subset_df$log2FoldChange_24), ]
 # set the number of results which you want
 subset_df_sorted_increase_reduced <- head(subset_df_sorted_increase, 10)
 subset_df_sorted_increase_reduced
 
-
 # long_subset_df_sorted <- generate_complete_long_df(subset_df_sorted, 24)
 # long_subset_df_sorted_plot <- plot_longdf(long_subset_df_sorted, "ZM core up regulated genes | n10")
 # long_subset_df_sorted_plot <- long_subset_df_sorted_plot + geom_text(aes(label = sprintf("p=%.3f", padj)), vjust = -1)
-
-
 # long_subset_df_sorted_plot
-
 
 # Functions
 #######
 
 df_long_increase_reduced <- generate_complete_long_df(subset_df_sorted_increase_reduced, 24)
-
 
 # long_subset_df_sorted_plot <- long_subset_df_sorted_plot + geom_text(aes(label = sprintf("p=%.3f", padj)), vjust = -1)
 plot_title <- "ZM Core Genes: Increase | n10"
@@ -102,15 +93,10 @@ p_increase_reduced <- ggplot(df_long_increase_reduced, aes(x = Timepoint, y = lo
 p_increase_reduced
 ggsave(filename = "results/output_encode/ZM/target_genes/ZM_p_increase_reduced.pdf", plot = p_increase_reduced, dpi=dpi, width=width_in, height=height_in)
 
-
-
 ### DECREASE
-
-
 table_decrease <- read.table(file_decrease, sep=',', header=TRUE)
 table_decrease$Target.Gene
 dim(table_decrease)
-
 
 merged_df_decrease <- all_df_merged_df
 
@@ -126,12 +112,10 @@ subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decr
 subset_df_decrease$symbol_48
 dim(subset_df_decrease)
 
-
 subset_df_decrease_sorted <- subset_df_decrease[order(subset_df_decrease$log2FoldChange_24), ]
 # set the number of results which you want
 subset_df_decrease_sorted_reduced <- head(subset_df_decrease_sorted, 10)
 subset_df_decrease_sorted_reduced
-
 
 #######
 df_long_decrease <- generate_complete_long_df(subset_df_decrease_sorted_reduced, 24)
@@ -281,4 +265,28 @@ interactive_decrease_plot <- plot_ly(
 
 interactive_decrease_plot
 saveWidget(interactive_decrease_plot, "results/output_encode/ZM/merged/ZM_interactive_decrease_plot.html")
+
+
+zm_df <- fix_labels(all_df_merged_df)
+
+
+"FOXM1" %in% zm_df$symbol 
+targets = c('BMF', "FOXM1")
+subset_targets <- subset(zm_df, symbol %in% targets)
+subset_targets
+
+df_long_subset_targets <- generate_complete_long_df(subset_targets, 24)
+df_long_subset_targets_plot <- plot_ly(
+  df_long_subset_targets,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+) %>%
+  layout(title="ZM Treatment: BMF + FOXM1")
+
+df_long_subset_targets_plot
+saveWidget(df_long_subset_targets_plot, "results/output_encode/ZM/ZM_bmf_foxm1.html")
 
