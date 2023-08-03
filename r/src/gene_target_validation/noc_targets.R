@@ -46,6 +46,14 @@ rownames(results_Noc_t16)
 
 all_df_merged_df <- merge_all_data(results_Noc_t48, results_Noc_t16, results_Noc_t20, results_Noc_t24, results_Noc_t36, 'results/output_encode/Noc/unfiltered_apeglm_Noc_data.csv', 'full_join')
 colnames(all_df_merged_df)
+
+noc_df <- fix_labels(all_df_merged_df)
+View(noc_df)
+
+# View(all_df_merged_df)
+
+
+
 file_increase <- "results/output_encode/Noc/iregulon_analysis/Noc_gene_signature_3n_increase.csv"
 file_decrease <- "results/output_encode/Noc/iregulon_analysis/Noc_gene_signature_3n_decrease.csv"
 
@@ -228,6 +236,8 @@ saveWidget(interactive_decrease_plot, "results/output_encode/Noc/target_genes/No
 gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/Noc_fgsea_genes.RData"
 load(gene_data_file)
 
+downregulated_genes
+table_decrease$Target.Gene
 
 subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
 subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
@@ -244,8 +254,11 @@ increase_shared
 decrease_shared <- intersect(table_decrease$Target.Gene, downregulated_genes_vec)
 decrease_shared
 
+length(decrease_shared)
+
 subset_df_increase <- all_df_merged_df[merged_df$symbol %in% increase_shared, ]
 subset_df_decrease <- all_df_merged_df[merged_df$symbol %in% decrease_shared, ]
+dim(subset_df_decrease)
 
 df_long_increase <- generate_complete_long_df(subset_df_increase, 24)
 df_long_decrease <- generate_complete_long_df(subset_df_decrease, 24)
@@ -260,10 +273,8 @@ interactive_increase_plot <- plot_ly(
   split= ~symbol
 )
 
-
 interactive_increase_plot
 saveWidget(interactive_increase_plot, "results/output_encode/Noc/merged/Noc_interactive_increase_plot.html")
-
 
 interactive_decrease_plot <- plot_ly(
   df_long_decrease,
@@ -277,3 +288,24 @@ interactive_decrease_plot <- plot_ly(
 
 interactive_decrease_plot
 saveWidget(interactive_decrease_plot, "results/output_encode/Noc/merged/Noc_interactive_decrease_plot.html")
+
+
+"FOXM1" %in% noc_df$symbol 
+targets = c('BMF', "FOXM1")
+subset_targets <- subset(noc_df, symbol %in% targets)
+subset_targets
+
+df_long_subset_targets <- generate_complete_long_df(subset_targets, 24)
+df_long_subset_targets_plot <- plot_ly(
+  df_long_subset_targets,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+  ) %>%
+  layout(title="Noc Treatment: BMF + FOXM1")
+
+df_long_subset_targets_plot
+saveWidget(df_long_subset_targets_plot, "results/output_encode/Noc/bmf_foxm1.html")
