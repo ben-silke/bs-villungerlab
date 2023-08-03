@@ -20,6 +20,8 @@ source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
 dir.create("results/output_encode/Nutl/target_genes")
+dir.create("results/output_encode/Nutl/merged")
+
 dpi = 500
 width_in <- 20
 height_in <- 20
@@ -45,8 +47,10 @@ rownames(results_Nutl_t8)
 
 all_df_merged_df <- merge_all_data(results_Nutl_t48, results_Nutl_t8, results_Nutl_t12, results_Nutl_t16, results_Nutl_t24, 'results/output_encode/Nutl/unfiltered_apeglm_Nutl_data.csv', 'full_join')
 colnames(all_df_merged_df)
-file_increase <- "results/output_encode/Nutl/iregulon_analysis/Nutl_gene_signature_3n_increase.csv"
-file_decrease <- "results/output_encode/Nutl/iregulon_analysis/Nutl_gene_signature_3n_decrease.csv"
+
+# /Users/bsilke/bs-villungerlab/results/output_encode/Nutl_full_signature_5n_decrease_default_edge.csv
+file_increase <- "results/output_encode/Nutl_full_signature_5n_increase_default_edge.csv"
+file_decrease <- "results/output_encode/Nutl_full_signature_5n_decrease_default_edge.csv"
 
 
 table_increase <- read.table(file_increase, sep=',', header=TRUE)
@@ -222,15 +226,6 @@ saveWidget(interactive_decrease_plot, "results/output_encode/Nutl/target_genes/N
 
 gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/Nutl_fgsea_genes.RData"
 load(gene_data_file)
-
-
-subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
-subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
-
-View(subset_df_increase)
-
-subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
-
 
 upregulated_genes_vec <- unlist(upregulated_genes)
 downregulated_genes_vec <- unlist(downregulated_genes)

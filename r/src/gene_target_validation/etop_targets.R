@@ -20,6 +20,8 @@ source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
 dir.create("results/output_encode/Etop/target_genes")
+dir.create("results/output_encode/Etop/merged")
+
 dpi = 500
 width_in <- 20
 height_in <- 20
@@ -45,8 +47,8 @@ rownames(results_Etop_t8)
 
 all_df_merged_df <- merge_all_data(results_Etop_t48, results_Etop_t8, results_Etop_t12, results_Etop_t16, results_Etop_t24, 'results/output_encode/Etop/unfiltered_apeglm_Etop_data.csv', 'full_join')
 colnames(all_df_merged_df)
-file_increase <- "results/output_encode/Etop/iregulon_analysis/Etop_gene_signature_3n_increase.csv"
-file_decrease <- "results/output_encode/Etop/iregulon_analysis/Etop_gene_signature_3n_decrease.csv"
+file_increase <- "results/output_encode/Etop_full_signature_5n_increase_default_edge.csv"
+file_decrease <- "results/output_encode/Etop_full_signature_5n_decrease_default_edge.csv"
 
 
 table_increase <- read.table(file_increase, sep=',', header=TRUE)
@@ -226,15 +228,6 @@ saveWidget(interactive_decrease_plot, "results/output_encode/Etop/target_genes/E
 
 gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/Etop_fgsea_genes.RData"
 load(gene_data_file)
-
-
-subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
-subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
-
-View(subset_df_increase)
-
-subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
-
 
 upregulated_genes_vec <- unlist(upregulated_genes)
 downregulated_genes_vec <- unlist(downregulated_genes)
