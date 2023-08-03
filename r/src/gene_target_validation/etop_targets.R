@@ -276,3 +276,25 @@ interactive_decrease_plot <- plot_ly(
 
 interactive_decrease_plot
 saveWidget(interactive_decrease_plot, "results/output_encode/Etop/merged/Etop_interactive_decrease_plot.html")
+
+
+Etop_df <- fix_labels(all_df_merged_df)
+"FOXM1" %in% Etop_df$symbol 
+targets = c('BMF', "FOXM1")
+subset_targets <- subset(Etop_df, symbol %in% targets)
+subset_targets
+
+df_long_subset_targets <- generate_complete_long_df(subset_targets, 24)
+df_long_subset_targets_plot <- plot_ly(
+  df_long_subset_targets,
+  x = ~Timepoint,
+  y = ~log2foldchange,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
+  split= ~symbol
+  ) %>%
+  layout(title="Etop Treatment: BMF + FOXM1")
+
+df_long_subset_targets_plot
+saveWidget(df_long_subset_targets_plot, "results/output_encode/Etop/etop_bmf_foxm1.html")
