@@ -20,10 +20,8 @@ source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
 dir.create("results/output_encode/Nutl/target_genes")
-dir.create("results/output_encode/Nutl/merged")
-
 dpi = 500
-width_in <- 20
+width_in <- 20  
 height_in <- 20
 
 load('~/bs-villungerlab/results/output_encode_1to6/Nutl_star_data.RData')
@@ -47,11 +45,8 @@ rownames(results_Nutl_t8)
 
 all_df_merged_df <- merge_all_data(results_Nutl_t48, results_Nutl_t8, results_Nutl_t12, results_Nutl_t16, results_Nutl_t24, 'results/output_encode/Nutl/unfiltered_apeglm_Nutl_data.csv', 'full_join')
 colnames(all_df_merged_df)
-
-# /Users/bsilke/bs-villungerlab/results/output_encode/Nutl_full_signature_5n_decrease_default_edge.csv
 file_increase <- "results/output_encode/Nutl_full_signature_5n_increase_default_edge.csv"
 file_decrease <- "results/output_encode/Nutl_full_signature_5n_decrease_default_edge.csv"
-
 
 table_increase <- read.table(file_increase, sep=',', header=TRUE)
 table_increase$Target.Gene
@@ -69,26 +64,20 @@ subset_df <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, 
 subset_df$symbol_48
 dim(subset_df)
 
-
 subset_df_sorted_increase <- subset_df[order(-subset_df$log2FoldChange_16), ]
 # set the number of results which you want
 subset_df_sorted_increase_reduced <- head(subset_df_sorted_increase, 10)
 subset_df_sorted_increase_reduced
 
-
 # long_subset_df_sorted <- generate_complete_long_df(subset_df_sorted, 16)
 # long_subset_df_sorted_plot <- plot_longdf(long_subset_df_sorted, "Nutl core up regulated genes | n10")
 # long_subset_df_sorted_plot <- long_subset_df_sorted_plot + geom_text(aes(label = sprintf("p=%.3f", padj)), vjust = -1)
-
-
 # long_subset_df_sorted_plot
-
 
 # Functions
 #######
 
 df_long_increase_reduced <- generate_complete_long_df(subset_df_sorted_increase_reduced, 16)
-
 
 # long_subset_df_sorted_plot <- long_subset_df_sorted_plot + geom_text(aes(label = sprintf("p=%.3f", padj)), vjust = -1)
 plot_title <- "Nutl Core Genes: Increase | n10"
@@ -110,7 +99,6 @@ table_decrease <- read.table(file_decrease, sep=',', header=TRUE)
 table_decrease$Target.Gene
 dim(table_decrease)
 
-
 merged_df_decrease <- all_df_merged_df
 
 merged_df_decrease$symbol <- merged_df_decrease$symbol_48
@@ -125,12 +113,10 @@ subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decr
 subset_df_decrease$symbol_48
 dim(subset_df_decrease)
 
-
 subset_df_decrease_sorted <- subset_df_decrease[order(subset_df_decrease$log2FoldChange_16), ]
 # set the number of results which you want
 subset_df_decrease_sorted_reduced <- head(subset_df_decrease_sorted, 10)
 subset_df_decrease_sorted_reduced
-
 
 #######
 df_long_decrease <- generate_complete_long_df(subset_df_decrease_sorted_reduced, 16)
@@ -227,6 +213,15 @@ saveWidget(interactive_decrease_plot, "results/output_encode/Nutl/target_genes/N
 gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/Nutl_fgsea_genes.RData"
 load(gene_data_file)
 
+
+subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
+subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
+
+View(subset_df_increase)
+
+subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
+
+
 upregulated_genes_vec <- unlist(upregulated_genes)
 downregulated_genes_vec <- unlist(downregulated_genes)
 increase_shared <- intersect(table_increase$Target.Gene, upregulated_genes_vec)
@@ -235,6 +230,10 @@ decrease_shared <- intersect(table_decrease$Target.Gene, downregulated_genes_vec
 decrease_shared
 
 subset_df_increase <- all_df_merged_df[merged_df$symbol %in% increase_shared, ]
+
+View(subset_df_increase)
+subset_df_increase$symbol_48
+
 subset_df_decrease <- all_df_merged_df[merged_df$symbol %in% decrease_shared, ]
 
 df_long_increase <- generate_complete_long_df(subset_df_increase, 16)
@@ -268,13 +267,16 @@ interactive_decrease_plot <- plot_ly(
 interactive_decrease_plot
 saveWidget(interactive_decrease_plot, "results/output_encode/Nutl/merged/Nutl_interactive_decrease_plot.html")
 
+
 Nutl_df <- fix_labels(all_df_merged_df)
+
+
 "FOXM1" %in% Nutl_df$symbol 
-targets = c('BMF', "FOXM1")
+targets = c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ARID5B", "ANKRD1")
 subset_targets <- subset(Nutl_df, symbol %in% targets)
 subset_targets
 
-df_long_subset_targets <- generate_complete_long_df(subset_targets, 24)
+df_long_subset_targets <- generate_complete_long_df(subset_targets, 16)
 df_long_subset_targets_plot <- plot_ly(
   df_long_subset_targets,
   x = ~Timepoint,
@@ -283,8 +285,9 @@ df_long_subset_targets_plot <- plot_ly(
   hoverinfo = "text",
   text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
   split= ~symbol
-  ) %>%
+) %>%
   layout(title="Nutl Treatment: BMF + FOXM1")
 
 df_long_subset_targets_plot
 saveWidget(df_long_subset_targets_plot, "results/output_encode/Nutl/Nutl_bmf_foxm1.html")
+
