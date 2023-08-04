@@ -47,3 +47,4 @@ noquote_gene_list <- c('gene_name', noquote_gene_list)
 
 # write(noquote_gene_list, file = "results/lukas/p1c2c4_downr_relevant_genes_iregulon.txt")
 write(noquote_gene_list, file = "results/lukas/p1c2c4_upr_relevant_genes_iregulon.txt")
+
