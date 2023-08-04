@@ -213,15 +213,7 @@ saveWidget(interactive_decrease_plot, "results/output_encode/Nutl/target_genes/N
 gene_data_file = "~/bs-villungerlab/results/output_encode_1to6/Nutl_fgsea_genes.RData"
 load(gene_data_file)
 
-
-subset_df_increase <- all_df_merged_df[merged_df$symbol %in% table_increase$Target.Gene, ]
-subset_df_increase <- subset_df_increase[subset_df_increase$symbol %in% upregulated_genes, ]
-
-View(subset_df_increase)
-
 subset_df_decrease <- all_df_merged_df[merged_df_decrease$symbol %in% table_decrease$Target.Gene, ]
-
-
 upregulated_genes_vec <- unlist(upregulated_genes)
 downregulated_genes_vec <- unlist(downregulated_genes)
 increase_shared <- intersect(table_increase$Target.Gene, upregulated_genes_vec)
@@ -230,10 +222,6 @@ decrease_shared <- intersect(table_decrease$Target.Gene, downregulated_genes_vec
 decrease_shared
 
 subset_df_increase <- all_df_merged_df[merged_df$symbol %in% increase_shared, ]
-
-View(subset_df_increase)
-subset_df_increase$symbol_48
-
 subset_df_decrease <- all_df_merged_df[merged_df$symbol %in% decrease_shared, ]
 
 df_long_increase <- generate_complete_long_df(subset_df_increase, 16)
