@@ -38,26 +38,30 @@ return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
   return (results_df)
 }
 
-merge_dataframe <- function(first, second, join_type='none') {
+merge_dataframe <- function(first, second, join_type='none', by_y="gene_id") {
+  
   second$gene_id <- rownames(second)
   print(dim(second))
   print(dim(first))
   if (join_type == 'full_join') {
-    merged_df <- merge(first, second, by.y = "gene_id", all = TRUE)
+    merged_df <- merge(first, second, by.y = by_y, all = TRUE)
   } else {
-    merged_df <- merge(first, second, by.y = "gene_id", all.x = TRUE)
+    merged_df <- merge(first, second, by.y = by_y, all.x = TRUE)
   }
   return (merged_df)
 }
 
 
-merge_all_data <- function(main_df, one, two, three, four, filename, join_type='') {
+# This is probably the wrong way to do this but wtv
+merge_all_data <- function(main_df, one, two=FALSE, three=FALSE, four=FALSE, filename, join_type='') {
   main_df$gene_id <- rownames(main_df)
   print(rownames(main_df))
+
   merged_df <- merge_dataframe(main_df,one, join_type)
-  merged_df <- merge_dataframe(merged_df,two, join_type)
-  merged_df <- merge_dataframe(merged_df,three, join_type)
-  merged_df <- merge_dataframe(merged_df,four, join_type)
+
+  if (two & is.data.frame(two)) { merged_df <- merge_dataframe(merged_df,two, join_type) }  
+  if (three & is.data.frame(three)) { merged_df <- merge_dataframe(merged_df,three, join_type) }  
+  if (four & is.data.frame(four)) { merged_df <- merge_dataframe(merged_df,four, join_type) }  
   
   write.csv(merged_df, file = filename)
   return (merged_df)
@@ -159,6 +163,8 @@ generate_complete_long_df <- function(merged_df, main_time) {
     merged_df$symbol <- merged_df$symbol_16
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_48[is.na(merged_df$symbol)]
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
+  } else if (main_time == 'special') {
+    merged_df$symbol = merged_df$gene_id
   } else {
     merged_df$symbol <- merged_df$symbol_48
     merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$symbol_24[is.na(merged_df$symbol)]
