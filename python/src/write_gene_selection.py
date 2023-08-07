@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import click
 
 SHORT_TIMES = ["c(0, 8, 12, 16, 24, 48)", [8,12,16,24,48], "c(8, 12, 16, 24, 48)"]

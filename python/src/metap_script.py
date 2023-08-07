@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from metaprogramming_r import SalmonRFileWriter, StarRFileWriter
 
 import click
