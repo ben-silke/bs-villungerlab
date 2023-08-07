@@ -16,6 +16,7 @@ library(openxlsx)
 library(ggplot2)
 library(tidyverse)
 library(tidyverse)
+library(docstring)
 
 
 source("~/bs-villungerlab/r/src/pca_utils.R")
@@ -24,8 +25,10 @@ source("~/bs-villungerlab/r/src/star_utils.R")
 
 
 return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
-  # Coef = "timepoint_t16_vs_t0", 
-  # model = 'apeglm'
+  #' Function to shrink results with DESeq2 from a dds object according to a specific model.
+  #' #' returns results as a dataframe with the timepoint appended to the headers/ colnames.
+  #' Coef = "timepoint_t16_vs_t0", 
+  #' model = 'apeglm'
   results <- lfcShrink(dds, coef=coef, type=model)
   results <- add_annotations_to_results(results)
   
@@ -39,7 +42,7 @@ return_results <- function(dds, coef, timepoint_extn, model='apeglm') {
 }
 
 merge_dataframe <- function(first, second, join_type='none', by_y="gene_id") {
-  
+  #' Function to merge two dataframes with specific join condition.
   second$gene_id <- rownames(second)
   print(dim(second))
   print(dim(first))
@@ -52,7 +55,8 @@ merge_dataframe <- function(first, second, join_type='none', by_y="gene_id") {
 }
 
 
-# This is probably the wrong way to do this but wtv
+# This is probably the wrong way to do this,
+# TODO: implement better handling of multiple dataframes, or with an list/ array format
 merge_all_data <- function(main_df, one, two=FALSE, three=FALSE, four=FALSE, filename, join_type='') {
   main_df$gene_id <- rownames(main_df)
   print(rownames(main_df))
@@ -70,8 +74,7 @@ merge_all_data <- function(main_df, one, two=FALSE, three=FALSE, four=FALSE, fil
 
 
 make_longdf_for_plot <- function(merged_df, main_time) {
-  
-  # Ensure that all rows have a label
+  # Ensure that all rows have a label/ symbol
   if (main_time == 24) {
     merged_df$symbol <- merged_df$symbol_24
   } else if (main_time == 16) {
@@ -88,7 +91,6 @@ make_longdf_for_plot <- function(merged_df, main_time) {
   print(head(merged_df))
   merged_df$label[is.na(merged_df$label)] <- merged_df$gene_id[is.na(merged_df$label)]
   merged_df$symbol[is.na(merged_df$symbol)] <- merged_df$gene_id[is.na(merged_df$symbol)]
-  
   
   ndf <- data.frame(names<-merged_df$gene_id)
   ndf$n_16 <- merged_df$log2FoldChange_16
@@ -153,6 +155,7 @@ fix_labels <- function(df) {
 
 
 generate_complete_long_df <- function(merged_df, main_time) {
+  #' generates long dataframe from flat dataframe with padj and lfc change
   # main_time = 24
   # Ensure that all rows have a label
   if (main_time == 24) {
