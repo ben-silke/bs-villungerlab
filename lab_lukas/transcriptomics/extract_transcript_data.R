@@ -18,8 +18,7 @@ FILE_NAME = "top50_differential.xlsx"
 
 df = read_excel(file.path(EXTENSION, FILE_NAME))
 
-
-
+View(df)
 
 noquote_gene_list <- noquote(df$gene_id)
 noquote_gene_list <- c('gene_name', noquote_gene_list)
