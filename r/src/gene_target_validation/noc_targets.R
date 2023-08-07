@@ -292,7 +292,7 @@ saveWidget(interactive_decrease_plot, "results/output_encode/Noc/merged/Noc_inte
 
 noc_df <- fix_labels(all_df_merged_df)
 "FOXM1" %in% noc_df$symbol 
-targets = c('BMF', "FOXM1")
+targets = c('BMF', "FOXM1", "SQSTM1")
 subset_targets <- subset(noc_df, symbol %in% targets)
 subset_targets
 
