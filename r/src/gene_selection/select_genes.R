@@ -23,9 +23,14 @@ source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 ### Arguments
 ######
 
+
+#TODO: fix arguments with argparser.
 star_data_file = '~/bs-villungerlab/results/output_encode_1to6/star_data.RData'
 results_data_file = "~/bs-villungerlab/results/output_encode_1to6/results_files.Rdata"
 treatment = "ZM"
+
+# Times should just be a choice between the two established timepoints, this doesn't make sense to make this so adjustable/ generalised.
+# It is less effort to just adjust these manually if need be.
 times = c("16", "20", "24", "36", "48")
 
 ######
@@ -42,6 +47,7 @@ if (file.exists(results_data_file)){
   load(results_data_file)
   print("file_exists")
 } else {
+  # TODO: create this iteratively.
   results_t16_df <- return_results(dds, "timepoint_t16_vs_t0", "_16")
   results_t20_df <- return_results(dds, "timepoint_t20_vs_t0", "_20")
   results_t24_df <- return_results(dds, "timepoint_t24_vs_t0", "_24")
@@ -112,7 +118,6 @@ full_signature <- fix_labels(full_signature)
 full_signature$symbol
 
                        
-# write.csv(full_signature, file = "results/output_encode/ZM/5n_signature.csv")
 full_signature_threshold <- full_signature[
   any(abs(full_signature$log2FoldChange_16)>1 | 
         abs(full_signature$log2FoldChange_20)>1 | 
