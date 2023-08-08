@@ -46,6 +46,8 @@ merge_dataframe <- function(first, second, join_type='none', by_y="gene_id") {
   second$gene_id <- rownames(second)
   print(dim(second))
   print(dim(first))
+  print(typeof(first))
+  print(typeof(second))
   if (join_type == 'full_join') {
     merged_df <- merge(first, second, by.y = by_y, all = TRUE)
   } else {
@@ -61,11 +63,11 @@ merge_all_data <- function(main_df, one, two=FALSE, three=FALSE, four=FALSE, fil
   main_df$gene_id <- rownames(main_df)
   print(rownames(main_df))
 
-  merged_df <- merge_dataframe(main_df,one, join_type)
+  merged_df <- merge_dataframe(main_df, one, join_type)
 
-  if (two & is.data.frame(two)) { merged_df <- merge_dataframe(merged_df,two, join_type) }  
-  if (three & is.data.frame(three)) { merged_df <- merge_dataframe(merged_df,three, join_type) }  
-  if (four & is.data.frame(four)) { merged_df <- merge_dataframe(merged_df,four, join_type) }  
+  if (two & is.data.frame(two)) { merged_df <- merge_dataframe(merged_df, two, join_type) }  
+  if (three & is.data.frame(three)) { merged_df <- merge_dataframe(merged_df, three, join_type) }  
+  if (four & is.data.frame(four)) { merged_df <- merge_dataframe(merged_df, four, join_type) }  
   
   write.csv(merged_df, file = filename)
   return (merged_df)
