@@ -12,7 +12,9 @@ library(ggplot2)
 library(tidyverse)
 library(plotly)
 library(htmlwidgets)
-
+library(readxl)
+library(plotly)
+library(htmlwidgets)
 setwd("~/bs-villungerlab/")
 source("~/bs-villungerlab/r/src/pca_utils.R")
 source("~/bs-villungerlab/r/src/utils.R")
@@ -28,7 +30,7 @@ height_in <- 20
 load('~/bs-villungerlab/results/output_encode_1to6/Noc_star_data.RData')
 dds_Noc <- ddseq_Noc
 
-data_file = "~/bs-villungerlab/results/output_encode_1to6/Noc_unfiltered_results_files.Rdata"
+data_file = "~/bs-villungerlab/results/output_encode_1to6/Noc_unfiltered_results_files_new.Rdata"
 if (file.exists(data_file)){
   load(data_file)
   print("file_exists")
@@ -45,6 +47,11 @@ colnames(results_Noc_t16)
 rownames(results_Noc_t16)
 
 all_df_merged_df <- merge_all_data(results_Noc_t48, results_Noc_t16, results_Noc_t20, results_Noc_t24, results_Noc_t36, 'results/output_encode/Noc/unfiltered_apeglm_Noc_data.csv', 'full_join')
+
+
+# file =
+all_df_merged_df = read_csv( "results/output_encode/Noc/unfiltered_apeglm_Noc_data.csv")
+# View(all_df_merged_df)
 colnames(all_df_merged_df)
 
 noc_df <- fix_labels(all_df_merged_df)
@@ -306,7 +313,8 @@ df_long_subset_targets_plot <- plot_ly(
   text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
   split= ~symbol
   ) %>%
-  layout(title="Noc Treatment: BMF + FOXM1")
+  layout(title="Noc Treatment: Primers")
 
 df_long_subset_targets_plot
-saveWidget(df_long_subset_targets_plot, "results/output_encode/Noc/bmf_foxm1.html")
+saveWidget(df_long_subset_targets_plot, "results/output_encode/Noc/noc_all_primers_response.html")
+

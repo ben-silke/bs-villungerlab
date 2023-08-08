@@ -43,6 +43,9 @@ colnames(results_ZM_t16)
 rownames(results_ZM_t16)
 
 all_df_merged_df <- merge_all_data(results_ZM_t48, results_ZM_t16, results_ZM_t20, results_ZM_t24, results_ZM_t36, 'results/output_encode/ZM/unfiltered_apeglm_ZM_data.csv', 'full_join')
+all_df_merged_df = read_csv( "results/output_encode/ZM/unfiltered_apeglm_ZM_data.csv")
+
+# View(all_df_merged_df)
 colnames(all_df_merged_df)
 file_increase <- "results/output_encode/ZM/iregulon_analysis/ZM_gene_signature_3n_increase.csv"
 file_decrease <- "results/output_encode/ZM/iregulon_analysis/ZM_gene_signature_3n_decrease.csv"
@@ -285,8 +288,8 @@ df_long_subset_targets_plot <- plot_ly(
   text = ~paste("T: ", Timepoint, "<br>l2fc: ", log2foldchange, "<br>padj: ", padj, '<br>ID: ', symbol),
   split= ~symbol
 ) %>%
-  layout(title="ZM Treatment: BMF + FOXM1")
+  layout(title="ZM Treatment: Primers")
 
 df_long_subset_targets_plot
-saveWidget(df_long_subset_targets_plot, "results/output_encode/ZM/ZM_bmf_foxm1.html")
+saveWidget(df_long_subset_targets_plot, "results/output_encode/ZM/ZM_all_primers.html")
 
