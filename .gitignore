@@ -185,6 +185,7 @@ cython_debug/
 *.jpeg
 *.png
 *.xlsx
+*.pdf
 
 # exclude logs
 /logs
@@ -194,3 +195,10 @@ cython_debug/
 
 *.DS_Store
 
+lab_work/qPCR/Noc_qPCR/Noc_plus_all_pcr_files/
+lab_work/qPCR/Noc_qPCR/Noc_pseven_all_pcr_files/
+lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr_files/
+
+lab_work/qPCR/Noc_qPCR/Noc_plus_all_pcr_files/
+lab_work/qPCR/Noc_qPCR/Noc_pseven_all_pcr_files/
+lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr_files/
