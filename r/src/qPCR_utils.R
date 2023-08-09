@@ -6,15 +6,8 @@ library(dplyr)
 
 # Import necessary util functions and set the directory correctly.
 setwd("~/bs-villungerlab/")
-source("~/bs-villungerlab/r/src/pca_utils.R")
-source("~/bs-villungerlab/r/src/utils.R")
-source("~/bs-villungerlab/r/src/star_utils.R")
-source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
-source("~/bs-villungerlab/r/src/qPCR_analysis/qPCR_utils.R")
-
-
-create_long_df_for_sample <- function(sample_name, target_name, control="GAPDH") {
+create_long_df_for_sample <- function(df, sample_name, target_name, control="GAPDH") {
   
   # SETUP control dataframe
   control_df <- subset(df, Target==control)
@@ -90,4 +83,19 @@ create_long_df_for_sample <- function(sample_name, target_name, control="GAPDH")
   long_df$timepoint <- as.numeric(str_extract(long_df$Sample, "\\d+"))
   long_df
   return (long_df)
+}
+
+
+transform_data_values <- function(df) {
+  df$Content = NULL
+  # df$Sample <- gsub("+","p", df$Sample)
+  df$Sample <- gsub(" 0h","_0h", df$Sample)
+  df$Sample <- gsub(" 16h","_16h", df$Sample)
+  df$Sample <- gsub(" 20h","_20h", df$Sample)
+  df$Sample <- gsub(" 24h","_24h", df$Sample)
+  df$Sample <- gsub(" 36h","_36h", df$Sample)
+  df$Sample <- gsub(" 48h","_48h", df$Sample)
+  
+  df$Cq <- as.numeric(as.character(df$Cq))
+  return (df)
 }
