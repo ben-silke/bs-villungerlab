@@ -7,8 +7,13 @@ library(dplyr)
 # Import necessary util functions and set the directory correctly.
 setwd("~/bs-villungerlab/")
 
+EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/Noc_qPCR/"
+FILE_NAME = "20230808-p53_time_series-Noc_results_validation.xlsx"
+
+control="GAPDH"
+
 create_long_df_for_sample <- function(df, sample_name, target_name, control="GAPDH") {
-  
+
   # SETUP control dataframe
   control_df <- subset(df, Target==control)
   sample_control_df <- subset(control_df, grepl(sample_name, Sample))
@@ -21,15 +26,6 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
       avg_Cq_control = mean(Cq, na.rm = TRUE),
     )
   
-  avg_colnames = colnames(sample_control_df)
-  avg_colnames
-  avg_colnames[3] = 'control_target'
-  avg_colnames[5] = 'control_Cq'
-  colnames(sample_control_df) = avg_colnames
-  
-  sample_control_df$Fluor = NULL
-  sample_control_df$Well = NULL
-  sample_control_df
   target_df <- subset(df, Target==target_name)
   sample_target_df <- subset(target_df, grepl(sample_name, Sample))
   target_df
@@ -41,12 +37,13 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
   colnames(sample_target_df) = target_colnames
   sample_target_df$Fluor = NULL
   sample_target_df$Well = NULL
-  
+  sample_target_df$SQ = NULL
   sample_target_df
   averaged_control_df
   
   # merged_df <- left_join(sample_target_df, sample_control_df, by = c('Sample'))
   merged_df <- merge(sample_target_df, averaged_control_df)
+  merged_df
   merged_df$dCt <- merged_df$target_Cq - merged_df$avg_Cq_control
   merged_df
   
@@ -59,8 +56,10 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
   next_merged_df <- left_join(merged_df, avg_dCt_df)
   next_merged_df
   
-  next_merged_df$ddCt <- next_merged_df$dCt - next_merged_df$avg_dCt_target
-  next_merged_df$ddct2 <- 2^next_merged_df$ddCt
+  dCt_avg_t0 <- avg_dCt_df$avg_dCt_target[1]
+  
+  next_merged_df$ddCt <- next_merged_df$dCt - dCt_avg_t0
+  next_merged_df$ddct2 <- 2^-(next_merged_df$ddCt)
   print(next_merged_df)
   
   avg_ddCt2_df <- next_merged_df %>%
@@ -88,7 +87,6 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
 
 transform_data_values <- function(df) {
   df$Content = NULL
-  # df$Sample <- gsub("+","p", df$Sample)
   df$Sample <- gsub(" 0h","_0h", df$Sample)
   df$Sample <- gsub(" 16h","_16h", df$Sample)
   df$Sample <- gsub(" 20h","_20h", df$Sample)
