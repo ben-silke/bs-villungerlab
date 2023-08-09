@@ -7,11 +7,19 @@ library(dplyr)
 # Import necessary util functions and set the directory correctly.
 setwd("~/bs-villungerlab/")
 
-EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/Noc_qPCR/"
-FILE_NAME = "20230808-p53_time_series-Noc_results_validation.xlsx"
+# EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/Noc_qPCR/"
+# FILE_NAME = "20230808-p53_time_series-Noc_results_validation.xlsx"
 
-control="GAPDH"
+# control="GAPDH"
+# EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/ZM_qPCR/"
+# FILE_NAME = "20230807-p53_time_series-ZM_results_validation.xlsx"
 
+# df = read_excel(file.path(EXTENSION, FILE_NAME), sheet='raw_data')
+# df
+# df <- transform_data_values(df)
+# df
+# target_name = 'ZMAT3'
+# sample_name = "new"
 create_long_df_for_sample <- function(df, sample_name, target_name, control="GAPDH") {
 
   # SETUP control dataframe
@@ -32,6 +40,7 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
   sample_target_df
   
   target_colnames = colnames(sample_target_df)
+  target_colnames
   target_colnames[3] = 'sample_target'
   target_colnames[5] = 'target_Cq'
   colnames(sample_target_df) = target_colnames
@@ -76,7 +85,7 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
     summarise(
       avg_ddct2 = mean(ddct2, na.rm = TRUE),
     )
-  long_df$target_name <-target_name
+  long_df$target_name <- target_name
   
   long_df
   long_df$timepoint <- as.numeric(str_extract(long_df$Sample, "\\d+"))
@@ -86,14 +95,23 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
 
 
 transform_data_values <- function(df) {
+  print(df)
+  colnames(df)
   df$Content = NULL
+  df$SQ = NULL
+  df$Cq = NULL
+  df
+  # df$Cq = df$adj_cq
   df$Sample <- gsub(" 0h","_0h", df$Sample)
   df$Sample <- gsub(" 16h","_16h", df$Sample)
   df$Sample <- gsub(" 20h","_20h", df$Sample)
   df$Sample <- gsub(" 24h","_24h", df$Sample)
   df$Sample <- gsub(" 36h","_36h", df$Sample)
   df$Sample <- gsub(" 48h","_48h", df$Sample)
-  
+  names <- colnames(df)
+  names[5] <- "Cq"
+  colnames(df) <- names
   df$Cq <- as.numeric(as.character(df$Cq))
+  df
   return (df)
 }
