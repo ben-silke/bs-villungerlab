@@ -84,7 +84,7 @@ df_Noc_long_subset_targets_plot <- plot_ly(
 df_Noc_long_subset_targets_plot
 saveWidget(df_Noc_long_subset_targets_plot, "lab_work/qPCR/Noc_qPCR/Noc_pseven_all_pcr.html")
 
-save_html_for_treatment <- function(df, biological_replicate, targets, save_location, title) {
+save_html_for_treatment <- function(df, biological_replicate, targets, save_location, title, treatment) {
   full_df <- data.frame()
   for (target in targets) {
     long_df <- create_long_df_for_sample(df, biological_replicate, target)
@@ -95,21 +95,86 @@ save_html_for_treatment <- function(df, biological_replicate, targets, save_loca
     x = ~timepoint,
     y = ~avg_ddct2,
     mode = "markers+lines",
+    text = ~paste("T: ", timepoint, "<br>avg_ddct2: ", avg_ddct2),
     hoverinfo = "text",
     split= ~target_name
   ) %>%
     layout(title=title)
   saveWidget(df_long_subset_targets_plot, save_location)
+  full_df$treatment = treatment
   return(full_df)
 }
 
-new_df <- save_html_for_treatment(df_Noc, 'new', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr.html", "Nocodazole Treatment - new")
-p7_df <- save_html_for_treatment(df_Noc, 'pseven', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_p7_all_pcr.html", "Nocodazole Treatment - p7")
-plus_df <- save_html_for_treatment(df_Noc, 'plus', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_plus_all_pcr.html", "Nocodazole Treatment - +")
+new_df_noc <- save_html_for_treatment(df_Noc, 'new', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr.html", "Nocodazole Treatment - new", "Noc")
+p7_df_noc <- save_html_for_treatment(df_Noc, 'pseven', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_p7_all_pcr.html", "Nocodazole Treatment - p7", "Noc")
+plus_df_noc <- save_html_for_treatment(df_Noc, 'plus', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_plus_all_pcr.html", "Nocodazole Treatment - +", "Noc")
 
-View(plus_df)
+names = colnames(new_df_noc)
+names[2] = "avg_ddct2_new"
+colnames(new_df_noc) = names
+names[2] = "avg_ddct2_pseven"
+colnames(p7_df_noc) = names
+names[2] = "avg_ddct2_plus"
+colnames(plus_df_noc) = names
 
-new_df <- save_html_for_treatment(df_ZM, 'New', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_new_all_pcr.html", "ZM Treatment - new")
-p7_df <- save_html_for_treatment(df_ZM, 'pseven', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_p7_all_pcr.html", "ZM Treatment - p7")
-plus_df <- save_html_for_treatment(df_ZM, 'plus', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_plus_all_pcr.html", "ZM Treatment - +")
+complete_noc <- new_df_noc
+# complete_noc$avg_ddct2_pseven <- p7_df_noc$avg_ddct2_pseven
+complete_noc$avg_ddct2_plus <- plus_df_noc$avg_ddct2_plus
+# complete_noc$avg <- (complete_noc$avg_ddct2_pseven + complete_noc$avg_ddct2_plus + complete_noc$avg_ddct2_new)/3
+complete_noc$avg <- (complete_noc$avg_ddct2_plus + complete_noc$avg_ddct2_new)/2
+
+# complete_noc <- subset(complete_noc)
+complete_noc_avg <- plot_ly(
+  complete_noc,
+  x = ~timepoint,
+  y = ~avg,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", timepoint, "<br>avg: ", avg, "<br>avg_ddct2_plus: ", avg_ddct2_plus, "<br>avg_ddct2_new: ", avg_ddct2_new),
+  split= ~target_name
+) %>%
+  layout(title="Noc Average qPCR (new & +)")
+# saveWidget(df_long_subset_targets_plot, save_location)
+complete_noc_avg
+saveWidget(complete_noc_avg, "lab_work/qPCR/Noc_qPCR/noc_average_newplus.html")
+
+View(complete_noc)
+
+
+
+######
+new_df_zm <- save_html_for_treatment(df_ZM, 'New', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_new_all_pcr.html", "ZM Treatment - new")
+p7_df_zm <- save_html_for_treatment(df_ZM, 'pseven', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_p7_all_pcr.html", "ZM Treatment - p7")
+plus_df_zm <- save_html_for_treatment(df_ZM, 'plus', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_plus_all_pcr.html", "ZM Treatment - +")
+names = colnames(new_df_zm)
+names[2] = "avg_ddct2_new"
+colnames(new_df_zm) = names
+names[2] = "avg_ddct2_pseven"
+colnames(p7_df_zm) = names
+names[2] = "avg_ddct2_plus"
+colnames(plus_df_zm) = names
+
+complete_zm <- new_df_zm
+# complete_zm$avg_ddct2_pseven <- p7_df_zm$avg_ddct2_pseven
+complete_zm$avg_ddct2_plus <- plus_df_zm$avg_ddct2_plus
+# complete_zm$avg <- (complete_zm$avg_ddct2_pseven + complete_zm$avg_ddct2_plus + complete_zm$avg_ddct2_new)/3
+complete_zm$avg <- (complete_zm$avg_ddct2_plus + complete_zm$avg_ddct2_new)/2
+
+# complete_zm <- subset(complete_zm)
+complete_zm_avg <- plot_ly(
+  complete_zm,
+  x = ~timepoint,
+  y = ~avg,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", timepoint, "<br>avg: ", avg, "<br>avg_ddct2_plus: ", avg_ddct2_plus, "<br>avg_ddct2_new: ", avg_ddct2_new),
+  split= ~target_name
+) %>%
+  layout(title="zm Average qPCR (new and +)")
+# saveWidget(df_long_subset_targets_plot, save_location)
+complete_zm_avg
+saveWidget(complete_zm_avg, "lab_work/qPCR/ZM_qPCR/ZM_average_newplus.html")
+
+View(complete_zm)
+
 
