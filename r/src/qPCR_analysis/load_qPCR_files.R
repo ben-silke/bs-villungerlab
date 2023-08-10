@@ -13,7 +13,7 @@ source("~/bs-villungerlab/r/src/utils.R")
 source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
-source("~/bs-villungerlab/r/src/qPCR_analysis/qPCR_utils.R")
+source("~/bs-villungerlab/r/src/qPCR_utils.R")
 # 
 dir.create('lab_work/qPCR/ZM_qPCR')
 EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/ZM_qPCR/"
@@ -22,13 +22,15 @@ df_ZM = read_excel(file.path(EXTENSION, FILE_NAME), sheet='raw_data')
 df_ZM <- transform_data_values(df_ZM)
 
 EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/Noc_qPCR/"
-FILE_NAME = "20230807-p53_time_series-Noc_results_validation.xlsx"
+FILE_NAME = "20230808-p53_time_series-Noc_results_validation.xlsx"
 df_Noc = read_excel(file.path(EXTENSION, FILE_NAME), sheet='raw_data')
 df_Noc <- transform_data_values(df_Noc)
 
 
 new_df_noc <- save_html_for_treatment(df_Noc, 'new', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr.html", "Nocodazole Treatment - new", "Noc")
+new_df_noc
 p7_df_noc <- save_html_for_treatment(df_Noc, 'pseven', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_p7_all_pcr.html", "Nocodazole Treatment - p7", "Noc")
+p7_df_noc
 plus_df_noc <- save_html_for_treatment(df_Noc, 'plus', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_plus_all_pcr.html", "Nocodazole Treatment - +", "Noc")
 
 names = colnames(new_df_noc)
@@ -39,11 +41,15 @@ colnames(p7_df_noc) = names
 names[2] = "avg_ddct2_plus"
 colnames(plus_df_noc) = names
 
+
 complete_noc <- new_df_noc
 complete_noc$avg_ddct2_pseven <- p7_df_noc$avg_ddct2_pseven
 complete_noc$avg_ddct2_plus <- plus_df_noc$avg_ddct2_plus
 complete_noc$avg <- (complete_noc$avg_ddct2_pseven + complete_noc$avg_ddct2_plus + complete_noc$avg_ddct2_new)/3
-# complete_noc$avg <- (complete_noc$avg_ddct2_plus + complete_noc$avg_ddct2_new)/2
+complete_noc <- complete_noc %>%
+  rowwise() %>%
+  mutate(sd = sd(c(avg_ddct2_pseven, avg_ddct2_plus, avg_ddct2_new)))
+
 
 # complete_noc <- subset(complete_noc)
 complete_noc_avg <- plot_ly(

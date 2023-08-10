@@ -96,6 +96,7 @@ transform_data_values <- function(df) {
   df$Sample <- gsub(" 24h","_24h", df$Sample)
   df$Sample <- gsub(" 36h","_36h", df$Sample)
   df$Sample <- gsub(" 48h","_48h", df$Sample)
+  
   names <- colnames(df)
   names[5] <- "Cq"
   colnames(df) <- names
