@@ -16,7 +16,15 @@ source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 source("~/bs-villungerlab/r/src/qPCR_analysis/qPCR_utils.R")
 # 
 dir.create('lab_work/qPCR/ZM_qPCR')
+EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/ZM_qPCR/"
+FILE_NAME = "20230807-p53_time_series-ZM_results_validation.xlsx"
+df_ZM = read_excel(file.path(EXTENSION, FILE_NAME), sheet='raw_data')
+df_ZM <- transform_data_values(df_ZM)
 
+EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/Noc_qPCR/"
+FILE_NAME = "20230807-p53_time_series-Noc_results_validation.xlsx"
+df_Noc = read_excel(file.path(EXTENSION, FILE_NAME), sheet='raw_data')
+df_Noc <- transform_data_values(df_Noc)
 
 
 new_df_noc <- save_html_for_treatment(df_Noc, 'new', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr.html", "Nocodazole Treatment - new", "Noc")
