@@ -7,19 +7,6 @@ library(dplyr)
 # Import necessary util functions and set the directory correctly.
 setwd("~/bs-villungerlab/")
 
-# EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/Noc_qPCR/"
-# FILE_NAME = "20230808-p53_time_series-Noc_results_validation.xlsx"
-
-# control="GAPDH"
-# EXTENSION = "/Users/bsilke/bs-villungerlab/lab_work/qPCR/ZM_qPCR/"
-# FILE_NAME = "20230807-p53_time_series-ZM_results_validation.xlsx"
-
-# df = read_excel(file.path(EXTENSION, FILE_NAME), sheet='raw_data')
-# df
-# df <- transform_data_values(df)
-# df
-# target_name = 'ZMAT3'
-# sample_name = "new"
 create_long_df_for_sample <- function(df, sample_name, target_name, control="GAPDH") {
 
   # SETUP control dataframe
@@ -114,4 +101,26 @@ transform_data_values <- function(df) {
   df$Cq <- as.numeric(as.character(df$Cq))
   df
   return (df)
+}
+
+
+save_html_for_treatment <- function(df, biological_replicate, targets, save_location, title, treatment) {
+  full_df <- data.frame()
+  for (target in targets) {
+    long_df <- create_long_df_for_sample(df, biological_replicate, target)
+    full_df <- rbind(full_df, long_df)
+  }
+  df_long_subset_targets_plot <- plot_ly(
+    full_df,
+    x = ~timepoint,
+    y = ~avg_ddct2,
+    mode = "markers+lines",
+    text = ~paste("T: ", timepoint, "<br>avg_ddct2: ", avg_ddct2),
+    hoverinfo = "text",
+    split= ~target_name
+  ) %>%
+    layout(title=title)
+  saveWidget(df_long_subset_targets_plot, save_location)
+  full_df$treatment = treatment
+  return(full_df)
 }

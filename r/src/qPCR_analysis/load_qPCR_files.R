@@ -17,26 +17,7 @@ source("~/bs-villungerlab/r/src/qPCR_analysis/qPCR_utils.R")
 # 
 dir.create('lab_work/qPCR/ZM_qPCR')
 
-save_html_for_treatment <- function(df, biological_replicate, targets, save_location, title, treatment) {
-  full_df <- data.frame()
-  for (target in targets) {
-    long_df <- create_long_df_for_sample(df, biological_replicate, target)
-    full_df <- rbind(full_df, long_df)
-  }
-  df_long_subset_targets_plot <- plot_ly(
-    full_df,
-    x = ~timepoint,
-    y = ~avg_ddct2,
-    mode = "markers+lines",
-    text = ~paste("T: ", timepoint, "<br>avg_ddct2: ", avg_ddct2),
-    hoverinfo = "text",
-    split= ~target_name
-  ) %>%
-    layout(title=title)
-  saveWidget(df_long_subset_targets_plot, save_location)
-  full_df$treatment = treatment
-  return(full_df)
-}
+
 
 new_df_noc <- save_html_for_treatment(df_Noc, 'new', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_new_all_pcr.html", "Nocodazole Treatment - new", "Noc")
 p7_df_noc <- save_html_for_treatment(df_Noc, 'pseven', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/Noc_qPCR/Noc_p7_all_pcr.html", "Nocodazole Treatment - p7", "Noc")
@@ -109,5 +90,3 @@ complete_zm_avg
 saveWidget(complete_zm_avg, "lab_work/qPCR/ZM_qPCR/ZM_average_newplus.html")
 
 View(complete_zm)
-
-
