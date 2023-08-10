@@ -42,24 +42,26 @@ colnames(plus_df_noc) = names
 
 
 complete_noc <- new_df_noc
-complete_noc$avg_ddct2_pseven <- p7_df_noc$avg_ddct2_pseven
+# complete_noc$avg_ddct2_pseven <- p7_df_noc$avg_ddct2_pseven
 complete_noc$avg_ddct2_plus <- plus_df_noc$avg_ddct2_plus
-complete_noc$avg <- (complete_noc$avg_ddct2_pseven + complete_noc$avg_ddct2_plus + complete_noc$avg_ddct2_new)/3
 complete_noc <- complete_noc %>%
   rowwise() %>%
-  mutate(sd = sd(c(avg_ddct2_pseven, avg_ddct2_plus, avg_ddct2_new)))
+  mutate(sd_ddct2 = sd(c(avg_ddct2_plus, avg_ddct2_new)))
+
+complete_noc <- complete_noc %>%
+  rowwise() %>%
+  mutate(mean_ddct2 = mean(c(avg_ddct2_plus, avg_ddct2_new)))
 
 View(complete_noc)
-complete_noc$sd
-# complete_noc <- subset(complete_noc)
+
 complete_noc_avg <- plot_ly(
   complete_noc,
   x = ~timepoint,
-  y = ~avg,
-  error_y = list(array = ~sd, color = "red", thickness = 0.5, width = 2),
+  y = ~mean_ddct2,
+  # error_y = list(array = ~sd_ddct2, color = "red", thickness = 0.5, width = 2),
   mode = "markers+lines",
   hoverinfo = "text",
-  text = ~paste("T: ", timepoint, "<br>avg: ", avg, "<br>avg_ddct2_plus: ", avg_ddct2_plus, "<br>avg_ddct2_new: ", avg_ddct2_new),
+  text = ~paste("T: ", timepoint, "<br>mean: ", mean_ddct2, "<br>sd: ", sd_ddct2, "<br>avg_ddct2_plus: ", avg_ddct2_plus, "<br>avg_ddct2_new: ", avg_ddct2_new),
   split= ~target_name
 ) %>%
   layout(title="Noc Average qPCR (all)")
@@ -69,7 +71,7 @@ saveWidget(complete_noc_avg, "lab_work/qPCR/Noc_qPCR/noc_all_average.html")
 
 View(complete_noc)
 
-
+complet
 
 ######
 new_df_zm <- save_html_for_treatment(df_ZM, 'New', c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1"), "lab_work/qPCR/ZM_qPCR/ZM_new_all_pcr.html", "ZM Treatment - new")
