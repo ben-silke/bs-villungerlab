@@ -37,6 +37,7 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
   sample_target_df
   averaged_control_df
   
+  # TODO: Handle target_Cq values which are zero, or less than a threshold better (where there is a clear error)
   # merged_df <- left_join(sample_target_df, sample_control_df, by = c('Sample'))
   merged_df <- merge(sample_target_df, averaged_control_df)
   merged_df
