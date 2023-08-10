@@ -1,0 +1,34 @@
+
+Tasks:
+qPCR
+1. Redo Noc qPCR with functional primers (noc_new, noc_+, noc_p7)
+2. (when primers arrive) test new primers
+3. pcr with primers
+4. qPCR with old primers (ZM_19, ZM_old, noc_old, noc_p5)
+5. qPCR with new primers (noc_new, noc_+, noc_p7, ZM_19, ZM_old, noc_old, noc_p5)
+
+
+Tissue Culture
+Thursday:
+1. Treat RPE1/ A459/ Nalm6 (done)
+2. Move Nalm6 to t75 with +8ml RPM1
+3. 
+
+Friday:
+1. Collect RPE1 / A459 / Nalm6 cells @ 1030am
+    Confirm: where are the cells are (RPE1/ A459)
+2. 
+
+Monday:
+1. Seed new experiment (9am)
+    a. RPE1 / A459 4*10^5 cells per well . same template (4+4) as first, but double the cells
+    b. Nalm6 - 6 well plate (4*10^6 cells / well (2ml))
+(what is the reason to seed/ treat on the same day?, but before we did different days)
+2. Treat Cells (4/5pm)
+3. Split RPE1 (1:12) / A459 (1:10); with trypsin (1ml) + DMEM (5ml wash; into relative amounts of DMEM)
+
+Tuesday:
+1. Collect cells
+
+Friday:
+1. Split Nalm6 cells
