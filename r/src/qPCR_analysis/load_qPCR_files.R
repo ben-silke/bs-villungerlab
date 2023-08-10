@@ -4,7 +4,6 @@ library(readxl)
 library(plotly)
 library(htmlwidgets)
 library(dplyr)
-library(dplyr)
 
 # Import necessary util functions and set the directory correctly.
 setwd("~/bs-villungerlab/")
@@ -50,19 +49,21 @@ complete_noc <- complete_noc %>%
   rowwise() %>%
   mutate(sd = sd(c(avg_ddct2_pseven, avg_ddct2_plus, avg_ddct2_new)))
 
-
+View(complete_noc)
+complete_noc$sd
 # complete_noc <- subset(complete_noc)
 complete_noc_avg <- plot_ly(
   complete_noc,
   x = ~timepoint,
   y = ~avg,
+  error_y = list(array = ~sd, color = "red", thickness = 0.5, width = 2),
   mode = "markers+lines",
   hoverinfo = "text",
   text = ~paste("T: ", timepoint, "<br>avg: ", avg, "<br>avg_ddct2_plus: ", avg_ddct2_plus, "<br>avg_ddct2_new: ", avg_ddct2_new),
   split= ~target_name
 ) %>%
   layout(title="Noc Average qPCR (all)")
-# saveWidget(df_long_subset_targets_plot, save_location)
+  # saveWidget(df_long_subset_targets_plot, save_location)
 complete_noc_avg
 saveWidget(complete_noc_avg, "lab_work/qPCR/Noc_qPCR/noc_all_average.html")
 
