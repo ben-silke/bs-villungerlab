@@ -1,14 +1,25 @@
 
-Tasks:
-qPCR
+## qPCR
+Functional Primers:
+BMF
+ARID5B
+CDC25A
+NINJ1
+SQSTM1
+GAPDH
+
 1. Redo Noc qPCR with functional primers (noc_new, noc_+, noc_p7)
 2. (when primers arrive) test new primers
 3. pcr with primers
 4. qPCR with old primers (ZM_19, ZM_old, noc_old, noc_p5)
 5. qPCR with new primers (noc_new, noc_+, noc_p7, ZM_19, ZM_old, noc_old, noc_p5)
 
+needed:
+1. password for the qPCR machine
+2. 
 
-Tissue Culture
+
+## Tissue Culture
 Thursday:
 1. Treat RPE1/ A459/ Nalm6 (done)
 2. Move Nalm6 to t75 with +8ml RPM1
