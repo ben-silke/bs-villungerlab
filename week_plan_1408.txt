@@ -8,38 +8,50 @@ NINJ1
 SQSTM1
 GAPDH
 
-1. Redo Noc qPCR with functional primers (noc_new, noc_+, noc_p7)
+1. qPCR with old primers (ZM_19, ZM_old, noc_old, noc_p5)
 2. (when primers arrive) test new primers
 3. pcr with primers
-4. qPCR with old primers (ZM_19, ZM_old, noc_old, noc_p5)
-5. qPCR with new primers (noc_new, noc_+, noc_p7, ZM_19, ZM_old, noc_old, noc_p5)
+5. qPCR with new primers (noc_new, noc_+, ZM_19, ZM_old, noc_old, noc_p5)
 
 needed:
-1. password for the qPCR machine
-2. 
+1. password for the qPCR machine (account)
+2. install 
 
 
 ## Tissue Culture
 Thursday:
 1. Treat RPE1/ A459/ Nalm6 (done)
-2. Move Nalm6 to t75 with +8ml RPM1
+2. Move Nalm6 to t75 with +8ml RPM1 (Done)
 3. 
 
 Friday:
 1. Collect RPE1 / A459 / Nalm6 cells @ 1030am
     Confirm: where are the cells are (RPE1/ A459)
-2. 
+Collection protocol:
+adherent cells: wash 1x with PBS (1ml/well), remove, 200ul trypsin, incubation for ˜5min @37°C. Add 1ml DMEM/well, collect and transfer in 1.5ml Eppendorf tube.
+                Spin down for 3 min @500rcf, remove supernatant, add 1ml PBS/Eppendorf, spin down for 3mins at 500rcf. Remove superanatant, store at -80
+Suspension cells: collect into an eppendorf tube, Spin down for 3 min @500rcf, remove supernatant, add 1ml PBS/Eppendorf, spin down for 3mins at 500rcf. Remove superanatant, store at -80
+
 
 Monday:
 1. Seed new experiment (9am)
-    a. RPE1 / A459 4*10^5 cells per well . same template (4+4) as first, but double the cells
-    b. Nalm6 - 6 well plate (4*10^6 cells / well (2ml))
-(what is the reason to seed/ treat on the same day?, but before we did different days)
+    a. RPE1 / A459 4*10^5 cells per well . same template (4wells for RNA + 4wells for WB for each cell line) as first, but double the cells (its 400.000 instead of 300.000)
+    b. Nalm6 - 6 well plate (4*10^6 cells / well (2ml)) for Western Blot +
+                        12well plate (1,5*10^6 cells/well, 1ml/well, 4 wells per cell line) for RNA extraction
+(what is the reason to seed/ treat on the same day? To save time. Suspension cells have no issues, adherent cells like RPE1 and A549 take relatively short to adhere, but the don’t have time to grow, that’s why I suggest to seed 400k instead of 300k cells/well, but before we did different days, yes, it’s just to save a bit of time)
 2. Treat Cells (4/5pm)
-3. Split RPE1 (1:12) / A459 (1:10); with trypsin (1ml) + DMEM (5ml wash; into relative amounts of DMEM)
+3. Split RPE1 (1:12) / A459 (1:10); with trypsin (1ml) + DMEM (5ml wash; into relative amounts of DMEM). You do that as you detach the cells to seed the experiments
 
 Tuesday:
 1. Collect cells
+Collection protocol:
+adherent cells: wash 1x with PBS (1ml/well), remove, 200ul trypsin, incubation for ˜5min @37°C. Add 1ml DMEM/well, collect and transfer in 1.5ml Eppendorf tube.
+                Spin down for 3 min @500rcf, remove supernatant, add 1ml PBS/Eppendorf, spin down for 3mins at 500rcf. Remove superanatant, store at -80
+Suspension cells: collect into an eppendorf tube, Spin down for 3 min @500rcf, remove supernatant, add 1ml PBS/Eppendorf, spin down for 3mins at 500rcf. Remove superanatant, store at -80
 
 Friday:
 1. Split Nalm6 cells
+
+needed: media without PBS.
+
+
