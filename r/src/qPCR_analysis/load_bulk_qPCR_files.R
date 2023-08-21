@@ -4,6 +4,8 @@ library(readxl)
 library(plotly)
 library(htmlwidgets)
 library(dplyr)
+library("fgsea")
+
 
 # Import necessary util functions and set the directory correctly.
 setwd("~/bs-villungerlab/")
