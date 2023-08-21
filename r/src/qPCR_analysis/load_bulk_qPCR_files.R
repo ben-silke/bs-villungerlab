@@ -143,14 +143,14 @@ create_longdf <- function(df, sample_name, target_name, control="GAPDH") {
 # qPCR_nocOld_zmOld_zm-19_noc5.xlsx
 df_one <- save_html_for_treatment("qPCR_nocOld_zmOld_zm-19_noc5.xlsx", 'noc_old', targets, "lab_work/qPCR/fulloutput/Noc_old_pcr.html", "Nocodazole Treatment - old", "Noc")
 df_two <- save_html_for_treatment("qPCR_nocOld_zmOld_zm-19_noc5.xlsx", 'zm_old', targets, "lab_work/qPCR/fulloutput/zm_old_pcr.html", "ZM Treatment - old", "ZM")
-df_three <- save_html_for_treatment("qPCR_nocOld_zmOld_zm-19_noc5.xlsx", 'zm_19', targets, "lab_work/qPCR/fulloutput/zm_19_all_pcr.html", "ZM Treatment - zm19", "ZM")
-df_four <- save_html_for_treatment("qPCR_nocOld_zmOld_zm-19_noc5.xlsx", 'noc_5', targets, "lab_work/qPCR/fulloutput/noc_5_pcr.html", "Nocodazole Treatment - zm5", "Noc")
+df_three <- save_html_for_treatment("qPCR_nocOld_zmOld_zm-19_noc5.xlsx", 'zm_nineteen', targets, "lab_work/qPCR/fulloutput/zm_19_all_pcr.html", "ZM Treatment - zm19", "ZM")
+df_four <- save_html_for_treatment("qPCR_nocOld_zmOld_zm-19_noc5.xlsx", 'noc_pfive', targets, "lab_work/qPCR/fulloutput/noc_5_pcr.html", "Nocodazole Treatment - zm5", "Noc")
 
 # qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx
 df_5 <- save_html_for_treatment("qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx", 'noc_old', targets, "lab_work/qPCR/fulloutput/Noc_old_v2_pcr.html", "Nocodazole Treatment - old", "Noc")
 df_6 <- save_html_for_treatment("qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx", 'zm_old', targets, "lab_work/qPCR/fulloutput/zm_old_v2_pcr.html", "ZM Treatment - old", "ZM")
-df_7 <- save_html_for_treatment("qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx", 'zm_19', targets, "lab_work/qPCR/fulloutput/zm_19_v2_pcr.html", "ZM Treatment - zm19", "ZM")
-df_8 <- save_html_for_treatment("qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx", 'noc_p5', targets, "lab_work/qPCR/fulloutput/noc_5_v2_pcr.html", "Nocodazole Treatment - zm5", "Noc")
+df_7 <- save_html_for_treatment("qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx", 'zm_nineteen', targets, "lab_work/qPCR/fulloutput/zm_19_v2_pcr.html", "ZM Treatment - zm19", "ZM")
+df_8 <- save_html_for_treatment("qPCR_v2_nocOld_zmOld_zm19_noc5.xlsx", 'noc_pfive', targets, "lab_work/qPCR/fulloutput/noc_5_v2_pcr.html", "Nocodazole Treatment - zm5", "Noc")
 
 
 file_three = "qPCR_zmNew_nocNew_nocPlus_zmPlus.xlsx"
