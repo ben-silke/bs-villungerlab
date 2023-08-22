@@ -100,7 +100,6 @@ transform_data_values <- function(df) {
   names[5] <- "Cq"
   colnames(df) <- names
   df$Cq <- as.numeric(as.character(df$Cq))
-  df
   return (df)
 }
 
@@ -122,7 +121,16 @@ save_html_for_treatment <- function(df, biological_replicate, targets, save_loca
   ) %>%
     layout(title=title)
   saveWidget(df_long_subset_targets_plot, save_location)
-  full_df$treatment = treatment
+  
+  # Transform so that it is applicable to merge consistently across the range.
+  # TODO: merge here
+  full_df[[paste0(colnames(full_df)[1], '_', biological_replicate)]] = full_df$Sample
+  # full_df[[paste0(colnames(long_df)[2], '_', biological_replicate)]] = long_df$avg_ddct2
+  full_df[[paste0(colnames(full_df)[3], '_', biological_replicate)]] = full_df$target_name
+  full_df[[paste0(colnames(full_df)[4], '_', biological_replicate)]] = full_df$timepoint
+  full_df[[paste0('treatment_', biological_replicate)]] = timepoint
+  full_df$identifier <- paste0(full_df$target_name, '_', full_df$timepoint)
+
   return(full_df)
 }
 
@@ -150,7 +158,16 @@ save_html_file <- function(file, biological_replicate, targets, save_location, t
   ) %>%
     layout(title=title)
   saveWidget(df_long_subset_targets_plot, save_location)
-  full_df$treatment = treatment
+  # full_df$treatment = treatment
+  # TODO: merge here
+
+  full_df[[paste0(colnames(full_df)[1], '_', biological_replicate)]] = full_df$Sample
+  # full_df[[paste0(colnames(long_df)[2], '_', biological_replicate)]] = long_df$avg_ddct2
+  full_df[[paste0(colnames(full_df)[3], '_', biological_replicate)]] = full_df$target_name
+  full_df[[paste0(colnames(full_df)[4], '_', biological_replicate)]] = full_df$timepoint
+  full_df[[paste0('treatment_', biological_replicate)]] = treatment
+  full_df$identifier <- paste0(full_df$target_name, '_', full_df$timepoint)
+
   return(full_df)
 }
 
