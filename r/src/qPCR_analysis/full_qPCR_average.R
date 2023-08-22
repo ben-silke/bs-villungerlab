@@ -13,7 +13,6 @@ source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
 source("~/bs-villungerlab/r/src/qPCR_utils.R")
-source("~/bs-villungerlab/r/src/qPCR_analysis/qPCR_utils.R")
 
 targets = c('BMF', "FOXM1", "SQSTM1", "NINJ1", "ZMAT3", "PHLDA3", "CCNA2", "CDCA8", "CDC25A", "AURKB", "ARID5B", "ANKRD1")
 
