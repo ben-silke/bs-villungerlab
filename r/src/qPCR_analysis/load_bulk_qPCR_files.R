@@ -15,8 +15,8 @@ source("~/bs-villungerlab/r/src/star_utils.R")
 source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
 source("~/bs-villungerlab/r/src/qPCR_utils.R")
-source("~/bs-villungerlab/r/src/qPCR_analysis/qPCR_utils.R")
-# 
+
+
 dir.create('lab_work/qPCR/fulloutput')
 EXTENSION = "lab_work/raw_data/"
 file_one = "qPCR_nocOld_zmOld_zm-19_noc5.xlsx"
