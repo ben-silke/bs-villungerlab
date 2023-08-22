@@ -76,6 +76,7 @@ create_long_df_for_sample <- function(df, sample_name, target_name, control="GAP
   long_df
   long_df$timepoint <- as.numeric(str_extract(long_df$Sample, "\\d+"))
   long_df
+  long_df[[paste0(colnames(long_df)[2], '_', sample_name)]] = long_df$avg_ddct2
   return (long_df)
 }
 
@@ -223,6 +224,6 @@ create_longdf <- function(df, sample_name, target_name, control="GAPDH") {
   
   long_df
   long_df$timepoint <- as.numeric(str_extract(long_df$Sample, "\\d+"))
-  long_df
+  long_df[[paste0(colnames(long_df)[2], '_', sample_name)]] = long_df$avg_ddct2
   return (long_df)
 }
