@@ -91,7 +91,6 @@ for (i in seq_along(list_of_dfs)) {
   list_of_dfs[[i]]$timepoint <- NULL
 }
 
-
 # Merge all data frames by 'identifier'
 merged_df <- reduce(list_of_dfs, ~left_join(.x, .y, by = "identifier"))
 
