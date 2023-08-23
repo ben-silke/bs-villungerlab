@@ -92,9 +92,110 @@ for (i in seq_along(list_of_dfs)) {
 }
 
 # Merge all data frames by 'identifier'
-merged_df <- reduce(list_of_dfs, ~left_join(.x, .y, by = "identifier"))
+merged_df <- reduce(list_of_dfs, ~left_join(by = "identifier"))
 
 # You can check the first few rows of the result
 head(merged_df)
 View(merged_df)
+
+
+# Extract columns that match the pattern
+avg_cols <- grep("^avg_ddct2_", names(merged_df), value = TRUE)
+
+# Check if there are any missing columns
+if (length(avg_cols) != length(list_of_dfs)) {
+  stop("Mismatch in the number of columns and dataframes!")
+}
+
+# Compute row-wise average across the identified columns and store in a new column
+merged_df$avg_of_all <- rowMeans(merged_df[, avg_cols], na.rm = TRUE)
+merged_df$avg_of_all
+merged_df$timepoint = merged_df$timepoint_new_Noc
+merged_df$target_name = merged_df$target_name_new_Noc
+
+merged_plot <- plot_ly(
+  merged_df,
+  x = ~timepoint,
+  y = ~avg_of_all,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", timepoint, "<br>avg: ", avg_of_all),
+  split= ~target_name
+) %>%
+  layout(title="Noc Replicates")
+# saveWidget(df_long_subset_targets_plot, save_location)
+merged_plot
+
+
+
+
+
+
+
+# List of your data frames
+dfs <- list(
+  p7_df_zm,
+  new_df_noc,
+  p7_df_noc,
+  plus_df_noc,
+  new_df_zm,
+  plus_df_zm,
+  noc_old,
+  zm_old,
+  zm_nineteen,
+  noc_pfive,
+  noc_old_v2,
+  zm_old_v2,
+  zm_nineteen_v2,
+  noc_pfive_v2,
+  noc_plus,
+  zm_plus,
+  noc_new,
+  zm_new
+)
+
+
+dfs
+for (i in seq_along(list_of_dfs)) {
+  list_of_dfs[[i]]$Sample <- NULL
+  list_of_dfs[[i]]$avg_ddct2 <- NULL
+  list_of_dfs[[i]]$target_name <- NULL
+  list_of_dfs[[i]]$timepoint <- NULL
+}
+
+
+# Merge all data frames by 'identifier'
+merged_df <- reduce(list_of_dfs, ~left_join(by = "identifier"))
+
+# You can check the first few rows of the result
+head(merged_df)
+View(merged_df)
+
+
+# Extract columns that match the pattern
+avg_cols <- grep("^avg_ddct2_", names(merged_df), value = TRUE)
+
+# Check if there are any missing columns
+if (length(avg_cols) != length(list_of_dfs)) {
+  stop("Mismatch in the number of columns and dataframes!")
+}
+
+# Compute row-wise average across the identified columns and store in a new column
+merged_df$avg_of_all <- rowMeans(merged_df[, avg_cols], na.rm = TRUE)
+merged_df$avg_of_all
+merged_df$timepoint = merged_df$timepoint_new_Noc
+merged_df$target_name = merged_df$target_name_new_Noc
+
+merged_plot <- plot_ly(
+  merged_df,
+  x = ~timepoint,
+  y = ~avg_of_all,
+  mode = "markers+lines",
+  hoverinfo = "text",
+  text = ~paste("T: ", timepoint, "<br>avg: ", avg_of_all),
+  split= ~target_name
+) %>%
+  layout(title="Noc Replicates")
+# saveWidget(df_long_subset_targets_plot, save_location)
+merged_plot
 
