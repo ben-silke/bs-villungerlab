@@ -5,17 +5,11 @@ library(htmlwidgets)
 library(dplyr)
 library("fgsea")
 library(EnhancedVolcano)
+library(msigdbr)
 
 setwd("~/bs-villungerlab/")
-
-data_file = "~/bs-villungerlab/references/misgdrbr_df.Rdata"
-if (file.exists(data_file)){
-  load(data_file)
-  print("file_exists")
-} else {
-  msigdbr_df = msigdbr(species = "human", category="H")
-  save(msigdbr_df, file=data_file)
-}
+msigdbr_df = msigdbr(species = "human", category="H")
+# msigdbr_df <- msigdbr(species = "Homo sapiens", category = "C2", subcategory = "CP:KEGG")
 
 msigdbr_list = split(x = msigdbr_df$gene_symbol, f = msigdbr_df$gs_name)
 
@@ -38,7 +32,7 @@ dreampl_fgseaRes_print$leadingEdge <- sapply(dreampl_fgseaRes_print$leadingEdge,
 
 # View(dreampl_fgseaRes)
 
-write.csv(dreampl_fgseaRes_print, file="results/lab_lukas/geneset_enrichment.xlsx")
+write.csv(dreampl_fgseaRes_print, file="results/lab_lukas/geneset_enrichment.csv")
 
 
 dreampl_pathwaynames <- as.character(dreampl_fgseaRes$pathway)
