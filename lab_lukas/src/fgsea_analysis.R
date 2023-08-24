@@ -54,3 +54,4 @@ fgsea_plot <- EnhancedVolcano(dreampl_fgseaRes,
 
 fgsea_plot
 ggsave(fgsea_plot, filename = "results/lab_lukas/fgsea_enrichment.pdf", width = 10, height = 10, limitsize = FALSE)
+

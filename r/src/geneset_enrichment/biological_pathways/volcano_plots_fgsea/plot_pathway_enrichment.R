@@ -1,7 +1,7 @@
 
 library(EnhancedVolcano)
 
-zm_data <- read_csv("results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_increase_2n.csv")
+zm_data <- read.csv("results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_increase_2n.csv")
 View(zm_data)
 # res <- results(dds)
 # resultsNames(dds)

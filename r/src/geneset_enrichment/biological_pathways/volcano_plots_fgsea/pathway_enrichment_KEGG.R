@@ -1,7 +1,17 @@
 
 library(EnhancedVolcano)
+library(msigdbr)
+setwd("~/bs-villungerlab/")
+source("~/bs-villungerlab/r/src/pca_utils.R")
+source("~/bs-villungerlab/r/src/utils.R")
+source("~/bs-villungerlab/r/src/star_utils.R")
+source("~/bs-villungerlab/r/src/gene_selection_utils.R")
 
-zm_data <- read_csv("results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_increase_2n.csv")
+source("~/bs-villungerlab/r/src/qPCR_utils.R")
+
+zm_data <- read.csv('results/output_encode/ZM/all_ZM_gene_regulation_data.csv')
+
+# zm_data <- read_csv("results/output_encode/ZM/fgsea_enrichment/fgsea_enrichment_ZM_increase_2n.csv")
 View(zm_data)
 # res <- results(dds)
 # resultsNames(dds)
