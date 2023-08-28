@@ -136,9 +136,6 @@ process_data <- function(df, sample_name, target_name, control="GAPDH") {
 }
 
 
-
-
-
 # df <- zm_df
 # cell_type="A549"
 # target_name ="ZMAT3"
