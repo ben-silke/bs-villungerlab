@@ -84,18 +84,18 @@ load('~/bs-villungerlab/results/{input_dir}{treatment}_star_data.RData')
 dds_{treatment} <- ddseq_{treatment}
 """
     for time in times:
-        content = content + f"""
+        content = f"""{content}
 results_{treatment}_t{time}_df <- return_results(dds_{treatment}, "timepoint_t{time}_vs_t0", "_{time}")"""
-    
-    content = content + f"""
+
+    content = f"""{content}
 df <- results_{treatment}_t{main_time}_df
 """
     times_list = ''
     for time in times:
         if time != main_time:
-            times_list = times_list + f'results_{treatment}_t{time}_df, '
+            times_list = f'{times_list}results_{treatment}_t{time}_df, '
 
-    content = content + f"""
+    content = f"""{content}
 #now you can apply filtering
 upr_df_sorted <- df[order(-df$log2FoldChange), ]
 # set the number of results which you want

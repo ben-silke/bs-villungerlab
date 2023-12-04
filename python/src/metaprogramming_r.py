@@ -40,7 +40,7 @@ class RFileWriter():
 """
 
         for time in self.time_dict[self.treatment][1]:
-            variable_name = f'results_{self.treatment}_t{0}_t{time}'
+            variable_name = f'results_{self.treatment}_t0_t{time}'
 
             time_content = f"""
 
@@ -54,7 +54,7 @@ class RFileWriter():
 
 """
             content = content + time_content
-        
+
 
         file = f'{self.treatment}_{replicate_file_name}_analysis.Rmd'
 
@@ -64,7 +64,7 @@ class RFileWriter():
     def write_intro_analysis(self):
         tabset_detail = "{.tabset}"
         variable = f'results_{self.treatment}_{self.replicate}'
-        content = f"""
+        return f"""
 
 ### PCA
 #### VST - Variance Stablised Transformation
@@ -125,14 +125,13 @@ plotPCA(vsd_{self.treatment}, intgroup=c('timepoint'))
     
 
 """
-        return content
     
     def exploration_analyis(self, start, end):
         tabset_detail = "{.tabset}"
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
         variable_name = f'results_{self.treatment}_t{end}_t{start}'
 
-        content = f"""
+        return f"""
 ### Exploratory Analysis {tabset_detail}
 
 #### Summary
@@ -158,17 +157,16 @@ results(
 summary({variable_name}_restricted)
 
 ```
-{self.write_ma_plot("%s_restricted" % variable_name)}
+{self.write_ma_plot(f"{variable_name}_restricted")}
 
 """
-        return content
 
     def differential_expression_analysis(self, start, end):
         tabset_detail = "{.tabset}"
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
         variable_name = f'results_{self.treatment}_t{end}_t{start}'
 
-        content = f"""
+        return f"""
 ### Differential Expression Analysis {tabset_detail}
 It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
 
@@ -180,10 +178,10 @@ summary({variable_name}_shrunk_apeglm)
 
 ```
 ###### MA - Plot
-{self.write_ma_plot("%s_shrunk_apeglm" % variable_name)}
+{self.write_ma_plot(f"{variable_name}_shrunk_apeglm")}
 
 ###### V-Plot
-{self.write_vplot("%s_shrunk_apeglm" % variable_name)}
+{self.write_vplot(f"{variable_name}_shrunk_apeglm")}
 
 
 #### ASHR
@@ -193,23 +191,22 @@ summary({variable_name}_shrunk_ashr)
 
 ```
 ###### MA - Plot
-{self.write_ma_plot("%s_shrunk_ashr" % variable_name)}
+{self.write_ma_plot(f"{variable_name}_shrunk_ashr")}
 
 ###### V-Plot
-{self.write_vplot("%s_shrunk_ashr" % variable_name)}
+{self.write_vplot(f"{variable_name}_shrunk_ashr")}
 
 #### P-Adjusted Analysis
 {self.write_p_adjusted_analysis(variable_name)}
 
 
 """
-        return content
 
 
     def time_analysis(self, start, end):
         timepoint_name = f'timepoint_t{end}_vs_t{start}'
         variable_name = f'results_{self.treatment}_t{end}_t{start}'
-        content = f"""
+        return f"""
 ### Unrestricted
 #### Summary
 ```{self._r}
@@ -235,8 +232,8 @@ results(
 summary({variable_name}_restricted)
 
 ```
-{self.write_ma_plot("%s_restricted" % variable_name)}
-{self.write_vplot("%s_restricted" % variable_name)}
+{self.write_ma_plot(f"{variable_name}_restricted")}
+{self.write_vplot(f"{variable_name}_restricted")}
 
 ### With LFC-Shrink
 It is more useful visualize the MA-plot for the shrunken log2 fold changes, which remove the noise associated with log2 fold changes from low count genes without requiring arbitrary filtering thresholds.
@@ -248,8 +245,8 @@ summary({variable_name}_shrunk_apeglm)
 
 ```
 
-{self.write_ma_plot("%s_shrunk_apeglm" % variable_name)}
-{self.write_vplot("%s_shrunk_apeglm" % variable_name)}
+{self.write_ma_plot(f"{variable_name}_shrunk_apeglm")}
+{self.write_vplot(f"{variable_name}_shrunk_apeglm")}
 
 #### ashr
 ```{self._r}
@@ -258,29 +255,28 @@ summary({variable_name}_shrunk_ashr)
 
 ```
 
-{self.write_ma_plot("%s_shrunk_ashr" % variable_name)}
-{self.write_vplot("%s_shrunk_ashr" % variable_name)}
+{self.write_ma_plot(f"{variable_name}_shrunk_ashr")}
+{self.write_vplot(f"{variable_name}_shrunk_ashr")}
 
 {self.write_p_adjusted_analysis(variable_name)}
         """
-
-        return content
     
     
     def write_ma_plot(self, variable):
-        content = """
+        return (
+            """
 MA Plot
 ```{r}
 
 DESeq2::plotMA(%s, ylim=c(-3,3))
 ```
 
-        """ % variable
-
-        return content
+        """
+            % variable
+        )
 
     def write_vplot(self, variable):
-        content = f"""
+        return f"""
 V- Plot
 
 ```{self._r}
@@ -301,11 +297,10 @@ EnhancedVolcano({variable},
                 labSize = 3.0)
 ```
 """
-        return content
 
     def write_batch_limma_analysis(self, variable, timepoint, treatment):
 
-        content = f"""
+        return f"""
 
 ### Batch Effects 
 
@@ -357,11 +352,11 @@ EnhancedVolcano(
 ```
 
 """
-        return content
 
 
     def write_p_adjusted_analysis(self, variable):
-        content = """
+        return (
+            """
 ```{r}
 resSig <- subset(%s, padj < 0.1) 
 summary(resSig)
@@ -376,9 +371,9 @@ head(resSig[ order(resSig$log2FoldChange), ])
 ```{r}
 head(resSig[ order(resSig$log2FoldChange, decreasing = TRUE), ])
 ```
-        """ % variable
-
-        return content
+        """
+            % variable
+        )
 
 
 
@@ -402,7 +397,7 @@ res$entrez <- mapIds(org.Hs.eg.db,
 return (res)
 }
 """
-        content = f"""
+        return f"""
 ---
 title: "Salmon Analysis - {variable}"
 output: html_document
@@ -436,11 +431,9 @@ resultsNames(dds_{variable})
 ```
         """
 
-        return content
-
     def write_heatmap(self, variable):
 
-        content = f"""
+        return f"""
 
 ```{self._r}
 sampleDists_{variable} <- dist(t(assay(vsd_{variable})))
@@ -455,11 +448,10 @@ pheatmap(sampleDistMatrix_{variable},
          col = colors)
 ```
 """
-        return content
 
 
     def write_poi_heatmap(self, variable):
-        content = f"""
+        return f"""
 ```{self._r}
 poisd_{variable} <- PoissonDistance(t(counts(dds_{self.treatment}_{self.replicate})))
 
@@ -472,7 +464,6 @@ pheatmap(samplePoisDistMatrix_{variable},
          col = colors)
 ```
 """
-        return content
 
 class SalmonRFileWriter(RFileWriter):
 
@@ -648,9 +639,9 @@ class ResultsSheetWriter:
         timepoint_variable = f"timepoint_t{timepoint}_vs_t0"
         workbook_name = f"t0_t{timepoint}_workbook"
         treatments = [treatment for treatment in self.time_dict.keys() if timepoint in self.time_dict[treatment][1]]
-        
+
         def write_treatment_timepoint_data(treatment, timepoint):
-            
+
 
             content = f"""
 addWorksheet({workbook_name}, "t0_t16_workbook")
@@ -678,7 +669,7 @@ writeData({workbook_name}, "results_subset_dataframe", results_{treatment}_{time
             content = content + write_treatment_timepoint_data(treatment, timepoint)
 
 
-        content = content + f"""
+        content = f"""{content}
 saveWorkbook({workbook_name}, "{workbook_name}.xlsx", overwrite = TRUE)
 
 """
@@ -686,7 +677,7 @@ saveWorkbook({workbook_name}, "{workbook_name}.xlsx", overwrite = TRUE)
 
     def write_intro(self):
 
-        content = f"""
+        return f"""
 library("vsn")
 library("genefilter")
 library(dplyr)
@@ -713,7 +704,6 @@ path <- "{self.file_location}"
 data_directory = file.path({self.file_location})
 
 """
-        return content
     
 
 class SalmonResultSheetWriter(ResultsSheetWriter):
